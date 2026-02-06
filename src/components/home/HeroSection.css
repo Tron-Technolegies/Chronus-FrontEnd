@@ -1,0 +1,129 @@
+.hero-section-container {
+  height: 100vh;
+  width: 100%;
+  background:
+    radial-gradient(
+      circle at right,
+      rgba(255, 0, 0, 0.35),
+      rgba(0, 0, 0, 0.9) 60%
+    ),
+    url(./herosection.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  padding: 0 8%;
+  box-sizing: border-box;
+  padding-top: 64px;
+}
+
+.herosection-contents {
+  max-width: 620px;
+  color: #ffffff;
+}
+
+.hero-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 12px;
+  padding: 6px 16px;
+  border-radius: 30px;
+  margin-bottom: 26px;
+  cursor: default;
+}
+
+.herosection-contents h2 {
+  font-size: 56px;
+  line-height: 1.1;
+  font-weight: 400;
+  margin-bottom: 22px;
+  font-family: "Bastoni";
+}
+
+.herosection-contents h2 span {
+  color: var(--secondary-color);
+}
+
+.herosection-contents p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 34px;
+  font-family: "Inter", sans-serif;
+}
+
+.hero-cta {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: #ffffff;
+  padding: 12px 30px;
+  font-size: 15px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hero-cta:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+/* WATCH CARD */
+.hero-limited-edition-watch {
+  margin-left: auto;
+  margin-top: 30%;
+}
+
+.watch-card {
+  /* background: linear-gradient(
+    180deg,
+    rgba(30, 30, 30, 0.85),
+    rgba(10, 10, 10, 0.95)
+  );
+  padding: 14px;
+  border-radius: 14px;
+  width: 220px;
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.75),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08); */
+  margin-top: 75%;
+}
+
+.watch-card img {
+  width: 70%;
+  border-radius: 10px;
+  display: block;
+}
+
+.watch-info {
+  margin-top: 14px;
+}
+
+.watch-badge {
+  color: #ff3b3b;
+  font-size: 11px;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 4px;
+  font-family: "Kdam Thmor Pro", sans-serif;
+}
+
+.watch-title {
+  color: #ffffff;
+  font-size: 14px;
+  font-family: "Kdam Thmor Pro", sans-serif;
+  font-weight: 400;
+}
+
+/* mediaQueries */
+@media (max-width: 900px) {
+  .hero-limited-edition-watch {
+    display: none;
+  }
+
+  .herosection-contents h2 {
+    font-size: 42px;
+  }
+}
