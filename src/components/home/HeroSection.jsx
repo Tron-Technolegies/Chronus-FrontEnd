@@ -1,10 +1,9 @@
 import React from "react";
-import "../../components/home/HeroSection.css";
+import "./HeroSection.css";
 
 const HeroSection = () => {
   return (
-    <div className="hero-section-container">
-      {/* LEFT CONTENT */}
+    <section className="hero-section-container">
       <div className="herosection-contents">
         <button className="hero-badge">Curated Excellence Since 1892</button>
 
@@ -22,21 +21,14 @@ const HeroSection = () => {
         <button className="hero-cta">Explore Collection</button>
       </div>
 
-      {/* RIGHT WATCH CARD */}
       <div className="hero-limited-edition-watch">
-        <div className="watch-card">
-          <img
-            src="./limited-edition-watch.png"
-            alt="Midnight Tourbillon"
-          />
-
-          <div className="watch-info">
-            <span className="watch-badge">LIMITED EDITION</span>
-            <p className="watch-title">Midnight Tourbillon</p>
-          </div>
+        <img src="./limited-edition-watch.png" alt="Midnight Tourbillon" />
+        <div className="watch-info">
+          <span className="watch-badge">LIMITED EDITION</span>
+          <p className="watch-title">Midnight Tourbillon</p>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
