@@ -1,205 +1,125 @@
-export const products = [
-  // WATCHES
+export const PRODUCTS = [
   {
     id: 1,
-    name: "Classic Leather Watch",
+    name: "Royal Chronograph Elite",
+    price: 12500,
+    image:
+      "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400&h=400&fit=crop",
     category: "watches",
-    brand: "Timex",
-    price: 3499,
-    rating: 4.5,
-    image: "/images/watches/watch1.jpg",
-    description: "Elegant analog watch with leather strap.",
+    collections: ["bestsellers", "featured"],
   },
   {
     id: 2,
-    name: "Smart Fitness Watch",
+    name: "Royal Chronograph Elite",
+    price: 12500,
+    image:
+      "https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?w=400&h=400&fit=crop",
     category: "watches",
-    brand: "Noise",
-    price: 2999,
-    rating: 4.3,
-    image: "/images/watches/watch2.jpg",
-    description: "Smartwatch with health and fitness tracking.",
+    collections: ["new"],
   },
   {
     id: 3,
-    name: "Luxury Metal Watch",
-    category: "watches",
-    brand: "Fossil",
-    price: 8999,
-    rating: 4.7,
-    image: "/images/watches/watch3.jpg",
-    description: "Premium stainless steel chronograph watch.",
+    name: "Women modern bijouterie",
+    price: 12500,
+    image:
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=400&fit=crop",
+    category: "accessories",
+    collections: ["bestsellers"],
   },
   {
     id: 4,
-    name: "Minimal Black Watch",
-    category: "watches",
-    brand: "Daniel Wellington",
-    price: 7499,
-    rating: 4.4,
-    image: "/images/watches/watch4.jpg",
-    description: "Minimal design for formal wear.",
+    name: "Royal Chronograph Elite",
+    price: 8500,
+    image:
+      "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&h=400&fit=crop",
+    category: "accessories",
+    collections: ["featured"],
   },
   {
     id: 5,
-    name: "Digital Sports Watch",
-    category: "watches",
-    brand: "Casio",
-    price: 2499,
-    rating: 4.6,
-    image: "/images/watches/watch5.jpg",
-    description: "Durable digital watch with water resistance.",
+    name: "Royal Chronograph Elite",
+    price: 12500,
+    image:
+      "https://images.unsplash.com/photo-1578500494198-246f612d782b?w=400&h=400&fit=crop",
+    category: "art",
+    collections: ["new", "featured"],
   },
   {
     id: 6,
-    name: "Automatic Skeleton Watch",
-    category: "watches",
-    brand: "Titan",
-    price: 11999,
-    rating: 4.6,
-    image: "/images/watches/watch6.jpg",
-    description: "Automatic watch with skeleton dial.",
+    name: "Royal Chronograph Elite",
+    price: 12500,
+    image:
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=400&fit=crop",
+    category: "accessories",
+    collections: ["bestsellers"],
   },
   {
     id: 7,
-    name: "Sport Analog Watch",
-    category: "watches",
-    brand: "Sonata",
-    price: 1999,
-    rating: 4.2,
-    image: "/images/watches/watch7.jpg",
-    description: "Affordable everyday analog watch.",
+    name: "Royal Chronograph Elite",
+    price: 12500,
+    image:
+      "https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&h=400&fit=crop",
+    category: "art",
+    collections: ["featured"],
   },
   {
     id: 8,
-    name: "Premium Smart Watch",
-    category: "watches",
-    brand: "Samsung",
-    price: 15999,
-    rating: 4.8,
-    image: "/images/watches/watch8.jpg",
-    description: "Premium smartwatch with AMOLED display.",
-  },
-  {
-    id: 9,
-    name: "Chronograph Watch",
-    category: "watches",
-    brand: "Citizen",
-    price: 9999,
-    rating: 4.5,
-    image: "/images/watches/watch9.jpg",
-    description: "Chronograph watch with date display.",
-  },
-  {
-    id: 10,
-    name: "Military Style Watch",
-    category: "watches",
-    brand: "Fastrack",
-    price: 3299,
-    rating: 4.3,
-    image: "/images/watches/watch10.jpg",
-    description: "Rugged watch with military-inspired design.",
-  },
-
-  // BAGS
-  {
-    id: 11,
-    name: "Laptop Backpack",
-    category: "bags",
-    brand: "American Tourister",
-    price: 2799,
-    rating: 4.5,
-    image: "/images/bags/bag1.jpg",
-    description: "Backpack with padded laptop compartment.",
-  },
-  {
-    id: 12,
-    name: "Travel Duffel Bag",
-    category: "bags",
-    brand: "Wildcraft",
-    price: 3199,
-    rating: 4.4,
-    image: "/images/bags/bag2.jpg",
-    description: "Spacious duffel bag for travel.",
-  },
-  {
-    id: 13,
-    name: "Leather Office Bag",
-    category: "bags",
-    brand: "Hidesign",
-    price: 6499,
-    rating: 4.6,
-    image: "/images/bags/bag3.jpg",
-    description: "Premium leather office bag.",
-  },
-  {
-    id: 14,
-    name: "Sling Bag",
-    category: "bags",
-    brand: "Puma",
-    price: 1799,
-    rating: 4.2,
-    image: "/images/bags/bag4.jpg",
-    description: "Compact sling bag for daily use.",
-  },
-  {
-    id: 15,
-    name: "Gym Backpack",
-    category: "bags",
-    brand: "Adidas",
-    price: 2599,
-    rating: 4.3,
-    image: "/images/bags/bag5.jpg",
-    description: "Lightweight gym and travel backpack.",
-  },
-  {
-    id: 16,
-    name: "College Backpack",
-    category: "bags",
-    brand: "Skybags",
-    price: 2199,
-    rating: 4.4,
-    image: "/images/bags/bag6.jpg",
-    description: "Stylish backpack for college students.",
-  },
-  {
-    id: 17,
-    name: "Trolley Travel Bag",
-    category: "bags",
-    brand: "Safari",
-    price: 8999,
-    rating: 4.5,
-    image: "/images/bags/bag7.jpg",
-    description: "Large trolley bag for long trips.",
-  },
-  {
-    id: 18,
-    name: "Mini Backpack",
-    category: "bags",
-    brand: "Lavie",
-    price: 1999,
-    rating: 4.3,
-    image: "/images/bags/bag8.jpg",
-    description: "Trendy mini backpack.",
-  },
-  {
-    id: 19,
-    name: "Messenger Bag",
-    category: "bags",
-    brand: "F Gear",
-    price: 2899,
-    rating: 4.4,
-    image: "/images/bags/bag9.jpg",
-    description: "Messenger bag for office and casual use.",
-  },
-  {
-    id: 20,
-    name: "Camera Backpack",
-    category: "bags",
-    brand: "Lowepro",
-    price: 7499,
-    rating: 4.7,
-    image: "/images/bags/bag10.jpg",
-    description: "Protective backpack for camera gear.",
+    name: "Royal Chronograph Elite",
+    price: 12500,
+    image:
+      "https://images.unsplash.com/photo-1535193566863-6f3031224c94?w=400&h=400&fit=crop",
+    category: "accessories",
+    collections: ["new"],
   },
 ];
+
+export const filterProducts = (products, filters) => {
+  let filtered = [...products];
+
+  if (filters.category && filters.category !== "all") {
+    filtered = filtered.filter((p) => p.category === filters.category);
+  }
+
+  if (filters.collections && filters.collections.length > 0) {
+    filtered = filtered.filter((p) =>
+      filters.collections.some((col) => p.collections.includes(col)),
+    );
+  }
+
+  if (filters.minPrice !== undefined && filters.maxPrice !== undefined) {
+    filtered = filtered.filter(
+      (p) => p.price >= filters.minPrice && p.price <= filters.maxPrice,
+    );
+  }
+
+  if (filters.searchQuery) {
+    const query = filters.searchQuery.toLowerCase();
+    filtered = filtered.filter((p) => p.name.toLowerCase().includes(query));
+  }
+
+  return filtered;
+};
+
+export const sortProducts = (products, sortBy) => {
+  const sorted = [...products];
+
+  switch (sortBy) {
+    case "price-low":
+      sorted.sort((a, b) => a.price - b.price);
+      break;
+    case "price-high":
+      sorted.sort((a, b) => b.price - a.price);
+      break;
+    case "name-asc":
+      sorted.sort((a, b) => a.name.localeCompare(b.name));
+      break;
+    case "newest":
+      sorted.reverse();
+      break;
+    case "featured":
+    default:
+      break;
+  }
+
+  return sorted;
+};

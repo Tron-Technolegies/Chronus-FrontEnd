@@ -2,7 +2,7 @@ import React from "react";
 
 const ShopPageHeader = () => {
   return (
-    <section className="w-full mt-12">
+    <section className="w-full mt-10">
       <div className="max-w-6xl mx-auto px-4 py-16 text-center">
         <p className="text-xs tracking-widest text-gray-500 uppercase mb-3">
           Discover
