@@ -7,6 +7,7 @@ import AboutPage from "../pages/AboutPage";
 import LoginPage from "../pages/auth/LoginPage";
 import SignupPage from "../pages/auth/SignupPage";
 import ShopPage from "../pages/shop/ShopPage";
+import ProductDetailPage from "../pages/shop/productdetails/ProductDetailPage";
 
 const AppRoutes = () => {
   const router = createBrowserRouter([
@@ -22,21 +23,24 @@ const AppRoutes = () => {
         },
         {
           path: "/about",
-          element: <AboutPage/>
+          element: <AboutPage />,
         },
         {
           path: "/login",
-          element: <LoginPage/>
+          element: <LoginPage />,
         },
         {
           path: "/signup",
-          element: <SignupPage/>
+          element: <SignupPage />,
         },
         {
           path: "/shop",
-          element: <ShopPage/>
-        }
-
+          element: <ShopPage />,
+        },
+        {
+          path: "/product/:id",
+          element: <ProductDetailPage/>,
+        },
       ],
     },
   ]);

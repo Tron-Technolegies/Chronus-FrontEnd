@@ -3,7 +3,7 @@ import { FiShield, FiTruck, FiRefreshCw, FiAward } from "react-icons/fi";
 
 const ShippingDetails = () => {
   return (
-    <div className="w-full pt-10 pb-14 px-8">
+    <div className="w-full pt-10 pb-14 px-8 ">
       <h3 className="text-sm font-semibold tracking-wider mb-10">
         SHIPPING & DELIVERY
       </h3>

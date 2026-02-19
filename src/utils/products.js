@@ -1,125 +1,193 @@
-export const PRODUCTS = [
+export const allProducts = [
   {
     id: 1,
     name: "Royal Chronograph Elite",
-    price: 12500,
-    image:
-      "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400&h=400&fit=crop",
+    price: "$12,500",
+    originalPrice: "$15,000",
+    images: [
+      "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80",
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80",
+      "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=800&q=80",
+    ],
     category: "watches",
-    collections: ["bestsellers", "featured"],
+    categoryName: "Timepieces",
+    brand: "Royal Elite",
+    shortDesc: "Swiss automatic chronograph • 18K rose gold • 42mm",
+    description:
+      "An exquisite masterpiece of Swiss horology with sapphire crystal, skeleton movement and premium leather strap.",
+    rating: 4.9,
+    reviewsCount: 127,
+    stock: 8,
   },
   {
     id: 2,
-    name: "Royal Chronograph Elite",
-    price: 12500,
-    image:
-      "https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?w=400&h=400&fit=crop",
+    name: "Astral Diver Pro",
+    price: "$9,800",
+    originalPrice: null,
+    images: [
+      "https://images.unsplash.com/photo-1541783245831-57d6fb0926d3?w=800&q=80",
+      "https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=80",
+    ],
     category: "watches",
-    collections: ["new"],
+    categoryName: "Timepieces",
+    brand: "Astral",
+    shortDesc: "300m professional diver • Titanium • Ceramic bezel",
+    description:
+      "Professional diver watch with ceramic bezel, luminous markers and lightweight titanium case.",
+    rating: 4.7,
+    reviewsCount: 89,
+    stock: 15,
   },
   {
     id: 3,
-    name: "Women modern bijouterie",
-    price: 12500,
-    image:
-      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=400&fit=crop",
-    category: "accessories",
-    collections: ["bestsellers"],
+    name: "Women Modern Bijouterie Set",
+    price: "$12,500",
+    originalPrice: null,
+    images: [
+      "https://images.unsplash.com/photo-1611590027211-b954fd027b51?w=800&q=80",
+      "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&q=80",
+    ],
+    category: "bijouterie",
+    categoryName: "Fine Jewelry",
+    brand: "Luxe Bijoux",
+    shortDesc: "18K white gold • Diamonds & sapphires",
+    description:
+      "Contemporary fine jewelry set crafted in 18K white gold with ethically sourced gemstones.",
+    rating: 4.8,
+    reviewsCount: 62,
+    stock: 5,
   },
   {
     id: 4,
-    name: "Royal Chronograph Elite",
-    price: 8500,
-    image:
-      "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&h=400&fit=crop",
-    category: "accessories",
-    collections: ["featured"],
+    name: "Heritage Automatic Dress Watch",
+    price: "$15,800",
+    originalPrice: null,
+    images: [
+      "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80",
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80",
+    ],
+    category: "watches",
+    categoryName: "Timepieces",
+    brand: "Heritage",
+    shortDesc: "Hand-wound movement • Guilloché dial",
+    description:
+      "Timeless dress watch with hand-wound mechanical movement and classic guilloché dial.",
+    rating: 4.95,
+    reviewsCount: 204,
+    stock: 3,
   },
   {
     id: 5,
-    name: "Royal Chronograph Elite",
-    price: 12500,
-    image:
-      "https://images.unsplash.com/photo-1578500494198-246f612d782b?w=400&h=400&fit=crop",
-    category: "art",
-    collections: ["new", "featured"],
+    name: "Emerald Chain Bag",
+    price: "$4,200",
+    originalPrice: null,
+    images: [
+      "https://images.unsplash.com/photo-1584917865447-032f09c18ef1?w=800&q=80",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&q=80",
+    ],
+    category: "accessories",
+    categoryName: "Handbags",
+    brand: "Luxe Atelier",
+    shortDesc: "Emerald calf leather • Gold chain hardware",
+    description:
+      "Structured calf leather bag with gold chain strap and elegant silhouette.",
+    rating: 4.6,
+    reviewsCount: 48,
+    stock: 12,
   },
   {
     id: 6,
-    name: "Royal Chronograph Elite",
-    price: 12500,
-    image:
-      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=400&fit=crop",
-    category: "accessories",
-    collections: ["bestsellers"],
+    name: "Abstract No. 7 – Limited Edition Print",
+    price: "$1,850",
+    originalPrice: null,
+    images: [
+      "https://images.unsplash.com/photo-1579783902614-a3db7a7e6e8e?w=800&q=80",
+      "https://images.unsplash.com/photo-1579783483458-83a9c9c8c8c8?w=800&q=80",
+    ],
+    category: "fine-art",
+    categoryName: "Fine Art",
+    brand: "Gallery Modern",
+    shortDesc: "Giclée print • Signed & numbered",
+    description:
+      "Museum-quality giclée print on archival paper. Signed and numbered edition.",
+    rating: 5.0,
+    reviewsCount: 19,
+    stock: 25,
   },
   {
     id: 7,
-    name: "Royal Chronograph Elite",
-    price: 12500,
-    image:
-      "https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&h=400&fit=crop",
-    category: "art",
-    collections: ["featured"],
+    name: "Midnight Blue Chrono",
+    price: "$9,200",
+    originalPrice: "$11,500",
+    images: [
+      "https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=80",
+      "https://images.unsplash.com/photo-1541783245831-57d6fb0926d3?w=800&q=80",
+    ],
+    category: "watches",
+    categoryName: "Timepieces",
+    brand: "Midnight",
+    shortDesc: "Blue sunburst dial • Chronograph",
+    description:
+      "Sport-luxury chronograph with deep blue sunburst dial and stainless steel case.",
+    rating: 4.8,
+    reviewsCount: 76,
+    stock: 9,
   },
   {
     id: 8,
-    name: "Royal Chronograph Elite",
-    price: 12500,
-    image:
-      "https://images.unsplash.com/photo-1535193566863-6f3031224c94?w=400&h=400&fit=crop",
+    name: "Sapphire Eternity Ring",
+    price: "$8,900",
+    originalPrice: null,
+    images: [
+      "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&q=80",
+      "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=800&q=80",
+    ],
+    category: "bijouterie",
+    categoryName: "Fine Jewelry",
+    brand: "Eternal Gems",
+    shortDesc: "18K white gold • Blue sapphires",
+    description:
+      "Full eternity ring set with premium blue sapphires symbolizing everlasting love.",
+    rating: 5.0,
+    reviewsCount: 34,
+    stock: 7,
+  },
+  {
+    id: 9,
+    name: "Classic Leather Tote",
+    price: "$3,600",
+    originalPrice: null,
+    images: [
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&q=80",
+      "https://images.unsplash.com/photo-1584917865447-032f09c18ef1?w=800&q=80",
+    ],
     category: "accessories",
-    collections: ["new"],
+    categoryName: "Handbags",
+    brand: "Luxe Atelier",
+    shortDesc: "Italian full-grain leather • Everyday tote",
+    description:
+      "Timeless Italian leather tote with spacious compartments for daily use.",
+    rating: 4.7,
+    reviewsCount: 53,
+    stock: 18,
+  },
+  {
+    id: 10,
+    name: "Oceanic Moonphase",
+    price: "$14,200",
+    originalPrice: "$16,900",
+    images: [
+      "https://images.unsplash.com/photo-1541783245831-57d6fb0926d3?w=800&q=80",
+      "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80",
+    ],
+    category: "watches",
+    categoryName: "Timepieces",
+    brand: "Oceanic",
+    shortDesc: "Moonphase complication • Blue dial",
+    description:
+      "Elegant moonphase watch combining astronomy and fine Swiss watchmaking.",
+    rating: 4.85,
+    reviewsCount: 94,
+    stock: 6,
   },
 ];
-
-export const filterProducts = (products, filters) => {
-  let filtered = [...products];
-
-  if (filters.category && filters.category !== "all") {
-    filtered = filtered.filter((p) => p.category === filters.category);
-  }
-
-  if (filters.collections && filters.collections.length > 0) {
-    filtered = filtered.filter((p) =>
-      filters.collections.some((col) => p.collections.includes(col)),
-    );
-  }
-
-  if (filters.minPrice !== undefined && filters.maxPrice !== undefined) {
-    filtered = filtered.filter(
-      (p) => p.price >= filters.minPrice && p.price <= filters.maxPrice,
-    );
-  }
-
-  if (filters.searchQuery) {
-    const query = filters.searchQuery.toLowerCase();
-    filtered = filtered.filter((p) => p.name.toLowerCase().includes(query));
-  }
-
-  return filtered;
-};
-
-export const sortProducts = (products, sortBy) => {
-  const sorted = [...products];
-
-  switch (sortBy) {
-    case "price-low":
-      sorted.sort((a, b) => a.price - b.price);
-      break;
-    case "price-high":
-      sorted.sort((a, b) => b.price - a.price);
-      break;
-    case "name-asc":
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
-      break;
-    case "newest":
-      sorted.reverse();
-      break;
-    case "featured":
-    default:
-      break;
-  }
-
-  return sorted;
-};
