@@ -1,6 +1,5 @@
-
 import ProductCard from "../../components/shop/ProductCard";
-import "../../components/shop/ProductsGrid.css"
+import "../../components/shop/ProductsGrid.css";
 const ProductsGrid = ({ products = [] }) => {
   return (
     <div className="products-grid">

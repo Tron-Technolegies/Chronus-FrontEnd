@@ -1,37 +1,44 @@
-import { useState } from "react";
-import { FiHeart } from "react-icons/fi";
-import "../../components/shop/ProductCard.css";
+import React, { useState } from "react";
+import { FaHeart } from "react-icons/fa";
+import { LuShoppingBag } from "react-icons/lu";
 
-const ProductCard = ({ product }) => {
-  const [isWishlisted, setIsWishlisted] = useState(false);
+export default function ProductCard({ product }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [wish, setWish] = useState(false);
 
   return (
-    <div className="product-card">
-      <div className="image-container">
-        <img src={product.image} alt={product.name} className="product-image" />
-
-        <button
-          className="wishlist-btn"
-          onClick={() => setIsWishlisted(!isWishlisted)}
-        >
-          <FiHeart
-            size={24}
-            fill={isWishlisted ? "#ff4d4f" : "none"}
-            color={isWishlisted ? "#ff4d4f" : "#fff"}
-          />
+    <div
+      className="bg-white group cursor-pointer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="border-gray-200 flex flex-col border p-5 relative pb-7 w-full overflow-hidden">
+        <button className="cursor-pointer ms-auto" onClick={() => setWish(!wish)}>
+          <FaHeart className={`transition ${wish ? "text-[#CBA61F]" : "text-gray-300"}`} />
         </button>
 
-        <div className="buy-overlay">
-          <button className="buy-now-btn">Buy Now</button>
+        <div className="h-80 w-full flex items-center justify-center">
+          <img src={product.images} alt={product.name} className="h-full w-full object-contain" />
+        </div>
+
+        <div
+          className={`
+            flex absolute gap-4 items-center justify-center w-full bottom-0 left-0 px-3 py-2
+            transform transition-all duration-300
+            ${isHovered ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}
+          `}
+        >
+          <button className="bg-yellow-400 p-2 w-full cursor-pointer">Buy Now</button>
+          <button className="bg-gray-300 p-2 w-fit cursor-pointer">
+            <LuShoppingBag />
+          </button>
         </div>
       </div>
 
-      <div className="product-info">
-        <p className="product-name">{product.name}</p>
-        <p className="product-price">{product.price}</p>
+      <div className="text-center text-black py-4">
+        <p>{product.name}</p>
+        <p className="text-lg">{product.price}</p>
       </div>
     </div>
   );
-};
-
-export default ProductCard;
+}

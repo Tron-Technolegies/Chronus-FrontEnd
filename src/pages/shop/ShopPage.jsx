@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import ShopPageHeader from "../../components/shop/ShopPageHeader";
 import FiltersSection from "../../components/shop/FiltersSection";
 import ProductPriceFilter from "../../components/shop/ProductPriceFilter";
@@ -6,36 +6,39 @@ import ShippingDetails from "../../components/shop/ShippingDetails";
 import ProductsGrid from "../../components/shop/ProductsGrid";
 import SearchBox from "../../components/shop/SearchBox";
 
-
 import { allProducts } from "../../utils/products";
 
 import "../../pages/shop/ShopPage.css";
+import CategoryTabs from "../../components/shop/CategoryTabs";
 
 const ShopPage = () => {
   return (
-    <div className="shop-page">
+    <div className="max-w-[1700px] mx-auto bg-white">
       <ShopPageHeader />
 
-      <div className="shop-layout">
-        <aside className="sidebar">
+      {/* Layout */}
+      <div className="flex flex-col lg:flex-row">
+        {/* Sidebar */}
+        <aside className="w-full lg:w-[360px] border-r border-gray-200 lg:sticky lg:top-0 h-fit">
           <FiltersSection />
-
-          <div className="price-wrapper">
-            <ProductPriceFilter />
-          </div>
-
-          <div className="shipping-wrapper">
-            <ShippingDetails />
-          </div>
+          <ProductPriceFilter />
+          <ShippingDetails />
         </aside>
 
-        <main className="main-content">
-          <div className="products-topbar">
+        {/* Right Content */}
+        <main className="flex-1">
+          {/* Tabs row */}
+          <div className="border-b border-gray-200 px-6 py-5">
+            <CategoryTabs />
+          </div>
+
+          {/* Search + Sort */}
+          <div className="flex justify-end px-6 py-5">
             <SearchBox />
           </div>
 
-          <div className="products-container">
-            {/* Pass the products array here */}
+          {/* Products */}
+          <div className="px-6 py-8">
             <ProductsGrid products={allProducts} />
           </div>
         </main>

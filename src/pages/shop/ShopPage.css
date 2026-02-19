@@ -1,7 +1,6 @@
 .shop-page {
   min-height: 100vh;
   background: #ffffff;
-
 }
 
 .shop-layout {
@@ -37,7 +36,6 @@
 
 .main-content {
   flex: 1;
-  background: #fafafa;
 }
 
 .products-topbar {

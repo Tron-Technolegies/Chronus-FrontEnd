@@ -1,61 +1,32 @@
-import React, { useState } from "react";
-import "../../components/shop/FiltersSection.css"
+import React from "react";
 
 const FiltersSection = () => {
-  const [activeTab, setActiveTab] = useState("All Collections");
-
-  const tabs = ["All Collections", "Timepieces", "Accessories", "Fine Art"];
-
   return (
-    <div className="filters-section">
-
- 
-      <div className="filters-top-row">
-
-       
-        <div className="filters-left">
-          <span className="filters-title">FILTERS</span>
-          <button className="reset-btn">Reset</button>
-        </div>
-
-      
-        <div className="category-tabs">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              className={`tab ${activeTab === tab ? "active" : ""}`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
+    <div className="p-6 space-y-8">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <h3 className="text-sm tracking-widest text-gray-500">FILTERS</h3>
+        <button className="text-xs text-gray-400 hover:text-black transition">Reset</button>
       </div>
 
-     
-      <div className="collections-section">
-        <h3>COLLECTIONS</h3>
-        <div className="collection-list">
-          <button className="collection-item">Best Sellers</button>
-          <button className="collection-item">New Arrivals</button>
-          <button className="collection-item">Featured</button>
+      {/* Collections */}
+      <div>
+        <h4 className="text-xs tracking-widest text-gray-400 mb-4">COLLECTIONS</h4>
+
+        <div className="flex flex-wrap gap-2">
+          <button className="px-3 py-1 border border-gray-200 rounded text-xs hover:border-black transition">
+            Best Sellers
+          </button>
+
+          <button className="px-3 py-1 border border-gray-200 rounded text-xs hover:border-black transition">
+            New Arrivals
+          </button>
+
+          <button className="px-3 py-1 border border-gray-200 rounded text-xs hover:border-black transition">
+            Featured
+          </button>
         </div>
       </div>
-
-      
-      {/* <div className="price-section">
-        <h3>Price Range</h3>
-      
-        <div className="price-range-placeholder">$0 — $35,000</div>
-      </div> */}
-
-      {/* Shipping & Delivery */}
-      <div className="shipping-section">
-        <h3>SHIPPING & DELIVERY</h3>
-        {/* <ShippingDetails /> */}
-      </div>
-
     </div>
   );
 };

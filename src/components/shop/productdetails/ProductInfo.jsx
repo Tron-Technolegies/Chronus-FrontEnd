@@ -1,13 +1,7 @@
 import React from "react";
-import { 
-  FiHeart, 
-  FiShoppingCart, 
-  FiShare2, 
-  FiTruck, 
-  FiRefreshCw 
-} from "react-icons/fi";
+import { FiHeart, FiShoppingCart, FiShare2, FiTruck, FiRefreshCw } from "react-icons/fi";
 
-import { HiShieldCheck } from "react-icons/hi"; // nicer shield icon (optional)
+import { HiShieldCheck } from "react-icons/hi";
 
 import "../../../components/shop/productdetails/ProductInfo.css";
 
@@ -19,14 +13,15 @@ const ProductInfo = ({ product }) => {
       <h1 className="product-title">{product.name}</h1>
 
       <div className="rating">
-        ★★★★☆ <span className="reviews">{product.rating} ({product.reviewsCount} reviews)</span>
+        ★★★★☆{" "}
+        <span className="reviews">
+          {product.rating} ({product.reviewsCount} reviews)
+        </span>
       </div>
 
       <div className="price">
         <span className="current-price">{product.price}</span>
-        {product.originalPrice && (
-          <span className="original-price">{product.originalPrice}</span>
-        )}
+        {product.originalPrice && <span className="original-price">{product.originalPrice}</span>}
       </div>
 
       <p className="short-desc">{product.shortDesc || product.description}</p>
