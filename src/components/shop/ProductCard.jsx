@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { LuShoppingBag } from "react-icons/lu";
 import { Link } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 
 export default function ProductCard({ product }) {
   const [isHovered, setIsHovered] = useState(false);
   const [wish, setWish] = useState(false);
+  const { addToCart } = useCart();
 
   return (
     <div
@@ -18,7 +20,7 @@ export default function ProductCard({ product }) {
         {/* Wishlist */}
         <button
           onClick={(e) => {
-            e.preventDefault(); // IMPORTANT → prevent navigation
+            e.preventDefault();
             setWish(!wish);
           }}
           className="ms-auto block"
@@ -26,11 +28,10 @@ export default function ProductCard({ product }) {
           <FaHeart className={`transition ${wish ? "text-[#CBA61F]" : "text-gray-300"}`} />
         </button>
 
-        {/* Click to product */}
         <Link to={`/product/${product.id}`}>
           <div className="flex items-center justify-center">
             <img
-              src={product.images?.[0]} // FIX → images is array
+              src={product.images?.[0]}
               alt={product.name}
               className="w-[350px] h-[500px] object-cover"
             />
@@ -49,7 +50,7 @@ export default function ProductCard({ product }) {
             <button className="bg-yellow-400 p-2 w-full">Buy Now</button>
           </Link>
 
-          <button onClick={(e) => e.preventDefault()} className="bg-gray-300 p-2">
+          <button onClick={() => addToCart(product)} className="bg-gray-50 cursor-pointer p-2">
             <LuShoppingBag />
           </button>
         </div>
