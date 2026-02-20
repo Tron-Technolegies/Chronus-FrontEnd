@@ -1,5 +1,5 @@
 import React from "react";
-import "./HeroSection.css";
+import "../../components/home/HeroSection.css"
 import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
