@@ -6,35 +6,23 @@ const ProductPriceFilter = () => {
   const [minVal, setMinVal] = useState(0);
   const [maxVal, setMaxVal] = useState(35000);
 
-  const getPercent = useCallback(
-    (value) => Math.round(((value - MIN) / (MAX - MIN)) * 100),
-    []
-  );
+  const getPercent = useCallback((value) => Math.round(((value - MIN) / (MAX - MIN)) * 100), []);
 
-  const formatPrice = (val) =>
-    `$ ${val.toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
+  const formatPrice = (val) => `$ ${val.toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
 
   const minPercent = getPercent(minVal);
   const maxPercent = getPercent(maxVal);
 
   return (
-    <div className="bg-white  p-5 w-80 ">
-      
+    <div className="bg-white  p-5 mx-8 ">
       <div className="flex justify-between items-center mb-4">
-        <span className="text-sm font-semibold text-gray-900 tracking-tight">
-          Price Range
-        </span>
-        <span className="text-xs font-medium text-gray-400">
-          ${MAX.toLocaleString()}
-        </span>
+        <span className="text-sm font-semibold text-gray-900 tracking-tight">Price Range</span>
+        <span className="text-xs font-medium text-gray-400">${MAX.toLocaleString()}</span>
       </div>
 
-      
       <div className="relative h-7 flex items-center">
-        
         <div className="absolute left-0 right-0 h-1 rounded-full bg-gray-200" />
 
-       
         <div
           className="absolute h-1 rounded-full bg-gray-900 transition-all duration-75"
           style={{
@@ -43,7 +31,6 @@ const ProductPriceFilter = () => {
           }}
         />
 
-        
         <input
           type="range"
           min={MIN}
@@ -58,7 +45,6 @@ const ProductPriceFilter = () => {
           style={{ zIndex: minVal > MAX - 1000 ? 5 : 3 }}
         />
 
-       
         <input
           type="range"
           min={MIN}

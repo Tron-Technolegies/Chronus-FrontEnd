@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ShopPageHeader from "../../components/shop/ShopPageHeader";
 import FiltersSection from "../../components/shop/FiltersSection";
 import ProductPriceFilter from "../../components/shop/ProductPriceFilter";
@@ -12,6 +12,9 @@ import "../../pages/shop/ShopPage.css";
 import CategoryTabs from "../../components/shop/CategoryTabs";
 
 const ShopPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  });
   return (
     <div className="max-w-[1700px] mx-auto bg-white">
       <ShopPageHeader />
@@ -19,7 +22,7 @@ const ShopPage = () => {
       {/* Layout */}
       <div className="flex flex-col lg:flex-row">
         {/* Sidebar */}
-        <aside className="w-full lg:w-[360px] border-r border-gray-200 lg:sticky lg:top-0 h-fit">
+        <aside className="w-full lg:w-[360px] border-r border-t border-gray-200 lg:sticky lg:top-0 h-fit">
           <FiltersSection />
           <ProductPriceFilter />
           <ShippingDetails />
@@ -28,7 +31,7 @@ const ShopPage = () => {
         {/* Right Content */}
         <main className="flex-1">
           {/* Tabs row */}
-          <div className="border-b border-gray-200 px-6 py-5">
+          <div className="border-b border-t border-gray-200 px-6 py-5">
             <CategoryTabs />
           </div>
 

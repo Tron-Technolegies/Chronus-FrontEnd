@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { LuShoppingBag } from "react-icons/lu";
+import { Link } from "react-router-dom";
 
 export default function ProductCard({ product }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -12,33 +13,55 @@ export default function ProductCard({ product }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="border-gray-200 flex flex-col border p-5 relative pb-7 w-full overflow-hidden">
-        <button className="cursor-pointer ms-auto" onClick={() => setWish(!wish)}>
+      {/* IMAGE AREA */}
+      <div className="border border-gray-200 p-5 relative pb-7 w-full overflow-hidden">
+        {/* Wishlist */}
+        <button
+          onClick={(e) => {
+            e.preventDefault(); // IMPORTANT → prevent navigation
+            setWish(!wish);
+          }}
+          className="ms-auto block"
+        >
           <FaHeart className={`transition ${wish ? "text-[#CBA61F]" : "text-gray-300"}`} />
         </button>
 
-        <div className="h-80 w-full flex items-center justify-center">
-          <img src={product.images} alt={product.name} className="h-full w-full object-contain" />
-        </div>
+        {/* Click to product */}
+        <Link to={`/product/${product.id}`}>
+          <div className="flex items-center justify-center">
+            <img
+              src={product.images?.[0]} // FIX → images is array
+              alt={product.name}
+              className="w-[350px] h-[500px] object-cover"
+            />
+          </div>
+        </Link>
 
+        {/* Hover buttons */}
         <div
           className={`
-            flex absolute gap-4 items-center justify-center w-full bottom-0 left-0 px-3 py-2
-            transform transition-all duration-300
-            ${isHovered ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}
-          `}
+        flex absolute gap-4 items-center justify-center w-full bottom-0 left-0 px-3 py-6
+        transform transition-all duration-300
+        ${isHovered ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}
+      `}
         >
-          <button className="bg-yellow-400 p-2 w-full cursor-pointer">Buy Now</button>
-          <button className="bg-gray-300 p-2 w-fit cursor-pointer">
+          <Link to={`/product/${product.id}`} className="w-full">
+            <button className="bg-yellow-400 p-2 w-full">Buy Now</button>
+          </Link>
+
+          <button onClick={(e) => e.preventDefault()} className="bg-gray-300 p-2">
             <LuShoppingBag />
           </button>
         </div>
       </div>
 
-      <div className="text-center text-black py-4">
-        <p>{product.name}</p>
-        <p className="text-lg">{product.price}</p>
-      </div>
+      {/* INFO */}
+      <Link to={`/product/${product.id}`}>
+        <div className="text-center text-black py-4">
+          <p>{product.name}</p>
+          <p className="text-lg">{product.price}</p>
+        </div>
+      </Link>
     </div>
   );
 }
