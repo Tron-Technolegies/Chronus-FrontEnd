@@ -1,5 +1,6 @@
 import React from "react";
 import { FiShield, FiTruck, FiRefreshCw, FiAward } from "react-icons/fi";
+import { sendEnquiryMembership } from "../../utils/whatsApp";
 
 const features = [
   {
@@ -41,11 +42,15 @@ const ExclusiveMembership = () => {
           exclusive events in the world’s finest venues.
         </p>
 
-        <button className="inline-flex items-center gap-2 bg-[var(--secondary-color)] text-black text-sm font-medium px-6 py-3 rounded-md shadow hover:opacity-90 transition">
+        <button
+          onClick={sendEnquiryMembership}
+          className="inline-flex items-center gap-2 bg-[var(--secondary-color)] text-black text-sm font-medium px-6 py-3 rounded-md shadow hover:opacity-90 transition"
+        >
           REQUEST MEMBERSHIP
         </button>
       </div>
 
+      {/*features*/}
       <div className="mt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 text-center">
         {features.map((item, index) => {
           const Icon = item.icon;
