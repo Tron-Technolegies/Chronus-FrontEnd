@@ -1,93 +1,157 @@
-import React, { useState } from "react";
-import { FiSearch, FiUser, FiShoppingBag, FiMenu, FiX } from "react-icons/fi";
-import { HiOutlineGlobeAlt } from "react-icons/hi2";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {
+  FiSearch,
+  FiUser,
+  FiShoppingBag,
+  FiMenu,
+  FiX,
+} from "react-icons/fi";
+import { useNavigate, useLocation } from "react-router-dom";
+
+const HEADER_COLOR = "#3D1613";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [langOpen, setLangOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const navigate = useNavigate();
   const location = useLocation();
 
   const isHome = location.pathname === "/";
 
+  // Scroll effect only for homepage
+  useEffect(() => {
+    if (!isHome) {
+      setScrolled(true);
+      return;
+    }
+
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isHome]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "auto";
+  }, [menuOpen]);
+
+  const handleNavigate = (path) => {
+    setMenuOpen(false);
+    navigate(path);
+  };
+
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50
-        transition-all duration-300
-        ${isHome ? "bg-transparent" : "bg-black"}
-        backdrop-blur-md text-white`}
-      style={{ height: "64px" }}
+      className="fixed top-0 left-0 w-full z-50 h-16 transition-colors duration-300 text-white"
+      style={{
+        backgroundColor:
+          isHome && !scrolled ? "transparent" : HEADER_COLOR,
+      }}
     >
-      {/* DESKTOP */}
-      <div className="hidden md:flex w-full px-10 h-full items-center justify-between">
-        <nav className="flex items-center gap-10 text-sm font-medium">
-          <a className="text-red-500 hover:text-red-400" href="#">
+      {/* ================= DESKTOP ================= */}
+      <div className="hidden md:flex relative h-full px-10 items-center">
+        {/* Left */}
+        <nav className="flex gap-10 text-sm font-medium tracking-wide">
+          <button onClick={() => navigate("/shop")} className="hover:text-gray-300">
             Collections
-          </a>
-          <a className="hover:text-gray-300" href="#">
+          </button>
+          <button onClick={() => navigate("/shop")} className="hover:text-gray-300">
             Timepieces
-          </a>
-          <a className="hover:text-gray-300" href="#">
+          </button>
+          <button onClick={() => navigate("/shop")} className="hover:text-gray-300">
             Accessories
-          </a>
-          <a className="hover:text-gray-300" href="#">
+          </button>
+          <button onClick={() => navigate("/shop")} className="hover:text-gray-300">
             Fine Art
-          </a>
+          </button>
         </nav>
 
-        <img src="/chronus-logo.png" alt="Chronos" className="h-4" />
+        {/* CENTER LOGO */}
+        <img
+          src="/chronus-logo.png"
+          alt="Chronos"
+          className="h-4 object-contain cursor-pointer absolute left-1/2 -translate-x-1/2"
+          onClick={() => navigate("/")}
+        />
 
-        <div className="flex items-center gap-6 relative">
-          <div
-            onClick={() => setLangOpen(!langOpen)}
-            className="flex items-center gap-1 cursor-pointer"
-          >
-            <HiOutlineGlobeAlt />
-            English
-          </div>
-
-          {langOpen && (
-            <div className="absolute right-20 top-10 bg-white text-black rounded-md w-32">
-              {["English", "Arabic", "French", "German"].map((lang) => (
-                <button key={lang} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                  {lang}
-                </button>
-              ))}
-            </div>
-          )}
-
-          <FiSearch />
-          <FiShoppingBag />
-          <FiUser />
+        {/* Right */}
+        <div className="ml-auto flex items-center gap-6">
+          <FiShoppingBag
+            size={18}
+            className="cursor-pointer hover:text-gray-300"
+            onClick={() => navigate("/shop")}
+          />
+          <FiUser
+            size={18}
+            className="cursor-pointer hover:text-gray-300"
+            onClick={() => navigate("/login")}
+          />
         </div>
       </div>
 
-      {/* MOBILE */}
-      <div className="md:hidden flex items-center justify-between px-5 h-full">
+      {/* ================= MOBILE ================= */}
+      <div className="md:hidden relative flex h-full items-center px-4">
+        {/* Left */}
         <button onClick={() => setMenuOpen(true)}>
-          <FiMenu size={22} />
+          <FiMenu size={24} />
         </button>
 
-        <img src="/chronus-logo.png" alt="Chronos" className="h-3" />
-        <FiShoppingBag size={20} />
+        {/* CENTER LOGO */}
+        <img
+          src="/chronus-logo.png"
+          alt="Chronos"
+          className="h-4 object-contain cursor-pointer absolute left-1/2 -translate-x-1/2"
+          onClick={() => handleNavigate("/")}
+        />
+
+        {/* Right */}
+        <div className="ml-auto">
+          <FiShoppingBag
+            size={18}
+            className="cursor-pointer"
+            onClick={() => handleNavigate("/shop")}
+          />
+        </div>
       </div>
 
-      {/* MOBILE MENU */}
+      {/* ================= MOBILE MENU ================= */}
       {menuOpen && (
-        <div className="fixed inset-0 bg-black/60 z-50">
-          <div className="bg-black text-white w-4/5 h-full p-6">
-            <div className="flex justify-between mb-8">
-              <img src="/chronus-logo.png" alt="Chronos" className="h-3" />
-              <FiX size={22} onClick={() => setMenuOpen(false)} />
-            </div>
+        <div
+          className="fixed inset-0 z-50 text-white"
+          style={{ backgroundColor: HEADER_COLOR }}
+        >
+          <div className="flex items-center justify-end px-6 h-16 border-b border-white/10">
+            <button onClick={() => setMenuOpen(false)}>
+              <FiX size={24} />
+            </button>
+          </div>
 
-            <nav className="flex flex-col gap-6 text-lg">
-              {["Collections", "Timepieces", "Accessories", "Fine Art"].map((item) => (
-                <a key={item} href="#" className="border-b border-white/20 pb-2">
-                  {item}
-                </a>
-              ))}
-            </nav>
+          <nav className="px-6 pt-8 flex flex-col gap-8 text-xl font-medium">
+            <button onClick={() => handleNavigate("/shop")} className="text-left border-b border-white/15 pb-4">
+              Collections
+            </button>
+            <button onClick={() => handleNavigate("/shop")} className="text-left border-b border-white/15 pb-4">
+              Timepieces
+            </button>
+            <button onClick={() => handleNavigate("/shop")} className="text-left border-b border-white/15 pb-4">
+              Accessories
+            </button>
+            <button onClick={() => handleNavigate("/shop")} className="text-left border-b border-white/15 pb-4">
+              Fine Art
+            </button>
+          </nav>
+
+          <div className="absolute bottom-8 left-6 right-6 flex justify-between opacity-80">
+            <FiSearch size={20} />
+            <FiUser
+              size={18}
+              className="cursor-pointer"
+              onClick={() => handleNavigate("/login")}
+            />
           </div>
         </div>
       )}

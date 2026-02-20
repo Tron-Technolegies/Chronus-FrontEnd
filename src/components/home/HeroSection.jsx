@@ -1,7 +1,9 @@
 import React from "react";
 import "./HeroSection.css";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
   return (
     <section className="hero-section-container">
       <div className="herosection-contents">
@@ -18,7 +20,7 @@ const HeroSection = () => {
           collector.
         </p>
 
-        <button className="hero-cta">Explore Collection</button>
+        <button className="hero-cta" onClick={()=>navigate("/shop")}>Explore Collection</button>
       </div>
 
       <div className="hero-limited-edition-watch">
