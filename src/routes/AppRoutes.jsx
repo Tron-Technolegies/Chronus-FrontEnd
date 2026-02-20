@@ -8,6 +8,7 @@ import LoginPage from "../pages/auth/LoginPage";
 import SignupPage from "../pages/auth/SignupPage";
 import ShopPage from "../pages/shop/ShopPage";
 import ProductDetailPage from "../pages/shop/productdetails/ProductDetailPage";
+import CheckoutPage from "../pages/CheckoutPage";
 
 const AppRoutes = () => {
   const router = createBrowserRouter([
@@ -39,7 +40,11 @@ const AppRoutes = () => {
         },
         {
           path: "/product/:id",
-          element: <ProductDetailPage/>,
+          element: <ProductDetailPage />,
+        },
+        {
+          path: "/checkout",
+          element: <CheckoutPage />,
         },
       ],
     },

@@ -30,7 +30,6 @@ const ExploreCategories = () => {
 
   return (
     <section className="bg-white py-16 md:py-24 px-4 sm:px-6 md:px-[6%] font-sans">
-      {/* Header */}
       <div className="text-center mb-10 md:mb-14">
         <span className="block text-[11px] tracking-[1.5px] text-[#181817] mb-3 uppercase inter">
           OUR COLLECTIONS
@@ -45,15 +44,18 @@ const ExploreCategories = () => {
         {categories.map((item, index) => (
           <div
             key={index}
-            onClick={() => navigate("/shop")}
+            onClick={() =>
+              navigate("/shop", {
+                state: { category: item },
+              })
+            }
             className="relative rounded-[28px] overflow-hidden cursor-pointer w-full
                        transition-transform duration-300 hover:scale-[1.02] hover:shadow-2xl"
             style={{
               height: "240px",
               background:
                 "linear-gradient(160deg, #0d1021 0%, #111528 40%, #3d0a14 75%, #6b0f1a 100%)",
-              boxShadow:
-                "0 20px 60px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.2)",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.2)",
               padding: "24px",
             }}
           >
@@ -71,8 +73,7 @@ const ExploreCategories = () => {
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
-                background:
-                  "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 40%)",
+                background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 40%)",
               }}
             />
 
@@ -124,10 +125,7 @@ const ExploreCategories = () => {
                 >
                   {item.count}
                 </span>
-                <span
-                  className="text-xl leading-none"
-                  style={{ color: "rgba(255,255,255,0.7)" }}
-                >
+                <span className="text-xl leading-none" style={{ color: "rgba(255,255,255,0.7)" }}>
                   →
                 </span>
               </div>

@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from "react";
-import {
-  FiSearch,
-  FiUser,
-  FiShoppingBag,
-  FiMenu,
-  FiX,
-} from "react-icons/fi";
+import { FiSearch, FiUser, FiShoppingBag, FiMenu, FiX } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 
 const HEADER_COLOR = "#3D1613";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { setOpen } = useCart();
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const isHome = location.pathname === "/";
 
-  // Scroll effect only for homepage
   useEffect(() => {
     if (!isHome) {
       setScrolled(true);
@@ -48,8 +43,7 @@ const Header = () => {
     <header
       className="fixed top-0 left-0 w-full z-50 h-16 transition-colors duration-300 text-white"
       style={{
-        backgroundColor:
-          isHome && !scrolled ? "transparent" : HEADER_COLOR,
+        backgroundColor: isHome && !scrolled ? "transparent" : HEADER_COLOR,
       }}
     >
       {/* ================= DESKTOP ================= */}
@@ -80,11 +74,14 @@ const Header = () => {
 
         {/* Right */}
         <div className="ml-auto flex items-center gap-6">
-          <FiShoppingBag
+          {/* <FiShoppingBag
             size={18}
             className="cursor-pointer hover:text-gray-300"
             onClick={() => navigate("/shop")}
-          />
+          /> */}
+          <button onClick={() => setOpen(true)}>
+            <FiShoppingBag size={18} className="cursor-pointer hover:text-gray-300" />
+          </button>
           <FiUser
             size={18}
             className="cursor-pointer hover:text-gray-300"
@@ -120,10 +117,7 @@ const Header = () => {
 
       {/* ================= MOBILE MENU ================= */}
       {menuOpen && (
-        <div
-          className="fixed inset-0 z-50 text-white"
-          style={{ backgroundColor: HEADER_COLOR }}
-        >
+        <div className="fixed inset-0 z-50 text-white" style={{ backgroundColor: HEADER_COLOR }}>
           <div className="flex items-center justify-end px-6 h-16 border-b border-white/10">
             <button onClick={() => setMenuOpen(false)}>
               <FiX size={24} />
@@ -131,27 +125,35 @@ const Header = () => {
           </div>
 
           <nav className="px-6 pt-8 flex flex-col gap-8 text-xl font-medium">
-            <button onClick={() => handleNavigate("/shop")} className="text-left border-b border-white/15 pb-4">
+            <button
+              onClick={() => handleNavigate("/shop")}
+              className="text-left border-b border-white/15 pb-4"
+            >
               Collections
             </button>
-            <button onClick={() => handleNavigate("/shop")} className="text-left border-b border-white/15 pb-4">
+            <button
+              onClick={() => handleNavigate("/shop")}
+              className="text-left border-b border-white/15 pb-4"
+            >
               Timepieces
             </button>
-            <button onClick={() => handleNavigate("/shop")} className="text-left border-b border-white/15 pb-4">
+            <button
+              onClick={() => handleNavigate("/shop")}
+              className="text-left border-b border-white/15 pb-4"
+            >
               Accessories
             </button>
-            <button onClick={() => handleNavigate("/shop")} className="text-left border-b border-white/15 pb-4">
+            <button
+              onClick={() => handleNavigate("/shop")}
+              className="text-left border-b border-white/15 pb-4"
+            >
               Fine Art
             </button>
           </nav>
 
           <div className="absolute bottom-8 left-6 right-6 flex justify-between opacity-80">
             <FiSearch size={20} />
-            <FiUser
-              size={18}
-              className="cursor-pointer"
-              onClick={() => handleNavigate("/login")}
-            />
+            <FiUser size={18} className="cursor-pointer" onClick={() => handleNavigate("/login")} />
           </div>
         </div>
       )}
