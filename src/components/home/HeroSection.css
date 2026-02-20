@@ -8,7 +8,7 @@
       rgba(255, 0, 0, 0.35),
       rgba(0, 0, 0, 0.9) 60%
     ),
-    url(./herosection.jpg);
+    url(/herosection.jpg);
 
   background-size: cover;
   background-position: center;
