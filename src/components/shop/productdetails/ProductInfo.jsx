@@ -1,68 +1,101 @@
-import React from "react";
-import { FiHeart, FiShoppingCart, FiShare2, FiTruck, FiRefreshCw } from "react-icons/fi";
+import { useState } from "react";
+import { IoShieldOutline } from "react-icons/io5";
+import { LuShoppingBag } from "react-icons/lu";
+import { MdOutlineLocalShipping } from "react-icons/md";
+import { RiLoopLeftFill } from "react-icons/ri";
 
-import { HiShieldCheck } from "react-icons/hi";
+export default function ProductInfo({ product }) {
+  const [qty, setQty] = useState(1);
 
-import "../../../components/shop/productdetails/ProductInfo.css";
+  const increase = () => {
+    if (qty < product.stock) setQty(qty + 1);
+  };
 
-const ProductInfo = ({ product }) => {
+  const decrease = () => {
+    if (qty > 1) setQty(qty - 1);
+  };
+
   return (
-    <div className="info-section">
-      <span className="sale-badge">SALE</span>
+    <div className="space-y-6">
+      {/* SALE */}
+      {product.originalPrice && (
+        <span className="inline-block text-xs bg-red-500 text-white px-3 py-1 tracking-widest">
+          SALE
+        </span>
+      )}
 
-      <h1 className="product-title">{product.name}</h1>
+      {/* Title */}
+      <h1 className="text-lg sm:text-xl tracking-widest font-[Bayon]">{product.name}</h1>
 
-      <div className="rating">
-        ★★★★☆{" "}
-        <span className="reviews">
+      {/* Rating */}
+      <div className="flex items-center gap-2 text-sm text-gray-400 flex-wrap">
+        <div className="flex text-[#CBA61F]">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <span key={i}>{i <= Math.round(product.rating) ? "★" : "☆"}</span>
+          ))}
+        </div>
+        <span>
           {product.rating} ({product.reviewsCount} reviews)
         </span>
       </div>
 
-      <div className="price">
-        <span className="current-price">{product.price}</span>
-        {product.originalPrice && <span className="original-price">{product.originalPrice}</span>}
+      {/* Price */}
+      <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+        <span className="text-2xl sm:text-3xl font-semibold">{product.price}</span>
+
+        {product.originalPrice && (
+          <span className="line-through text-gray-400 text-base sm:text-lg">
+            {product.originalPrice}
+          </span>
+        )}
       </div>
 
-      <p className="short-desc">{product.shortDesc || product.description}</p>
+      {/* Short desc */}
+      <p className="text-gray-500 leading-6 max-w-md text-sm sm:text-base">{product.shortDesc}</p>
 
-      <div className="quantity-buy">
-        <div className="quantity-selector">
-          <button className="quantity-btn">-</button>
-          <span>1</span>
-          <button className="quantity-btn">+</button>
+      {/* Qty + Buy */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
+        {/* Qty */}
+        <div className="flex border border-gray-300 w-fit ">
+          <button onClick={decrease} className="px-4 py-2 cursor-pointer hover:bg-gray-50">
+            -
+          </button>
+          <span className="px-6 flex items-center">{qty}</span>
+          <button onClick={increase} className="px-4 py-2 cursor-pointer hover:bg-gray-50">
+            +
+          </button>
         </div>
-        <button className="buy-now-btn">BUY NOW</button>
-        <button className="cart-btn">
-          <FiShoppingCart size={24} />
+
+        {/* Buy */}
+        <button className="bg-[#F5C518] hover:brightness-95 px-6 cursor-pointer sm:px-24 py-3 text-sm tracking-wide w-full sm:w-auto">
+          BUY NOW
         </button>
+
+        {/* Cart */}
+        <div className="p-3 cursor-pointer hover:text-[#CBA61F] text-black border border-[#D9D9D9] w-fit">
+          <LuShoppingBag className="w-5 h-5" />
+        </div>
       </div>
 
-      <div className="trust-badges">
-        <div className="badge">
-          <HiShieldCheck size={20} /> Authenticity Guaranteed
-        </div>
-        <div className="badge">
-          <FiTruck size={20} /> Free Shipping
-        </div>
-        <div className="badge">
-          <FiRefreshCw size={20} /> 30-Day Returns
-        </div>
-      </div>
+      {/* Divider */}
+      <div className="border-t border-[#D9D9D9] pt-8">
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div className="flex flex-col items-center gap-2">
+            <IoShieldOutline className="w-5 h-5" />
+            <p className="text-[10px] sm:text-xs tracking-widest">AUTHENTICITY GUARANTEED</p>
+          </div>
 
-      <div className="actions">
-        <button className="action-btn">
-          <FiHeart size={20} /> Add to Wishlist
-        </button>
-        <button className="action-btn">
-          <FiShoppingCart size={20} /> Add to Cart
-        </button>
-        <button className="action-btn">
-          <FiShare2 size={20} /> Share
-        </button>
+          <div className="flex flex-col items-center gap-2">
+            <MdOutlineLocalShipping className="w-5 h-5" />
+            <p className="text-[10px] sm:text-xs tracking-widest">FREE SHIPPING</p>
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            <RiLoopLeftFill className="w-5 h-5" />
+            <p className="text-[10px] sm:text-xs tracking-widest">30-DAY RETURNS</p>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-
-export default ProductInfo;
+}

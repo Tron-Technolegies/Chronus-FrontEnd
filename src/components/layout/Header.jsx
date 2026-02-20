@@ -21,10 +21,18 @@ const Header = () => {
       {/* DESKTOP */}
       <div className="hidden md:flex w-full px-10 h-full items-center justify-between">
         <nav className="flex items-center gap-10 text-sm font-medium">
-          <a className="text-red-500 hover:text-red-400" href="#">Collections</a>
-          <a className="hover:text-gray-300" href="#">Timepieces</a>
-          <a className="hover:text-gray-300" href="#">Accessories</a>
-          <a className="hover:text-gray-300" href="#">Fine Art</a>
+          <a className="text-red-500 hover:text-red-400" href="#">
+            Collections
+          </a>
+          <a className="hover:text-gray-300" href="#">
+            Timepieces
+          </a>
+          <a className="hover:text-gray-300" href="#">
+            Accessories
+          </a>
+          <a className="hover:text-gray-300" href="#">
+            Fine Art
+          </a>
         </nav>
 
         <img src="/chronus-logo.png" alt="Chronos" className="h-4" />
@@ -41,10 +49,7 @@ const Header = () => {
           {langOpen && (
             <div className="absolute right-20 top-10 bg-white text-black rounded-md w-32">
               {["English", "Arabic", "French", "German"].map((lang) => (
-                <button
-                  key={lang}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                >
+                <button key={lang} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
                   {lang}
                 </button>
               ))}
@@ -77,13 +82,11 @@ const Header = () => {
             </div>
 
             <nav className="flex flex-col gap-6 text-lg">
-              {["Collections", "Timepieces", "Accessories", "Fine Art"].map(
-                (item) => (
-                  <a key={item} href="#" className="border-b border-white/20 pb-2">
-                    {item}
-                  </a>
-                )
-              )}
+              {["Collections", "Timepieces", "Accessories", "Fine Art"].map((item) => (
+                <a key={item} href="#" className="border-b border-white/20 pb-2">
+                  {item}
+                </a>
+              ))}
             </nav>
           </div>
         </div>
