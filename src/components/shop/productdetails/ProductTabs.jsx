@@ -11,12 +11,12 @@ export default function ProductTabs({ product }) {
 
   return (
     <div>
-      <div className="flex gap-10 border-b border-[#D9D9D9]">
+      <div className="flex gap-6 sm:gap-10 border-b border-[#D9D9D9] overflow-x-auto scrollbar-hide">
         {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`pb-4 text-sm tracking-widest relative cursor-pointer
+            className={`pb-4 text-xs sm:text-sm tracking-widest relative cursor-pointer whitespace-nowrap shrink-0
               ${tab === t.id ? "text-[#CBA61F] font-bold" : "text-gray-400"}
             `}
           >
@@ -33,8 +33,8 @@ export default function ProductTabs({ product }) {
         {tab === "description" && <p>{product.description}</p>}
         {tab === "specs" && <p>42mm case · Sapphire crystal · Automatic movement</p>}
         {tab === "reviews" && (
-          <div className="grid lg:grid-cols-[320px_1fr] gap-10">
-            <div className="border-r border-[#D9D9D9] pr-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-8 lg:gap-10">
+            <div className="border-b lg:border-b-0 lg:border-r border-[#D9D9D9] pb-8 lg:pb-0 lg:pr-8">
               <div className="text-4xl font-semibold">{product.rating.toFixed(1)}</div>
 
               <div className="flex text-[#CBA61F] mt-2">
@@ -69,10 +69,10 @@ export default function ProductTabs({ product }) {
               {product.reviews?.map((r) => (
                 <div key={r.id} className="border-b border-[#D9D9D9] pb-8">
                   <div className="flex gap-4">
-                    <img src={r.avatar} className="w-12 h-12 rounded-full object-cover" />
+                    <img src={r.avatar} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shrink-0" />
 
-                    <div className="flex-1">
-                      <div className="flex justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between gap-2 flex-wrap">
                         <h4 className="font-semibold">{r.name}</h4>
                         <span className="text-xs text-gray-400">{r.date}</span>
                       </div>
@@ -89,7 +89,7 @@ export default function ProductTabs({ product }) {
                 </div>
               ))}
 
-              <button className="text-md text-black  cursor-pointer hover:underline px-4 py-2 rounded">
+              <button className="text-md text-black cursor-pointer hover:underline px-4 py-2 rounded">
                 Read more reviews
               </button>
             </div>
@@ -99,3 +99,4 @@ export default function ProductTabs({ product }) {
     </div>
   );
 }
+

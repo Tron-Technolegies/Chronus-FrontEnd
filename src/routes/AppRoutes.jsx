@@ -9,6 +9,7 @@ import SignupPage from "../pages/auth/SignupPage";
 import ShopPage from "../pages/shop/ShopPage";
 import ProductDetailPage from "../pages/shop/productdetails/ProductDetailPage";
 import CheckoutPage from "../pages/CheckoutPage";
+import WishlistPage from "../pages/WishlistPage";
 
 const AppRoutes = () => {
   const router = createBrowserRouter([
@@ -45,6 +46,10 @@ const AppRoutes = () => {
         {
           path: "/checkout",
           element: <CheckoutPage />,
+        },
+        {
+          path: "/wishlist",
+          element: <WishlistPage />,
         },
       ],
     },

@@ -17,7 +17,7 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="bg-[#f6f6f4] py-28 px-[8%]">
+    <section className="bg-[#f6f6f4] py-16 sm:py-28 px-4 sm:px-[6%] md:px-[8%]">
       <div className="max-w-4xl mx-auto text-center">
         <div className="text-8xl text-[var(--secondary-color)] mb-6">❝</div>
 

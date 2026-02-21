@@ -3,14 +3,12 @@ import React from "react";
 const FiltersSection = () => {
   return (
     <div className="p-6 space-y-8 border-b border-gray-200">
-      {/* Header */}
-      <div className="flex justify-between items-center mx-8">
+      <div className="flex justify-between items-center">
         <h3 className="text-md tracking-widest text-black">FILTERS</h3>
-        <button className="text-sm  text-gray-400 hover:text-black transition">Reset</button>
+        <button className="text-sm text-gray-400 hover:text-black transition">Reset</button>
       </div>
 
-      {/* Collections */}
-      <div className="mx-8">
+      <div>
         <h4 className="text-sm font-semibold tracking-widest text-black mb-4">COLLECTIONS</h4>
 
         <div className="flex flex-wrap gap-2">
