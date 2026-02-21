@@ -23,7 +23,7 @@ const Subscription = () => {
   };
 
   return (
-    <section className="bg-white py-28 px-[8%]">
+    <section className="bg-white py-16 sm:py-28 px-4 sm:px-[6%] md:px-[8%]">
       <div className="max-w-3xl mx-auto text-center">
         <span className="block text-[11px] tracking-[1.5px] text-gray-500 mb-4 inter">
           STAY CONNECTED

@@ -13,7 +13,9 @@ const HomePage = () => {
   });
   return (
     <div>
-      <HeroSection />
+      <section id="hero">
+        <HeroSection />
+      </section>
       <FeaturedProducts />
       <ExploreCategories />
       <NewArrivals />

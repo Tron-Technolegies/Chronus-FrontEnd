@@ -27,7 +27,7 @@ const features = [
 
 const ExclusiveMembership = () => {
   return (
-    <section className="bg-white py-28 px-[8%]">
+    <section className="bg-white py-16 sm:py-28 px-4 sm:px-[6%] md:px-[8%]">
       <div className="text-center max-w-3xl mx-auto">
         <span className="block text-[11px] tracking-[1.5px] text-red-600 mb-4 inter">
           EXCLUSIVE MEMBERSHIP
@@ -51,7 +51,7 @@ const ExclusiveMembership = () => {
       </div>
 
       {/*features*/}
-      <div className="mt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 text-center">
+      <div className="mt-16 sm:mt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12 text-center">
         {features.map((item, index) => {
           const Icon = item.icon;
 

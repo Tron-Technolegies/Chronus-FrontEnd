@@ -5,6 +5,7 @@ import { allProducts } from "../../../utils/products";
 import ProductGallery from "../../../components/shop/productdetails/ProductGallery";
 import ProductInfo from "../../../components/shop/productdetails/ProductInfo";
 import ProductTabs from "../../../components/shop/productdetails/ProductTabs";
+import YouMayAlsoLike from "../../../components/shop/YouMayAlsoLike";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -15,20 +16,21 @@ const ProductDetailPage = () => {
     window.scrollTo(0, 0);
   });
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-10">
-      <nav className="text-sm text-gray-500 mt-18 mb-10 ">
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-10">
+      <nav className="text-xs sm:text-sm text-gray-500 mt-16 sm:mt-18 mb-8 sm:mb-10">
         <Link to="/">Home</Link> &gt; <Link to="/shop">Collections</Link> &gt;{" "}
         <span className="text-[#CBA61F]">{product.name}</span>
       </nav>
 
-      <div className="grid lg:grid-cols-2 gap-16 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
         <ProductGallery images={product.images} />
         <ProductInfo product={product} />
       </div>
 
-      <div className="mt-20">
+      <div className="mt-12 sm:mt-20">
         <ProductTabs product={product} />
       </div>
+      <YouMayAlsoLike currentProduct={product} />
     </div>
   );
 };

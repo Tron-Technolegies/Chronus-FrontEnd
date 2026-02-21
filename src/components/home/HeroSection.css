@@ -1,13 +1,10 @@
 .hero-section-container {
-  height: 100vh;
+  height: calc(100vh + 64px); /* compensate for the -64px pull-up */
+  min-height: 564px;
   width: 100%;
 
   background:
-    radial-gradient(
-      circle at right,
-      rgba(255, 0, 0, 0.35),
-      rgba(0, 0, 0, 0.9) 60%
-    ),
+    radial-gradient(circle at right, rgba(255, 0, 0, 0.35), rgba(0, 0, 0, 0.9) 60%),
     url(/herosection.jpg);
 
   background-size: cover;
@@ -18,8 +15,9 @@
   align-items: center;
 
   padding: 0 8%;
-  padding-top: 64px;
+  padding-top: 128px; /* 64px header + 64px breathing room */
 
+  margin-top: -64px; /* pull up behind transparent header, hiding white gap */
   position: relative;
 }
 
@@ -42,7 +40,8 @@
   font-weight: 400;
   line-height: 1.1;
   margin-bottom: 22px;
-   font-family: "Bastoni";
+  font-family: "Bastoni";
+  word-break: break-word;
 }
 
 .herosection-contents h2 span {
@@ -89,17 +88,84 @@
   font-size: 14px;
 }
 
-/* mediaQueries */
+/* ── Tablet (≤ 1024px) ─────────────────────────── */
+@media (max-width: 1024px) {
+  .hero-limited-edition-watch img {
+    width: 160px;
+  }
+
+  .herosection-contents h2 {
+    font-size: 46px;
+  }
+}
+
+/* ── Small tablet / large phone (≤ 768px) ─────── */
 @media (max-width: 768px) {
   .hero-section-container {
-    padding-top: 56px;
+    padding: 80px 6% 48px;
+    align-items: center;
+    background-position: 70% center; /* keep face visible */
   }
 
   .hero-limited-edition-watch {
     display: none;
   }
 
+  .herosection-contents {
+    max-width: 100%;
+  }
+
   .herosection-contents h2 {
-    font-size: 42px;
+    font-size: 38px;
+  }
+
+  .herosection-contents p {
+    font-size: 14px;
+  }
+}
+
+/* ── Mobile (≤ 480px) ──────────────────────────── */
+@media (max-width: 480px) {
+  .hero-section-container {
+    padding: 80px 5% 48px;
+    min-height: 100svh; /* safe-area aware */
+  }
+
+  .herosection-contents h2 {
+    font-size: 30px;
+    line-height: 1.15;
+  }
+
+  .hero-badge {
+    font-size: 11px;
+    padding: 5px 12px;
+    margin-bottom: 18px;
+  }
+
+  .herosection-contents p {
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+
+  .hero-cta {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+}
+
+/* ── Very small phones (≤ 360px) ──────────────── */
+@media (max-width: 360px) {
+  .herosection-contents h2 {
+    font-size: 24px;
+  }
+
+  .herosection-contents p {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .hero-badge {
+    font-size: 10px;
+    padding: 4px 10px;
   }
 }
