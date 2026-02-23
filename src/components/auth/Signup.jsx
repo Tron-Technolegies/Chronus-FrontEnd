@@ -1,14 +1,36 @@
 import React, { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    localStorage.setItem("demoUserAuth", JSON.stringify(formData));
+
+    alert("Account created successfully!");
+    navigate("/login");
+  };
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-white px-4">
       <div className="w-full max-w-md text-center">
-        {/* Heading */}
         <h2 className="text-3xl font-normal text-gray-900 mb-2 font-[Bastoni]">
           Create Account
         </h2>
@@ -16,33 +38,33 @@ const Signup = () => {
           Join our exclusive community of collectors
         </p>
 
-        {/* Form */}
-        <form className="space-y-6 text-left">
-          {/* Name */}
+        <form onSubmit={handleSubmit} className="space-y-6 text-left">
           <div>
             <label className="block text-xs text-gray-500 mb-2 inter">
               Name
             </label>
             <input
               type="text"
+              name="name"
               placeholder="Full Name"
+              onChange={handleChange}
               className="w-full px-4 py-3 text-sm bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 inter"
             />
           </div>
 
-          {/* Email */}
           <div>
             <label className="block text-xs text-gray-500 mb-2 inter">
               Email
             </label>
             <input
               type="email"
+              name="email"
               placeholder="Email address"
+              onChange={handleChange}
               className="w-full px-4 py-3 text-sm bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 inter"
             />
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-xs text-gray-500 mb-2 inter">
               Password
@@ -51,7 +73,9 @@ const Signup = () => {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
+                name="password"
                 placeholder="Enter password"
+                onChange={handleChange}
                 className="w-full px-4 py-3 text-sm bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 inter pr-10"
               />
 
@@ -65,7 +89,6 @@ const Signup = () => {
             </div>
           </div>
 
-          {/* Sign up Button */}
           <button
             type="submit"
             className="w-full bg-black text-white py-3 rounded-md text-sm font-medium hover:bg-black/90 transition"
@@ -74,13 +97,9 @@ const Signup = () => {
           </button>
         </form>
 
-        {/* Footer */}
         <p className="text-xs text-gray-500 mt-10 inter">
           Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-red-500 hover:underline"
-          >
+          <Link to="/login" className="text-red-500 hover:underline">
             Sign in now
           </Link>
         </p>
