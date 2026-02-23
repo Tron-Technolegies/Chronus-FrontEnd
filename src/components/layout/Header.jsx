@@ -9,6 +9,7 @@ const HEADER_COLOR = "#3D1613";
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
   const { setOpen } = useCart();
   const { wishlist } = useWishlist();
 
@@ -16,6 +17,8 @@ const Header = () => {
   const location = useLocation();
 
   const isHome = location.pathname === "/";
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
   useEffect(() => {
     if (!isHome) {
       setScrolled(true);
@@ -30,7 +33,6 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHome]);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
   }, [menuOpen]);
@@ -38,6 +40,10 @@ const Header = () => {
   const handleNavigate = (path) => {
     setMenuOpen(false);
     navigate(path);
+  };
+
+  const handleUserClick = () => {
+    navigate(isLoggedIn ? "/my-account" : "/login");
   };
 
   const navLinks = [
@@ -54,6 +60,7 @@ const Header = () => {
         backgroundColor: isHome && !scrolled ? "transparent" : HEADER_COLOR,
       }}
     >
+     
       <div className="hidden md:flex relative h-full px-6 lg:px-10 items-center">
         {/* Left nav */}
         <nav className="flex gap-5 lg:gap-10 text-xs lg:text-sm font-medium tracking-wide">
@@ -87,27 +94,27 @@ const Header = () => {
               </span>
             )}
           </button>
+
           {/* Cart */}
           <button onClick={() => setOpen(true)}>
             <FiShoppingBag size={18} className="hover:text-gray-300 transition-colors" />
           </button>
+
           {/* User */}
           <FiUser
             size={18}
-            className="hover:text-gray-300 transition-colors"
-            onClick={() => navigate("/login")}
+            className="hover:text-gray-300 transition-colors cursor-pointer"
+            onClick={handleUserClick}
           />
         </div>
       </div>
 
-      {/* ================= MOBILE TOP BAR ================= */}
+      
       <div className="md:hidden relative flex h-full items-center px-4">
-        {/* Hamburger */}
         <button onClick={() => setMenuOpen(true)} className="p-1">
           <FiMenu size={22} />
         </button>
 
-        {/* Center logo */}
         <img
           src="/chronus-logo.png"
           alt="Chronos"
@@ -115,9 +122,7 @@ const Header = () => {
           onClick={() => handleNavigate("/")}
         />
 
-        {/* Right icons */}
         <div className="ml-auto flex items-center gap-3">
-          {/* Wishlist */}
           <button onClick={() => handleNavigate("/wishlist")} className="relative p-1">
             <FiHeart size={18} />
             {wishlist.length > 0 && (
@@ -126,18 +131,19 @@ const Header = () => {
               </span>
             )}
           </button>
+
           <button onClick={() => setOpen(true)} className="p-1">
             <FiShoppingBag size={18} />
           </button>
         </div>
       </div>
 
+      {/*mobilemenus*/}
       {menuOpen && (
         <div
           className="fixed inset-0 z-50 flex flex-col text-white"
           style={{ backgroundColor: HEADER_COLOR }}
         >
-          {/* Menu top bar */}
           <div className="flex items-center justify-between px-5 h-16 border-b border-white/10 shrink-0">
             <img src="/chronus-logo.png" alt="Chronos" className="h-4 object-contain" />
             <button onClick={() => setMenuOpen(false)} className="p-1">
@@ -145,7 +151,6 @@ const Header = () => {
             </button>
           </div>
 
-          {/* Nav links */}
           <nav className="flex-1 px-6 pt-8 flex flex-col gap-0 text-lg font-medium overflow-y-auto">
             {navLinks.map((link) => (
               <button
@@ -156,41 +161,17 @@ const Header = () => {
                 {link.label}
               </button>
             ))}
-            {/* Wishlist link in menu */}
+
             <button
-              onClick={() => handleNavigate("/wishlist")}
+              onClick={() =>
+                handleNavigate(isLoggedIn ? "/my-account" : "/login")
+              }
               className="text-left py-5 border-b border-white/10 flex items-center gap-3 hover:text-yellow-400 transition-colors"
             >
-              <FiHeart size={18} />
-              Wishlist
-              {wishlist.length > 0 && (
-                <span className="ml-1 text-xs bg-[#FFCA0A] text-black rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                  {wishlist.length}
-                </span>
-              )}
+              <FiUser size={18} />
+              Account
             </button>
           </nav>
-
-          {/* Bottom icons row */}
-          <div className="px-6 py-6 flex items-center justify-between border-t border-white/10 shrink-0">
-            <button
-              onClick={() => handleNavigate("/login")}
-              className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100"
-            >
-              <FiUser size={18} />
-              <span>Account</span>
-            </button>
-            <button
-              onClick={() => {
-                setMenuOpen(false);
-                setOpen(true);
-              }}
-              className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100"
-            >
-              <FiShoppingBag size={18} />
-              <span>Cart</span>
-            </button>
-          </div>
         </div>
       )}
     </header>
