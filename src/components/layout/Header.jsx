@@ -17,7 +17,9 @@ const Header = () => {
   const location = useLocation();
 
   const isHome = location.pathname === "/";
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  
+  const isLoggedIn = !!localStorage.getItem("accessToken");
 
   useEffect(() => {
     if (!isHome) {
@@ -60,7 +62,7 @@ const Header = () => {
         backgroundColor: isHome && !scrolled ? "transparent" : HEADER_COLOR,
       }}
     >
-     
+      {/* Desktop Header */}
       <div className="hidden md:flex relative h-full px-6 lg:px-10 items-center">
         {/* Left nav */}
         <nav className="flex gap-5 lg:gap-10 text-xs lg:text-sm font-medium tracking-wide">
@@ -109,7 +111,7 @@ const Header = () => {
         </div>
       </div>
 
-      
+      {/* Mobile Header */}
       <div className="md:hidden relative flex h-full items-center px-4">
         <button onClick={() => setMenuOpen(true)} className="p-1">
           <FiMenu size={22} />
@@ -138,7 +140,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/*mobilemenus*/}
+      {/* Mobile Menu */}
       {menuOpen && (
         <div
           className="fixed inset-0 z-50 flex flex-col text-white"

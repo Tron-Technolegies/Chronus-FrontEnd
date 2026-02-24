@@ -5,6 +5,7 @@ import { LuShoppingBag } from "react-icons/lu";
 import { FiX, FiHeart } from "react-icons/fi";
 
 export default function WishlistPage() {
+  
   const { wishlist, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
   const navigate = useNavigate();

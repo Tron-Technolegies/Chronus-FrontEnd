@@ -18,7 +18,9 @@ const AccountSidebar = ({ activeTab, setActiveTab }) => {
 
   const handleClick = (item) => {
     if (item.id === "logout") {
-      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
 
       navigate("/login");
     } else {
