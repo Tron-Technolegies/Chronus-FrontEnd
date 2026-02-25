@@ -10,6 +10,8 @@ import ShopPage from "../pages/shop/ShopPage";
 import ProductDetailPage from "../pages/shop/productdetails/ProductDetailPage";
 import CheckoutPage from "../pages/CheckoutPage";
 import WishlistPage from "../pages/WishlistPage";
+import MyAccountPage from "../pages/auth/MyAccountPage";
+import ProtectedRoute from "./ProtectedRoute";
 
 const AppRoutes = () => {
   const router = createBrowserRouter([
@@ -35,6 +37,15 @@ const AppRoutes = () => {
           path: "/signup",
           element: <SignupPage />,
         },
+        {
+          path: "/my-account",
+          element: (
+            <ProtectedRoute>
+              <MyAccountPage />
+            </ProtectedRoute>
+          ),
+        },
+
         {
           path: "/shop",
           element: <ShopPage />,
