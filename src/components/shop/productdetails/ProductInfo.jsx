@@ -72,9 +72,12 @@ export default function ProductInfo({ product }) {
         </button>
 
         {/* Cart */}
-        <div className="p-3 cursor-pointer hover:text-[#CBA61F] text-black border border-[#D9D9D9] w-fit">
-          <LuShoppingBag className="w-5 h-5" />
-        </div>
+        <button
+          onClick={() => addToCart(product)}
+          className="bg-gray-50 cursor-pointer p-2 shrink-0"
+        >
+          <LuShoppingBag />
+        </button>
       </div>
 
       {/* Divider */}

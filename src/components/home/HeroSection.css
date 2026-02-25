@@ -4,7 +4,7 @@
   width: 100%;
 
   background:
-    radial-gradient(circle at right, rgba(255, 0, 0, 0.35), rgba(0, 0, 0, 0.9) 60%),
+    radial-gradient(circle at right, rgba(255, 0, 0, 0.35), rgba(0, 0, 0, 0.295) 60%),
     url(/herosection.jpg);
 
   background-size: cover;
