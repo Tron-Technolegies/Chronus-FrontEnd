@@ -11,9 +11,7 @@ export default function ProductCard({ product }) {
 
   return (
     <div className="bg-white group cursor-pointer">
-      {/* IMAGE AREA */}
       <div className="border border-gray-200 p-5 relative pb-7 w-full overflow-hidden">
-        {/* Wishlist */}
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -21,7 +19,9 @@ export default function ProductCard({ product }) {
           }}
           className="ms-auto block"
         >
-          <FaHeart className={`transition ${isWishlisted(product.id) ? "text-[#CBA61F]" : "text-gray-300"}`} />
+          <FaHeart
+            className={`transition ${isWishlisted(product.id) ? "text-[#CBA61F]" : "text-gray-300"}`}
+          />
         </button>
 
         <Link to={`/product/${product.id}`}>
@@ -50,7 +50,10 @@ export default function ProductCard({ product }) {
             <button className="bg-yellow-400 p-2 w-full text-sm">Buy Now</button>
           </Link>
 
-          <button onClick={() => addToCart(product)} className="bg-gray-50 cursor-pointer p-2 shrink-0">
+          <button
+            onClick={() => addToCart(product)}
+            className="bg-gray-50 cursor-pointer p-2 shrink-0"
+          >
             <LuShoppingBag />
           </button>
         </div>
