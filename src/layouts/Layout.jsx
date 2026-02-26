@@ -4,21 +4,22 @@ import { Outlet } from "react-router-dom";
 import Footer from "../components/layout/Footer";
 import CartToast from "../components/cart/CartToast";
 import CartDrawer from "../components/cart/CartDrawer";
-import { WishlistProvider } from "../context/WishlistContext";
+import GuestBanner from "../components/ui/GuestBanner";
+import WishlistToast from "../components/ui/WishlistToast";
 
 const Layout = () => {
   return (
-    <WishlistProvider>
-      <div>
-        <Header />
-        <div className="pt-16">
-          <Outlet />
-        </div>
-        <Footer />
-        <CartToast />
-        <CartDrawer />
+    <div>
+      <Header />
+      <div className="pt-16">
+        <Outlet />
       </div>
-    </WishlistProvider>
+      <Footer />
+      <CartToast />
+      <CartDrawer />
+      <WishlistToast />
+      <GuestBanner />
+    </div>
   );
 };
 

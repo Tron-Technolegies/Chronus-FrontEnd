@@ -3,9 +3,14 @@ import { IoShieldOutline } from "react-icons/io5";
 import { LuShoppingBag } from "react-icons/lu";
 import { MdOutlineLocalShipping } from "react-icons/md";
 import { RiLoopLeftFill } from "react-icons/ri";
+import { useAddToCart } from "../../../hooks/useAddToCart";
+import { useWishlistToggle } from "../../../hooks/useWishlistToggle";
+import { FaHeart } from "react-icons/fa";
 
 export default function ProductInfo({ product }) {
   const [qty, setQty] = useState(1);
+  const { handleAddToCart, loading: cartLoading } = useAddToCart();
+  const { handleToggle, isWishlisted } = useWishlistToggle();
 
   const increase = () => {
     if (qty < product.stock) setQty(qty + 1);
@@ -53,10 +58,10 @@ export default function ProductInfo({ product }) {
       {/* Short desc */}
       <p className="text-gray-500 leading-6 max-w-md text-sm sm:text-base">{product.shortDesc}</p>
 
-      {/* Qty + Buy */}
+      {/* Qty + Buy + Wishlist row */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
         {/* Qty */}
-        <div className="flex border border-gray-300 w-fit ">
+        <div className="flex border border-gray-300 w-fit">
           <button onClick={decrease} className="px-4 py-2 cursor-pointer hover:bg-gray-50">
             -
           </button>
@@ -71,12 +76,30 @@ export default function ProductInfo({ product }) {
           BUY NOW
         </button>
 
-        {/* Cart */}
+        {/* Add to Cart */}
         <button
-          onClick={() => addToCart(product)}
-          className="bg-gray-50 cursor-pointer p-2 shrink-0"
+          onClick={() => handleAddToCart(product, qty)}
+          disabled={cartLoading}
+          className="bg-gray-50 cursor-pointer p-3 shrink-0 disabled:opacity-50 border border-gray-200"
+          aria-label="Add to cart"
         >
-          <LuShoppingBag />
+          {cartLoading ? (
+            <span className="w-4 h-4 border-2 border-gray-400 border-t-gray-700 rounded-full animate-spin block" />
+          ) : (
+            <LuShoppingBag size={18} />
+          )}
+        </button>
+
+        {/* Wishlist toggle */}
+        <button
+          onClick={() => handleToggle(product)}
+          className="p-3 shrink-0 border border-gray-200"
+          aria-label="Toggle wishlist"
+        >
+          <FaHeart
+            size={18}
+            className={`transition ${isWishlisted(product.id) ? "text-[#CBA61F]" : "text-gray-300"}`}
+          />
         </button>
       </div>
 
