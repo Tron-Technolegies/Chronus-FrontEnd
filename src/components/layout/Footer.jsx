@@ -4,7 +4,7 @@ import { IoLocationOutline, IoCallOutline, IoMailOutline } from "react-icons/io5
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1a0806] pt-8 sm:pt-12 relative flex flex-col items-center overflow-hidden inter text-[#FFEDD0] ">
+    <footer className="bg-[#1a0806] pt-8 sm:pt-12 relative flex flex-col items-center overflow-hidden inter text-[#FFEDD0] " id="contact">
       <div className="w-[96%] sm:w-[92%] max-w-[1400px] bg-[#2a0e0c] rounded-[24px] sm:rounded-[40px] p-5 sm:p-8 md:p-12 lg:p-16 relative z-10 border border-[#78241e5d] shadow-2xl shadow-[#541a1685]">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-12 mb-10 sm:mb-16">
           <div className="space-y-4 sm:space-y-6">
