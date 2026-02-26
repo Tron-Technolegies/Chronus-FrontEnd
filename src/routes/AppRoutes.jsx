@@ -10,6 +10,8 @@ import ProductDetailPage from "../pages/shop/productdetails/ProductDetailPage";
 import CheckoutPage from "../pages/CheckoutPage";
 import WishlistPage from "../pages/WishlistPage";
 import MyAccountPage from "../pages/auth/MyAccountPage";
+import OrdersPage from "../pages/OrdersPage";
+import OrderSuccessPage from "../pages/OrderSuccessPage";
 import ProtectedRoute from "./ProtectedRoute";
 
 const AppRoutes = () => {
@@ -40,7 +42,6 @@ const AppRoutes = () => {
             </ProtectedRoute>
           ),
         },
-
         {
           path: "/shop",
           element: <ShopPage />,
@@ -56,6 +57,14 @@ const AppRoutes = () => {
         {
           path: "/wishlist",
           element: <WishlistPage />,
+        },
+        {
+          path: "/orders",
+          element: <OrdersPage />,
+        },
+        {
+          path: "/order-success/:id",
+          element: <OrderSuccessPage />,
         },
       ],
     },

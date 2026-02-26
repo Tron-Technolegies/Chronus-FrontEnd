@@ -3,9 +3,13 @@ import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
 import { LuShoppingBag } from "react-icons/lu";
 import { FiX, FiHeart } from "react-icons/fi";
+import { useEffect } from "react";
 
 export default function WishlistPage() {
-  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  });
+
   const { wishlist, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
   const navigate = useNavigate();
@@ -13,14 +17,14 @@ export default function WishlistPage() {
   return (
     <div className="min-h-screen bg-[#f7f6f3]">
       <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-10 pt-24 pb-20">
-        {/* Breadcrumb */}
         <p className="text-xs text-gray-400 mb-6 tracking-wide">
-          <Link to="/" className="hover:text-gray-600">Home</Link>
+          <Link to="/" className="hover:text-gray-600">
+            Home
+          </Link>
           <span className="mx-2">&gt;</span>
           <span className="text-gray-600">Wishlist</span>
         </p>
 
-        {/* Title row */}
         <div className="flex items-center gap-3 mb-8">
           <FiHeart size={20} className="text-[#CBA61F]" />
           <h1 className="text-xl sm:text-2xl tracking-[0.12em] font-medium">My Wishlist</h1>
@@ -31,7 +35,6 @@ export default function WishlistPage() {
 
         <hr className="border-gray-200 mb-8" />
 
-        {/* Empty state */}
         {wishlist.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 gap-5 text-center">
             <FiHeart size={48} className="text-gray-200" />
@@ -50,7 +53,6 @@ export default function WishlistPage() {
                 key={product.id}
                 className="bg-white rounded-xl border border-gray-100 shadow-sm flex items-center gap-4 sm:gap-6 px-4 sm:px-6 py-4 group transition-shadow hover:shadow-md"
               >
-                {/* Image */}
                 <Link to={`/product/${product.id}`} className="shrink-0">
                   <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden border border-gray-100">
                     <img
@@ -61,7 +63,6 @@ export default function WishlistPage() {
                   </div>
                 </Link>
 
-                {/* Info */}
                 <div className="flex-1 min-w-0">
                   <p className="text-[11px] text-gray-400 tracking-widest uppercase mb-1">
                     Order ID: ABC-{product.id?.toString().padStart(8, "0").slice(-8) ?? "00000000"}
@@ -77,7 +78,6 @@ export default function WishlistPage() {
                   </p>
                 </div>
 
-                {/* Actions */}
                 <div className="flex items-center gap-3 sm:gap-4 shrink-0">
                   <button
                     onClick={() => {
@@ -101,7 +101,6 @@ export default function WishlistPage() {
               </div>
             ))}
 
-            {/* Footer action */}
             <div className="flex justify-between items-center mt-4 pt-6 border-t border-gray-200">
               <button
                 onClick={() => navigate("/shop")}

@@ -2,12 +2,12 @@ import React from "react";
 import { FaHeart } from "react-icons/fa";
 import { LuShoppingBag } from "react-icons/lu";
 import { Link } from "react-router-dom";
-import { useCart } from "../../context/CartContext";
-import { useWishlist } from "../../context/WishlistContext";
+import { useWishlistToggle } from "../../hooks/useWishlistToggle";
+import { useAddToCart } from "../../hooks/useAddToCart";
 
 export default function ProductCard({ product }) {
-  const { addToCart } = useCart();
-  const { toggleWishlist, isWishlisted } = useWishlist();
+  const { handleAddToCart, loading: cartLoading } = useAddToCart();
+  const { handleToggle, isWishlisted } = useWishlistToggle();
 
   return (
     <div className="bg-white group cursor-pointer">
@@ -15,9 +15,10 @@ export default function ProductCard({ product }) {
         <button
           onClick={(e) => {
             e.preventDefault();
-            toggleWishlist(product);
+            handleToggle(product);
           }}
           className="ms-auto block"
+          aria-label="Toggle wishlist"
         >
           <FaHeart
             className={`transition ${isWishlisted(product.id) ? "text-[#CBA61F]" : "text-gray-300"}`}
@@ -34,9 +35,6 @@ export default function ProductCard({ product }) {
           </div>
         </Link>
 
-        {/* Action buttons:
-            Mobile  → always visible (translate-y-0 opacity-100)
-            Desktop → hidden until group hover */}
         <div
           className="
             flex absolute gap-4 items-center justify-center w-full bottom-0 left-0 px-3 py-6
@@ -51,15 +49,20 @@ export default function ProductCard({ product }) {
           </Link>
 
           <button
-            onClick={() => addToCart(product)}
-            className="bg-gray-50 cursor-pointer p-2 shrink-0"
+            onClick={() => handleAddToCart(product)}
+            disabled={cartLoading}
+            className="bg-gray-50 cursor-pointer p-2 shrink-0 disabled:opacity-50"
+            aria-label="Add to cart"
           >
-            <LuShoppingBag />
+            {cartLoading ? (
+              <span className="w-4 h-4 border-2 border-gray-400 border-t-gray-700 rounded-full animate-spin block" />
+            ) : (
+              <LuShoppingBag />
+            )}
           </button>
         </div>
       </div>
 
-      {/* INFO */}
       <Link to={`/product/${product.id}`}>
         <div className="text-center text-black py-4 px-2">
           <p className="text-sm sm:text-base leading-snug">{product.name}</p>

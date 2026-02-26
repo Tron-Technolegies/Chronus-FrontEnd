@@ -1,4 +1,4 @@
-import axiosInstance from "./axios";
+import axiosInstance from "../api/axios";
 
 export const registerAPI = (data) => {
   return axiosInstance.post("/signup/", data);
