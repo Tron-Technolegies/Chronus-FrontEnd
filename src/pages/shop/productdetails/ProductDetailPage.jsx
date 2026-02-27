@@ -23,7 +23,6 @@ const ProductDetailPage = () => {
     fetchProductByIdAPI(id)
       .then((res) => {
         const p = res.data;
-        // Normalise to UI shape
         setProduct({
           id: p.id,
           name: p.name,
@@ -33,6 +32,7 @@ const ProductDetailPage = () => {
           images: [p.image, ...(p.gallery ?? [])].filter(Boolean),
           category: p.category?.name?.toLowerCase().replace(/\s+/g, "-") ?? "other",
           categoryName: p.category?.name ?? "Other",
+          subcategoryName: p.subcategory?.name ?? null,
           brand: p.brand?.name ?? "",
           shortDesc: p.description?.slice(0, 80) ?? "",
           description: p.description ?? "",
@@ -40,9 +40,20 @@ const ProductDetailPage = () => {
           is_featured: p.is_featured ?? false,
           is_best_seller: p.is_best_seller ?? false,
           created_at: p.created_at,
-          rating: 4.8,
-          reviewsCount: 0,
-          reviews: [],
+          // Real rating & reviews from API
+          rating: p.average_rating ?? 0,
+          reviewsCount: p.review_count ?? 0,
+          reviews: (p.reviews ?? []).map((r) => ({
+            id: r.id,
+            name: r.name,
+            rating: r.rating,
+            comment: r.comment,
+            date: r.created_at
+              ? new Date(r.created_at).toLocaleDateString("en-US", {
+                  year: "numeric", month: "short", day: "numeric",
+                })
+              : "",
+          })),
         });
       })
       .catch((err) => {

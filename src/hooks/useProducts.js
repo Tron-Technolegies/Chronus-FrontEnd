@@ -1,17 +1,19 @@
 import { useEffect, useState, useCallback } from "react";
-import { fetchProductsAPI } from "../api/product";
+import { fetchProductsAPI, getProductsByCategory } from "../api/product";
 
 /**
  * Normalises the backend product shape → the shape the UI expects.
  *
  * Backend returns:
- * { id, name, category:{id,name}, brand:{id,name},
+ * { id, name, category:{id,name}, subcategory:{id,name}|null, brand:{id,name},
  *   price, description, stock, image, gallery:[url],
  *   is_featured, is_best_seller, created_at }
  *
  * UI expects:
  * { id, name, price, images:[url], category(string slug),
- *   categoryName, brand(string), shortDesc, description,
+ *   categoryName, categoryId, subcategory(string|null),
+ *   subcategoryName(string|null), subcategoryId(int|null),
+ *   brand(string), shortDesc, description,
  *   stock, is_featured, is_best_seller, created_at,
  *   rating, reviewsCount }
  */
@@ -25,6 +27,9 @@ const normalise = (p) => ({
   category: p.category?.name?.toLowerCase().replace(/\s+/g, "-") ?? "other",
   categoryName: p.category?.name ?? "Other",
   categoryId: p.category?.id ?? null,
+  subcategory: p.subcategory?.name?.toLowerCase().replace(/\s+/g, "-") ?? null,
+  subcategoryName: p.subcategory?.name ?? null,
+  subcategoryId: p.subcategory?.id ?? null,
   brand: p.brand?.name ?? "",
   brandId: p.brand?.id ?? null,
   shortDesc: p.description?.slice(0, 80) ?? "",
@@ -40,18 +45,22 @@ const normalise = (p) => ({
 });
 
 /**
- * Fetches all products from the API, normalises them, and provides
- * derived helpers (unique categories, brands) for filter UIs.
+ * Fetches products from the API (optionally filtered by categoryId),
+ * normalises them, and provides derived helpers for filter UIs.
+ *
+ * @param {object} [options]
+ * @param {number|string|null} [options.categoryId] - When set, fetches only that category's products
  *
  * Returns:
- *   products   – raw full list (for internal filtering)
+ *   products      – normalised list
  *   loading
  *   error
- *   refetch    – call to re-fetch
- *   categories – unique { id, name, slug } list derived from products
- *   brands     – unique { id, name } list derived from products
+ *   refetch       – call to re-fetch
+ *   categories    – unique { id, name, slug } list derived from products
+ *   brands        – unique { id, name } list derived from products
+ *   subcategories – unique non-null { id, name, slug } from products (for category pages)
  */
-export function useProducts() {
+export function useProducts({ categoryId = null } = {}) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -60,9 +69,11 @@ export function useProducts() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetchProductsAPI();
+      const res = categoryId
+        ? await getProductsByCategory(categoryId)
+        : await fetchProductsAPI();
       const raw = res.data?.products ?? res.data ?? [];
-      setProducts(raw.map(normalise));
+      setProducts(Array.isArray(raw) ? raw.map(normalise) : []);
     } catch (err) {
       setError(
         err?.response?.data?.detail ?? err?.message ?? "Failed to load products.",
@@ -70,7 +81,7 @@ export function useProducts() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [categoryId]);
 
   useEffect(() => {
     load();
@@ -91,5 +102,13 @@ export function useProducts() {
     return acc;
   }, []);
 
-  return { products, loading, error, refetch: load, categories, brands };
+  // Unique non-null subcategories — only meaningful in category mode
+  const subcategories = products.reduce((acc, p) => {
+    if (p.subcategoryId && !acc.find((s) => s.id === p.subcategoryId)) {
+      acc.push({ id: p.subcategoryId, name: p.subcategoryName, slug: p.subcategory });
+    }
+    return acc;
+  }, []);
+
+  return { products, loading, error, refetch: load, categories, brands, subcategories };
 }

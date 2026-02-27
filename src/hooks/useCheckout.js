@@ -4,18 +4,6 @@ import { placeOrderAPI } from "../api/checkout";
 import { createPaymentIntentAPI } from "../api/payment";
 import { useCart } from "../context/CartContext";
 
-/**
- * Orchestrates the checkout → payment → order-success flow.
- *
- * Flow:
- *   1. POST /checkout/  → get order_id
- *   2. Save order_id to localStorage (guest tracking)
- *   3. POST /payments/create-intent/ → get client_secret
- *   4. Store client_secret for future Stripe integration
- *   5. Navigate to /order-success/:id
- *
- * IMPORTANT: We do NOT navigate to /orders before payment succeeds.
- */
 export function useCheckout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
