@@ -1,8 +1,13 @@
 import axiosInstance from "./axios";
 
-/**
- * POST /checkout/
- * payload: { address, city, postal_code, country, phone, email, first_name, last_name }
- */
-export const placeOrderAPI = (payload) =>
-  axiosInstance.post("/checkout/", payload);
+export const placeOrderAPI = (payload) => {
+  const guestId = localStorage.getItem("guest_id");
+  return axiosInstance.post("/checkout/", {
+    ...payload,
+    ...(guestId ? { guest_id: guestId } : {}),
+  });
+};
+
+export const applyCouponAPI = (order_id, coupon_code) =>
+  axiosInstance.post("/coupon/apply/", { order_id, coupon_code });
+

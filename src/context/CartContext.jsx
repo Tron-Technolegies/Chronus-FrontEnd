@@ -1,5 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { addToCartAPI, fetchCartAPI } from "../api/cart";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { addToCartAPI, clearCartAPI, fetchCartAPI, removeCartItemAPI } from "../api/cart";
 
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
@@ -34,6 +34,8 @@ export const CartProvider = ({ children }) => {
   const [toast, setToast] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  // Prevents fetchCart from re-loading items right after clearCart
+  const justCleared = useRef(false);
 
   // Persist to localStorage whenever cart changes
   useEffect(() => {
@@ -48,6 +50,11 @@ export const CartProvider = ({ children }) => {
 
   // ── fetch cart from server ───────────────────────────────────────────────────
   const fetchCart = useCallback(async () => {
+    // Skip re-fetch if we just cleared (avoids cart reappearing from the server)
+    if (justCleared.current) {
+      justCleared.current = false;
+      return;
+    }
     try {
       setLoading(true);
       const res = await fetchCartAPI();
@@ -103,7 +110,12 @@ export const CartProvider = ({ children }) => {
 
   // ── removeItem ───────────────────────────────────────────────────────────────
   const removeItem = useCallback((id) => {
+    // Optimistic local removal
     setCart((prev) => prev.filter((p) => p.id !== id));
+    // Sync with server (best-effort — local state is already updated)
+    removeCartItemAPI(id).catch((err) =>
+      console.warn("Remove cart item API failed:", err?.message)
+    );
   }, []);
 
   // ── updateQty ────────────────────────────────────────────────────────────────
@@ -118,9 +130,18 @@ export const CartProvider = ({ children }) => {
   }, []);
 
   // ── clearCart ────────────────────────────────────────────────────────────────
-  const clearCart = useCallback(() => {
+  const clearCart = useCallback(async () => {
+    // Clear local state & storage immediately
     setCart([]);
     localStorage.removeItem(LS_KEY);
+    // Set flag so next fetchCart call (on re-mount) is skipped
+    justCleared.current = true;
+    // Also clear server-side cart (guest session) so it doesn't come back
+    try {
+      await clearCartAPI();
+    } catch (err) {
+      console.warn("Server cart clear failed:", err?.message);
+    }
   }, []);
 
   // ── syncCartOnLogin ──────────────────────────────────────────────────────────

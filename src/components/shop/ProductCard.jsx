@@ -11,16 +11,18 @@ export default function ProductCard({ product }) {
 
   return (
     <div className="bg-white group cursor-pointer">
-      <div className="border border-gray-200 p-5 relative pb-7 w-full overflow-hidden">
+      <div className="border border-gray-200 bg-[#FFF5E6] p-5 relative pb-7 w-full overflow-hidden">
         <button
           onClick={(e) => {
             e.preventDefault();
             handleToggle(product);
           }}
-          className="ms-auto block"
+          className={`ms-auto flex items-center justify-center w-13 h-13 rounded-full transition
+            ${isWishlisted(product.id) ? "border-[#CBA61F] " : " hover:border-[#CBA61F]"}`}
           aria-label="Toggle wishlist"
         >
           <FaHeart
+            size={24}
             className={`transition ${isWishlisted(product.id) ? "text-[#CBA61F]" : "text-gray-300"}`}
           />
         </button>

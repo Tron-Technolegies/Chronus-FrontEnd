@@ -6,6 +6,7 @@ import CartToast from "../components/cart/CartToast";
 import CartDrawer from "../components/cart/CartDrawer";
 import GuestBanner from "../components/ui/GuestBanner";
 import WishlistToast from "../components/ui/WishlistToast";
+import WhatsAppFAB from "../components/ui/WhatsAppFAB";
 
 const Layout = () => {
   return (
@@ -19,6 +20,7 @@ const Layout = () => {
       <CartDrawer />
       <WishlistToast />
       <GuestBanner />
+      <WhatsAppFAB />
     </div>
   );
 };

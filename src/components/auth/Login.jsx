@@ -7,6 +7,7 @@ import Loader from "../ui/Loader";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState(null);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -15,28 +16,32 @@ const Login = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setLoginError(null);
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoginError(null);
     try {
       setLoading(true);
-
       const response = await loginAPI(formData);
+      const data = response.data;
 
-      localStorage.setItem("accessToken", response.data.tokens.access);
-      localStorage.setItem("refreshToken", response.data.tokens.refresh);
+      localStorage.setItem("accessToken",  data.tokens?.access  ?? data.access);
+      localStorage.setItem("refreshToken", data.tokens?.refresh ?? data.refresh);
+      // Save user info (full_name used by ProfileForm)
+      localStorage.setItem("user", JSON.stringify({
+        user_id:   data.user_id,
+        email:     data.email,
+        full_name: data.full_name,
+        first_name: data.full_name?.split(" ")[0] ?? "",
+        last_name:  data.full_name?.split(" ").slice(1).join(" ") ?? "",
+      }));
 
-      // alert("Login successful!");
       navigate("/my-account");
     } catch (error) {
-      console.error(error.response?.data);
-      alert(error.response?.data?.error || "Invalid credentials");
+      setLoginError(error.response?.data?.error || "Invalid email or password.");
     } finally {
       setLoading(false);
     }
@@ -90,6 +95,12 @@ const Login = () => {
                 </button>
               </div>
             </div>
+
+            {loginError && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-2 rounded-md">
+                {loginError}
+              </p>
+            )}
 
             <button
               type="submit"

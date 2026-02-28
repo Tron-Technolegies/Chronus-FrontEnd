@@ -6,7 +6,8 @@ import ShippingDetails from "../../components/shop/ShippingDetails";
 import ProductsGrid from "../../components/shop/ProductsGrid";
 import SearchBox from "../../components/shop/SearchBox";
 import CategoryTabs from "../../components/shop/CategoryTabs";
-import { useLocation } from "react-router-dom";
+import SubcategoryFilter from "../../components/shop/SubcategoryFilter";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { FiSliders, FiX, FiAlertCircle } from "react-icons/fi";
 import { useProducts } from "../../hooks/useProducts";
 
@@ -15,36 +16,52 @@ const PAGE_SIZE = 12;
 const ShopPage = () => {
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  const location = useLocation();
-  const categoryData = location.state?.category;
+  // ── URL param: ?category=<id> ───────────────────────────────────────────
+  const [searchParams] = useSearchParams();
+  const categoryId = searchParams.get("category") ?? null;
 
-  const [showIntro, setShowIntro] = useState(!!categoryData);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [page, setPage] = useState(1);
 
-  // ── Filters & Sort state (owned here, passed down as props) ──────────────
+  // ── Filters & Sort state ─────────────────────────────────────────────────
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("default");
   const [activeCategory, setActiveCategory] = useState("all");
-  const [collection, setCollection] = useState("all"); // best-seller | featured | new | all
+  const [activeSubcategory, setActiveSubcategory] = useState("all");
+  const [collection, setCollection] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 999999]);
 
-  const { products, loading, error, categories } = useProducts();
+  // Reset subcategory when category changes
+  useEffect(() => { setActiveSubcategory("all"); }, [categoryId]);
+
+  const { products, loading, error, categories, subcategories } = useProducts(
+    categoryId ? { categoryId } : {}
+  );
+
+  // When we're in category mode, derive the category name from the first product
+  const categoryName = useMemo(() => {
+    if (!categoryId) return null;
+    return products[0]?.categoryName ?? null;
+  }, [categoryId, products]);
 
   // ── Derived: filtered + sorted products ─────────────────────────────────
   const filtered = useMemo(() => {
     let list = [...products];
 
-    // Category tab
-    if (activeCategory !== "all") {
+    // Category tab (only in global mode)
+    if (!categoryId && activeCategory !== "all") {
       list = list.filter((p) => p.category === activeCategory);
+    }
+
+    // Subcategory filter (only in category mode)
+    if (categoryId && activeSubcategory !== "all") {
+      list = list.filter((p) => p.subcategory === activeSubcategory);
     }
 
     // Collection filter
     if (collection === "featured") list = list.filter((p) => p.is_featured);
     if (collection === "best-seller") list = list.filter((p) => p.is_best_seller);
     if (collection === "new") {
-      // Sort by newest and take top 30% or at least 6
       list = [...list].sort(
         (a, b) => new Date(b.created_at ?? 0) - new Date(a.created_at ?? 0),
       );
@@ -75,10 +92,10 @@ const ShopPage = () => {
     if (sort === "name-asc") list.sort((a, b) => a.name.localeCompare(b.name));
 
     return list;
-  }, [products, activeCategory, collection, priceRange, search, sort]);
+  }, [products, categoryId, activeCategory, activeSubcategory, collection, priceRange, search, sort]);
 
-  // Reset pagination whenever filter changes
-  useEffect(() => { setPage(1); }, [search, sort, activeCategory, collection, priceRange]);
+  // Reset pagination whenever filters change
+  useEffect(() => { setPage(1); }, [search, sort, activeCategory, activeSubcategory, collection, priceRange]);
 
   const paginated = filtered.slice(0, page * PAGE_SIZE);
   const hasMore = paginated.length < filtered.length;
@@ -87,6 +104,7 @@ const ShopPage = () => {
     setSearch("");
     setSort("default");
     setActiveCategory("all");
+    setActiveSubcategory("all");
     setCollection("all");
     setPriceRange([0, 999999]);
     setPage(1);
@@ -97,26 +115,7 @@ const ShopPage = () => {
 
   return (
     <div className="max-w-[1700px] mx-auto bg-white pb-14">
-      {/* Category intro modal */}
-      {showIntro && categoryData && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 sm:p-6 font-[Bayon]">
-          <div className="bg-white max-w-3xl w-full rounded-2xl overflow-hidden relative">
-            <button onClick={() => setShowIntro(false)} className="absolute top-4 right-4 text-xl z-10">✕</button>
-            <div className="bg-gray-100 flex items-center justify-center p-6 sm:p-10">
-              <img src={categoryData.img} className="h-[140px] sm:h-[180px] md:h-[220px] object-contain" />
-            </div>
-            <div className="p-6 sm:p-8 text-center space-y-4">
-              <h2 className="text-xl sm:text-2xl tracking-widest font-[Bayon]">{categoryData.title}</h2>
-              <p className="text-gray-500 max-w-md mx-auto text-sm sm:text-base">{categoryData.desc}</p>
-              <button onClick={() => setShowIntro(false)} className="bg-[#F5C518] px-6 sm:px-8 py-3 text-sm">
-                Explore Collection
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <ShopPageHeader />
+      <ShopPageHeader categoryName={categoryName} />
 
       {/* Mobile: Filter toggle */}
       <div className="lg:hidden flex justify-end px-4 py-3 border-b border-gray-200">
@@ -153,14 +152,25 @@ const ShopPage = () => {
         </aside>
 
         <main className="flex-1 min-w-0">
-          {/* Category tabs */}
-          <div className="border-b border-t border-gray-200 px-4 sm:px-6 py-5 overflow-hidden">
-            <CategoryTabs
-              categories={categories}
-              activeCategory={activeCategory}
-              setActiveCategory={setActiveCategory}
+          {/* Category tabs — only shown in global shop mode */}
+          {!categoryId && (
+            <div className="border-b border-t border-gray-200 px-4 sm:px-6 py-5 overflow-hidden">
+              <CategoryTabs
+                categories={categories}
+                activeCategory={activeCategory}
+                setActiveCategory={setActiveCategory}
+              />
+            </div>
+          )}
+
+          {/* Subcategory filter — only shown in category mode, auto-hides when empty */}
+          {categoryId && (
+            <SubcategoryFilter
+              subcategories={subcategories}
+              activeSubcategory={activeSubcategory}
+              setActiveSubcategory={setActiveSubcategory}
             />
-          </div>
+          )}
 
           {/* Search + Sort */}
           <div className="flex justify-end px-4 sm:px-6 py-5">
@@ -231,3 +241,4 @@ const ShopPage = () => {
 };
 
 export default ShopPage;
+
