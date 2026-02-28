@@ -102,9 +102,11 @@
 /* ── Small tablet / large phone (≤ 768px) ─────── */
 @media (max-width: 768px) {
   .hero-section-container {
-    padding: 80px 6% 48px;
-    align-items: center;
-    background-position: 70% center; /* keep face visible */
+    height: auto;
+    min-height: unset;
+    padding: 100px 6% 48px;
+    align-items: flex-start;
+    background-position: 70% center;
   }
 
   .hero-limited-edition-watch {
@@ -127,8 +129,9 @@
 /* ── Mobile (≤ 480px) ──────────────────────────── */
 @media (max-width: 480px) {
   .hero-section-container {
-    padding: 80px 5% 48px;
-    min-height: 100svh; /* safe-area aware */
+    height: auto;
+    min-height: unset;
+    padding: 96px 5% 40px;
   }
 
   .herosection-contents h2 {

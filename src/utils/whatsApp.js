@@ -1,5 +1,5 @@
 export const sendEnquiryMessage = (email) => {
-  const phoneNumber = "12345677890"; 
+  const phoneNumber = "+971569778080"; 
 
   const message =
     `Hello,\n\n` +
@@ -13,7 +13,7 @@ export const sendEnquiryMessage = (email) => {
 };
 
 export const sendEnquiryMembership = () => {
-  const phoneNumber = "12345677890"; 
+  const phoneNumber = "+971569778080"; 
 
   const message =
     `Hello,\n\n` +

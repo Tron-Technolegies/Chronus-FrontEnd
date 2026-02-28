@@ -9,8 +9,8 @@ const AccountSidebar = ({ activeTab, setActiveTab }) => {
   const menuItems = [
     { id: "profile", label: "My Profile" },
     { id: "orders", label: "My Orders" },
-    { id: "address", label: "Saved Address" },
-    { id: "password", label: "Change Password" },
+    // { id: "address", label: "Saved Address" },
+    // { id: "password", label: "Change Password" },
     { id: "logout", label: "Logout" },
   ];
 

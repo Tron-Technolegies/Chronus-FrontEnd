@@ -24,8 +24,8 @@ const MyAccountPage = () => {
           <div className="flex-1 p-6 sm:p-8">
             {activeTab === "profile" && <ProfileForm />}
             {activeTab === "orders" && <OrdersList/>}
-            {activeTab === "address" && <AddressSection/>}
-            {activeTab === "password" && <ChangePassword/>}
+            {/* {activeTab === "address" && <AddressSection/>}
+            {activeTab === "password" && <ChangePassword/>} */}
           </div>
         </div>
       </div>

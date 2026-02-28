@@ -82,12 +82,12 @@ const CategoryIntroModal = ({ category, onClose }) => {
             >
               Explore Products
             </button>
-            <button
+            {/* <button
               onClick={onClose}
               className="text-xs tracking-widest text-gray-400 hover:text-black transition uppercase underline underline-offset-4"
             >
               Maybe later
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

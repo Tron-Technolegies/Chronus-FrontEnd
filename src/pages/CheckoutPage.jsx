@@ -2,74 +2,71 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useCheckout } from "../hooks/useCheckout";
-import { FiPackage, FiCreditCard, FiCheckCircle, FiTruck, FiAlertCircle } from "react-icons/fi";
+import {
+  FiPackage,
+  FiCreditCard,
+  FiCheckCircle,
+  FiAlertCircle,
+} from "react-icons/fi";
+import ShippingForm from "../components/checkout/ShippingForm";
+import OrderReview from "../components/checkout/OrderReview";
+import StripeProvider from "../providers/StripeProvider";
+import StripePaymentForm from "../components/checkout/StripePaymentForm";
 
+// ── Steps: 1 Shipping → 2 Review → 3 Payment ──────────────────────────────
 const STEPS = [
   { label: "Shipping", icon: FiPackage },
-  { label: "Payment", icon: FiCreditCard },
-  { label: "Review", icon: FiCheckCircle },
+  { label: "Review",   icon: FiCheckCircle },
+  { label: "Payment",  icon: FiCreditCard },
 ];
 
-const inputBase =
-  "w-full border rounded-sm px-4 py-3 text-sm outline-none transition-all placeholder:text-gray-400 bg-white";
-const inputOk = "border-gray-200 focus:border-[#CBA61F] focus:ring-1 focus:ring-[#CBA61F]";
-const inputErr = "border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-300 bg-red-50";
-
 const INITIAL_FORM = {
-  first_name: "",
-  last_name: "",
-  email: "",
-  city: "",
+  first_name:  "",
+  last_name:   "",
+  email:       "",
+  address:     "",
+  city:        "",
   postal_code: "",
-  country: "",
-  phone: "",
+  country:     "",
+  phone:       "",
 };
 
-// ── Validators ────────────────────────────────────────────────────────────────
+// ── Validators ──────────────────────────────────────────────────────────────
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+\d][\d\s\-().]{6,19}$/;
 
 function validateShipping(form) {
   const errs = {};
-  if (!form.first_name.trim()) errs.first_name = "First name is required";
-  if (!form.last_name.trim()) errs.last_name = "Last name is required";
-  if (!form.email.trim()) errs.email = "Email is required";
+  if (!form.first_name.trim())  errs.first_name  = "First name is required";
+  if (!form.last_name.trim())   errs.last_name   = "Last name is required";
+  if (!form.email.trim())       errs.email       = "Email is required";
   else if (!EMAIL_RE.test(form.email)) errs.email = "Enter a valid email address";
-  if (!form.city.trim()) errs.city = "City is required";
+  if (!form.address.trim())     errs.address     = "Street address is required";
+  if (!form.city.trim())        errs.city        = "City is required";
   if (!form.postal_code.trim()) errs.postal_code = "Postal code is required";
-  if (!form.country) errs.country = "Please select a country";
-  if (!form.phone.trim()) errs.phone = "Phone number is required";
+  if (!form.country)            errs.country     = "Please select a country";
+  if (!form.phone.trim())       errs.phone       = "Phone number is required";
   else if (!PHONE_RE.test(form.phone)) errs.phone = "Enter a valid phone number";
   return errs;
 }
 
-// ── Field wrapper ─────────────────────────────────────────────────────────────
-function Field({ error, children }) {
-  return (
-    <div>
-      {children}
-      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
-    </div>
-  );
-}
-
 export default function CheckoutPage() {
+  const navigate = useNavigate();
   const { cart, subtotal } = useCart();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState(INITIAL_FORM);
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const { submit, loading, error } = useCheckout();
+  const { submit, loading, error, clientSecret, orderId } = useCheckout();
 
-  const tax = subtotal * 0.15;
-  const total = subtotal + tax;
+  // No tax — total = subtotal only
+  const total = subtotal;
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    // Clear error on change if already touched
     if (touched[name]) {
       const errs = validateShipping({ ...form, [name]: value });
       setFieldErrors((prev) => ({ ...prev, [name]: errs[name] }));
@@ -83,25 +80,25 @@ export default function CheckoutPage() {
     setFieldErrors((prev) => ({ ...prev, [name]: errs[name] }));
   };
 
-  const handleContinueToPayment = () => {
+  // Step 1 → 2
+  const handleContinueToReview = () => {
     const errs = validateShipping(form);
-    // Mark all fields touched
     setTouched(Object.keys(INITIAL_FORM).reduce((acc, k) => ({ ...acc, [k]: true }), {}));
     setFieldErrors(errs);
     if (Object.keys(errs).length === 0) setStep(2);
   };
 
+  // Step 2 → 3
   const handlePlaceOrder = async () => {
     if (cart.length === 0) return;
     try {
       await submit(form);
+      setStep(3);
     } catch {
-      // error already set in hook
+      // error shown in hook
     }
   };
 
-  // Helper: input class based on error state
-  const ic = (name) => `${inputBase} ${fieldErrors[name] && touched[name] ? inputErr : inputOk}`;
 
   return (
     <div className="min-h-screen bg-[#f7f6f3]">
@@ -118,7 +115,7 @@ export default function CheckoutPage() {
         <div className="flex items-center mb-10 max-w-sm">
           {STEPS.map((s, i) => {
             const active = step === i + 1;
-            const done = step > i + 1;
+            const done   = step > i + 1;
             return (
               <div key={s.label} className="flex items-center flex-1 last:flex-none">
                 <div className="flex flex-col items-center">
@@ -145,7 +142,6 @@ export default function CheckoutPage() {
           {/* ============ LEFT — Form ============ */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow-sm p-6 sm:p-8 space-y-6">
 
-            {/* API Error banner */}
             {error && (
               <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-sm">
                 <FiAlertCircle size={16} />
@@ -153,111 +149,31 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {/* ── Step 1: Shipping ── */}
+            {/* Step 1 */}
             {step === 1 && (
-              <>
-                <div className="flex items-center gap-3 mb-2">
-                  <FiTruck className="text-[#CBA61F]" size={18} />
-                  <h2 className="text-sm tracking-[0.15em] font-medium uppercase">Shipping Information</h2>
-                </div>
-                <hr className="border-gray-100" />
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field error={touched.first_name && fieldErrors.first_name}>
-                    <input
-                      className={ic("first_name")}
-                      name="first_name"
-                      placeholder="First Name *"
-                      value={form.first_name}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                  </Field>
-                  <Field error={touched.last_name && fieldErrors.last_name}>
-                    <input
-                      className={ic("last_name")}
-                      name="last_name"
-                      placeholder="Last Name *"
-                      value={form.last_name}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                  </Field>
-                </div>
-
-                <Field error={touched.email && fieldErrors.email}>
-                  <input
-                    className={ic("email")}
-                    name="email"
-                    placeholder="Email Address *"
-                    type="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                </Field>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <Field error={touched.city && fieldErrors.city}>
-                    <input
-                      className={ic("city")}
-                      name="city"
-                      placeholder="City *"
-                      value={form.city}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                  </Field>
-                  <Field error={touched.postal_code && fieldErrors.postal_code}>
-                    <input
-                      className={ic("postal_code")}
-                      name="postal_code"
-                      placeholder="Postal Code *"
-                      value={form.postal_code}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                  </Field>
-                  <Field error={touched.country && fieldErrors.country}>
-                    <select
-                      className={ic("country")}
-                      name="country"
-                      value={form.country}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    >
-                      <option value="">Country *</option>
-                      <option value="India">India</option>
-                      <option value="UAE">UAE</option>
-                      <option value="USA">USA</option>
-                      <option value="UK">UK</option>
-                    </select>
-                  </Field>
-                </div>
-
-                <Field error={touched.phone && fieldErrors.phone}>
-                  <input
-                    className={ic("phone")}
-                    name="phone"
-                    placeholder="Phone Number *"
-                    type="tel"
-                    value={form.phone}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                </Field>
-
-                <button
-                  onClick={handleContinueToPayment}
-                  className="bg-[#FFCA0A] w-full py-3.5 text-xs sm:text-sm tracking-[0.2em] font-semibold hover:bg-[#e6b600] transition-colors"
-                >
-                  CONTINUE TO PAYMENT
-                </button>
-              </>
+              <ShippingForm
+                form={form}
+                touched={touched}
+                fieldErrors={fieldErrors}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                onContinue={handleContinueToReview}
+              />
             )}
 
-            {/* ── Step 2: Payment ── */}
+            {/* Step 2 */}
             {step === 2 && (
+              <OrderReview
+                form={form}
+                cart={cart}
+                loading={loading}
+                onBack={() => setStep(1)}
+                onPlaceOrder={handlePlaceOrder}
+              />
+            )}
+
+            {/* Step 3 */}
+            {step === 3 && (
               <>
                 <div className="flex items-center gap-3 mb-2">
                   <FiCreditCard className="text-[#CBA61F]" size={18} />
@@ -265,77 +181,19 @@ export default function CheckoutPage() {
                 </div>
                 <hr className="border-gray-100" />
 
-                <div className="space-y-4">
-                  <input className={`${inputBase} ${inputOk}`} placeholder="Cardholder Name" />
-                  <input className={`${inputBase} ${inputOk}`} placeholder="Card Number" maxLength={19} />
-                  <div className="grid grid-cols-2 gap-4">
-                    <input className={`${inputBase} ${inputOk}`} placeholder="MM / YY" maxLength={7} />
-                    <input className={`${inputBase} ${inputOk}`} placeholder="CVV" maxLength={4} type="password" />
+                {clientSecret ? (
+                  <StripeProvider clientSecret={clientSecret}>
+                    <StripePaymentForm
+                      orderId={orderId ?? localStorage.getItem("last_order_id")}
+                      onSuccess={(id) => navigate(`/order-success/${id}`)}
+                    />
+                  </StripeProvider>
+                ) : (
+                  <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 text-yellow-700 text-sm px-4 py-3 rounded-sm">
+                    <FiAlertCircle size={16} />
+                    <span>Payment is being prepared. Please wait or refresh the page.</span>
                   </div>
-                  <p className="text-[11px] text-gray-400 flex items-center gap-1">
-                    🔒 Payment processed securely via Stripe
-                  </p>
-                </div>
-
-                <div className="flex gap-4">
-                  <button onClick={() => setStep(1)} className="flex-1 border border-gray-200 py-3.5 text-xs tracking-widest hover:bg-gray-50 transition-colors">
-                    BACK
-                  </button>
-                  <button onClick={() => setStep(3)} className="flex-1 bg-[#FFCA0A] py-3.5 text-xs tracking-[0.2em] font-semibold hover:bg-[#e6b600] transition-colors">
-                    REVIEW ORDER
-                  </button>
-                </div>
-              </>
-            )}
-
-            {/* ── Step 3: Review ── */}
-            {step === 3 && (
-              <>
-                <div className="flex items-center gap-3 mb-2">
-                  <FiCheckCircle className="text-[#CBA61F]" size={18} />
-                  <h2 className="text-sm tracking-[0.15em] font-medium uppercase">Review &amp; Place Order</h2>
-                </div>
-                <hr className="border-gray-100" />
-
-                {/* Address summary */}
-                <div className="bg-gray-50 rounded-sm p-4 text-sm space-y-1">
-                  <p className="font-medium text-gray-700">{form.first_name} {form.last_name}</p>
-                  <p className="text-gray-500">{form.email}</p>
-                  <p className="text-gray-500">
-                    {form.city}{form.postal_code ? `, ${form.postal_code}` : ""}{form.country ? `, ${form.country}` : ""}
-                  </p>
-                  {form.phone && <p className="text-gray-500">{form.phone}</p>}
-                </div>
-
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Please review your order details before confirming. By placing the order you agree to our terms and conditions.
-                </p>
-
-                {cart.length === 0 && (
-                  <p className="text-yellow-600 text-xs">
-                    Your cart is empty. <Link to="/shop" className="underline">Continue shopping</Link>
-                  </p>
                 )}
-
-                <div className="flex gap-4">
-                  <button onClick={() => setStep(2)} className="flex-1 border border-gray-200 py-3.5 text-xs tracking-widest hover:bg-gray-50 transition-colors">
-                    BACK
-                  </button>
-                  <button
-                    onClick={handlePlaceOrder}
-                    disabled={loading || cart.length === 0}
-                    className="flex-1 bg-[#3D1613] text-white py-3.5 text-xs tracking-[0.2em] font-semibold hover:bg-[#5a2019] transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
-                  >
-                    {loading ? (
-                      <>
-                        <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                        PLACING ORDER…
-                      </>
-                    ) : (
-                      "PLACE ORDER"
-                    )}
-                  </button>
-                </div>
               </>
             )}
           </div>
@@ -346,6 +204,7 @@ export default function CheckoutPage() {
               <h3 className="text-sm tracking-[0.2em] font-semibold text-[#FFCA0A] uppercase">Order Summary</h3>
             </div>
 
+            {/* Cart items */}
             <div className="px-6 py-4 space-y-4 max-h-[300px] overflow-y-auto scrollbar-hide">
               {cart.length === 0 ? (
                 <p className="text-white/50 text-sm text-center py-4">Your cart is empty</p>
@@ -365,6 +224,7 @@ export default function CheckoutPage() {
               )}
             </div>
 
+            {/* Totals */}
             <div className="px-6 py-5 border-t border-white/10 space-y-3">
               <div className="flex justify-between text-white/70 text-xs">
                 <span>Subtotal</span>
@@ -373,10 +233,6 @@ export default function CheckoutPage() {
               <div className="flex justify-between text-white/70 text-xs">
                 <span>Shipping</span>
                 <span className="text-[#FFCA0A] font-medium">Free</span>
-              </div>
-              <div className="flex justify-between text-white/70 text-xs">
-                <span>Tax (15%)</span>
-                <span className="text-white">${tax.toFixed(0)}</span>
               </div>
               <div className="flex justify-between pt-2 border-t border-white/10">
                 <span className="text-white text-sm font-semibold tracking-wide">Total</span>

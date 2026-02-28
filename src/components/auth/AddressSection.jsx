@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { demoUser } from "../../utils/demoUser"
 
 const AddressSection = () => {
-  const [addresses, setAddresses] = useState(demoUser.addresses);
+  const [addresses, setAddresses] = useState([]);
 
   const [formData, setFormData] = useState({
     firstName: "",

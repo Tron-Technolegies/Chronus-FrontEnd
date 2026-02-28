@@ -1,31 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiX } from "react-icons/fi";
 
-const BANNER_KEY = "guest_banner_dismissed";
-
-/**
- * A dismissible banner shown to non-logged-in users (guests).
- * Matches the brand palette: #3D1613 background, #FFCA0A accent.
- * Auto-hidden for logged-in users or if previously dismissed in this session.
- */
 export default function GuestBanner() {
-  const isLoggedIn = !!localStorage.getItem("accessToken");
-  const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
 
+  // Reactively check login status — re-evaluates on storage changes (e.g. after login)
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => !!localStorage.getItem("accessToken")
+  );
+  const [dismissed, setDismissed] = useState(false);
+
   useEffect(() => {
-    if (!isLoggedIn && !sessionStorage.getItem(BANNER_KEY)) {
-      setVisible(true);
-    }
-  }, [isLoggedIn]);
+    const onStorage = () => {
+      setIsLoggedIn(!!localStorage.getItem("accessToken"));
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
-  const dismiss = () => {
-    setVisible(false);
-    sessionStorage.setItem(BANNER_KEY, "1");
-  };
+  // Also re-check on every render cycle (catches same-tab login)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const loggedIn = !!localStorage.getItem("accessToken");
+      setIsLoggedIn(loggedIn);
+      if (loggedIn) setDismissed(false); // reset dismiss when they log out later
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
-  if (!visible) return null;
+  // Don't show if logged in or banner dismissed this session
+  if (isLoggedIn || dismissed) return null;
 
   return (
     <div
@@ -60,16 +65,16 @@ export default function GuestBanner() {
 
         {/* Login CTA */}
         <button
-          onClick={() => { dismiss(); navigate("/login"); }}
+          onClick={() => navigate("/login")}
           className="shrink-0 text-[11px] font-semibold tracking-widest px-4 py-2 rounded-sm transition-colors"
           style={{ backgroundColor: "#FFCA0A", color: "#1a1a1a" }}
         >
           LOGIN
         </button>
 
-        {/* Dismiss */}
+        {/* Dismiss for this session */}
         <button
-          onClick={dismiss}
+          onClick={() => setDismissed(true)}
           className="shrink-0 text-white/40 hover:text-white transition-colors p-1"
           aria-label="Dismiss"
         >

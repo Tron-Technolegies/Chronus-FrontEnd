@@ -30,9 +30,9 @@ const HomePage = () => {
       <section id="hero">
         <HeroSection />
       </section>
-      <FeaturedProducts />
+      {/* <FeaturedProducts /> */}
       <ExploreCategories />
-      <NewArrivals />
+      {/* <NewArrivals /> */}
       <AboutSection/>
       <ExclusiveMembership />
       <Testimonials />
