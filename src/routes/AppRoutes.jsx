@@ -13,6 +13,11 @@ import MyAccountPage from "../pages/auth/MyAccountPage";
 import OrdersPage from "../pages/OrdersPage";
 import OrderSuccessPage from "../pages/OrderSuccessPage";
 import ProtectedRoute from "./ProtectedRoute";
+import ShippingPage from "../pages/ShippingPage";
+import PrivacyPage from "../pages/PrivacyPage";
+import TermsPage from "../pages/TermsPage";
+import LegalNoticePage from "../pages/LegalNoticePage";
+import FAQPage from "../pages/FAQPage";
 
 const AppRoutes = () => {
   const router = createBrowserRouter([
@@ -66,6 +71,20 @@ const AppRoutes = () => {
           path: "/order-success/:id",
           element: <OrderSuccessPage />,
         },
+        {
+          path: "/shipping",
+          element: <ShippingPage />,
+        },
+        {
+          path: "/privacy",
+          element: <PrivacyPage />,
+        },
+        {
+          path: "/terms",
+          element: <TermsPage />,
+        },
+        { path: "/legal", element: <LegalNoticePage /> },
+        { path: "/faq", element: <FAQPage /> },
       ],
     },
   ]);

@@ -7,18 +7,31 @@ import ProductsGrid from "../../components/shop/ProductsGrid";
 import SearchBox from "../../components/shop/SearchBox";
 import CategoryTabs from "../../components/shop/CategoryTabs";
 import SubcategoryFilter from "../../components/shop/SubcategoryFilter";
+import SubcategorySelectModal from "../../components/shop/SubcategorySelectModal";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { FiSliders, FiX, FiAlertCircle } from "react-icons/fi";
-import { useProducts } from "../../hooks/useProducts";
+import { useLocalProducts } from "../../hooks/useLocalProducts"; // TODO: swap to useProducts when backend is ready
 
 const PAGE_SIZE = 12;
 
 const ShopPage = () => {
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  // ── URL param: ?category=<id> ───────────────────────────────────────────
+  // ── URL params: ?category=<id>&type=his|her ──────────────────────────────
   const [searchParams] = useSearchParams();
   const categoryId = searchParams.get("category") ?? null;
+  const typeParam = searchParams.get("type") ?? null; // "his" | "her" | null
+
+  // Human-readable label shown in the header
+  const typeLabel =
+    typeParam === "his"
+      ? "His Collection"
+      : typeParam === "her"
+      ? "Her Collection"
+      : null;
+
+  // Show subcategory selector when: we're in category mode, no type chosen yet
+  const [showSubModal, setShowSubModal] = useState(false);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -31,12 +44,21 @@ const ShopPage = () => {
   const [collection, setCollection] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 999999]);
 
-  // Reset subcategory when category changes
-  useEffect(() => { setActiveSubcategory("all"); }, [categoryId]);
+  // Reset subcategory when category or type changes
+  useEffect(() => { setActiveSubcategory("all"); }, [categoryId, typeParam]);
 
-  const { products, loading, error, categories, subcategories } = useProducts(
+  const { products, loading, error, categories, subcategories } = useLocalProducts(
     categoryId ? { categoryId } : {}
   );
+
+  // Once products load, show subcategory selector if category has subcategories and no type selected
+  useEffect(() => {
+    if (categoryId && !typeParam && !loading && subcategories.length > 0) {
+      setShowSubModal(true);
+    } else {
+      setShowSubModal(false);
+    }
+  }, [categoryId, typeParam, loading, subcategories.length]);
 
   // When we're in category mode, derive the category name from the first product
   const categoryName = useMemo(() => {
@@ -53,8 +75,15 @@ const ShopPage = () => {
       list = list.filter((p) => p.category === activeCategory);
     }
 
-    // Subcategory filter (only in category mode)
-    if (categoryId && activeSubcategory !== "all") {
+    // ?type=his|her  — applied before any other subcategory filter
+    if (typeParam) {
+      list = list.filter(
+        (p) => p.subcategory?.toLowerCase() === typeParam.toLowerCase()
+      );
+    }
+
+    // Subcategory filter pill (only in category mode, when no type param)
+    if (categoryId && !typeParam && activeSubcategory !== "all") {
       list = list.filter((p) => p.subcategory === activeSubcategory);
     }
 
@@ -92,10 +121,10 @@ const ShopPage = () => {
     if (sort === "name-asc") list.sort((a, b) => a.name.localeCompare(b.name));
 
     return list;
-  }, [products, categoryId, activeCategory, activeSubcategory, collection, priceRange, search, sort]);
+  }, [products, categoryId, typeParam, activeCategory, activeSubcategory, collection, priceRange, search, sort]);
 
   // Reset pagination whenever filters change
-  useEffect(() => { setPage(1); }, [search, sort, activeCategory, activeSubcategory, collection, priceRange]);
+  useEffect(() => { setPage(1); }, [search, sort, typeParam, activeCategory, activeSubcategory, collection, priceRange]);
 
   const paginated = filtered.slice(0, page * PAGE_SIZE);
   const hasMore = paginated.length < filtered.length;
@@ -115,7 +144,17 @@ const ShopPage = () => {
 
   return (
     <div className="max-w-[1700px] mx-auto bg-white pb-14">
-      <ShopPageHeader categoryName={categoryName} />
+      {/* Subcategory selector — shown when entering a category with His/Her products */}
+      {showSubModal && (
+        <SubcategorySelectModal
+          categorySlug={categoryId}
+          categoryName={categoryName}
+          subcategories={subcategories}
+          onClose={() => setShowSubModal(false)}
+        />
+      )}
+
+      <ShopPageHeader categoryName={categoryName} typeLabel={typeLabel} />
 
       {/* Mobile: Filter toggle */}
       <div className="lg:hidden flex justify-end px-4 py-3 border-b border-gray-200">

@@ -7,6 +7,7 @@ import CartDrawer from "../components/cart/CartDrawer";
 import GuestBanner from "../components/ui/GuestBanner";
 import WishlistToast from "../components/ui/WishlistToast";
 import WhatsAppFAB from "../components/ui/WhatsAppFAB";
+import InstagramFAB from "../components/ui/InstagramFAB";
 
 const Layout = () => {
   return (
@@ -19,7 +20,8 @@ const Layout = () => {
       <CartToast />
       <CartDrawer />
       <WishlistToast />
-      <GuestBanner />
+      {/* <GuestBanner /> */}
+      <InstagramFAB />
       <WhatsAppFAB />
     </div>
   );

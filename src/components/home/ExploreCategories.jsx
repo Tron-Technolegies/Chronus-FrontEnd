@@ -1,138 +1,103 @@
-import React, { useEffect, useState } from "react";
-import { getCategories } from "../../api/product";
+import React, { useState } from "react";
 import CategoryIntroModal from "./CategoryIntroModal";
 
-const ExploreCategories = () => {
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+const categories = [
+  {
+    id: 1,
+    name: "Watches",
+    slug: "watches",
+    desc: "Luxury timepieces",
+    total_products: 24,
+    hasSubcategories: true,
+    description:
+      "Discover the finest watch collection, meticulously curated for the discerning collector. Each timepiece reflects Swiss precision and refined elegance.",
+  },
+  {
+    id: 2,
+    name: "Fine Jewelry",
+    slug: "bijouterie",
+    desc: "Premium precious jewelry",
+    total_products: 18,
+    hasSubcategories: true,
+    description:
+      "From diamond necklaces to signet rings — our jewelry collection is crafted from the world's finest gemstones and precious metals.",
+  },
+  {
+    id: 3,
+    name: "Handbags",
+    slug: "accessories",
+    desc: "Premium leather bags",
+    total_products: 12,
+    hasSubcategories: true,
+    description:
+      "From velvet evening clutches to executive briefcases — our bag collection merges functionality with luxury craftsmanship.",
+  },
+  {
+    id: 4,
+    name: "Fine Art",
+    slug: "fine-art",
+    desc: "Exclusive art collection",
+    total_products: 9,
+    hasSubcategories: false,
+    description:
+      "A curated selection of original works and limited-edition prints from celebrated contemporary artists.",
+  },
+  {
+    id: 5,
+    name: "Winter Collection",
+    slug: "winter-collection",
+    desc: "Seasonal luxury items",
+    total_products: 14,
+    hasSubcategories: true,
+    description:
+      "Wrap yourself in warmth and luxury. Our winter collection is crafted from the finest cashmere, wool, and exotic furs.",
+  },
+  {
+    id: 6,
+    name: "Burgundy Room",
+    slug: "burgundy-room",
+    desc: "Curated premium pieces",
+    total_products: 7,
+    hasSubcategories: false,
+    description:
+      "An intimate selection of our most exceptional pieces — each one a statement of absolute luxury.",
+  },
+];
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await getCategories();
-        setCategories(res.data.categories);
-      } catch (err) {
-        console.error("Failed to fetch categories");
-      }
-    };
-    fetchCategories();
-  }, []);
+export default function ExploreCategories() {
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   return (
     <>
-      <section className="bg-white py-16 md:py-24 px-4 sm:px-6 md:px-[6%] font-sans">
-        <div className="text-center mb-10 md:mb-14">
-          <span className="block text-[11px] tracking-[1.5px] text-[#181817] mb-3 uppercase inter">
-            OUR COLLECTIONS
-          </span>
-          <h2 className="text-3xl md:text-4xl font-normal text-black font-[Bastoni]">
-            Explore Categories
-          </h2>
+      <section className="py-20 px-6 md:px-[6%]">
+        <div className="text-center mb-14">
+          <h2 className="text-4xl tracking-wide font-[Bastoni]">Explore Categories</h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto">
-          {Array.isArray(categories) &&
-            categories.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => setSelectedCategory(item)}
-                className="relative rounded-[28px] overflow-hidden cursor-pointer w-full
-                           transition-transform duration-300 hover:scale-[1.02] hover:shadow-2xl"
-                style={{
-                  height: "240px",
-                  background:
-                    "linear-gradient(160deg, #0d1021 0%, #111528 40%, #3d0a14 75%, #6b0f1a 100%)",
-                  boxShadow: "0 20px 60px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.2)",
-                  padding: "24px",
-                }}
-              >
-                {/* Bottom glow */}
-                <div
-                  className="absolute bottom-0 left-0 right-0 pointer-events-none"
-                  style={{
-                    height: "55%",
-                    background:
-                      "radial-gradient(ellipse at 50% 120%, rgba(180,20,40,0.55) 0%, transparent 70%)",
-                  }}
-                />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
+          {categories.map((category) => (
+            <div
+              key={category.id}
+              onClick={() => setSelectedCategory(category)}
+              className="cursor-pointer group transition-all duration-300 hover:-translate-y-1 w-full max-w-[380px]"
+            >
+              {/* Thin Gold Border */}
+              <div className="p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] hover:bg-gradient-to-r hover:from-[#ffd058] hover:via-[#ffca56] hover:to-[#ffe2a4]">
+                {/* Card */}
+                <div className="bg-[#3d1613] group-hover:bg-[#32110f] transition-all duration-300 rounded-sm w-full min-h-[180px] md:min-h-[200px] flex flex-col justify-center items-center shadow-md shadow-[#4c302f8a] text-center px-6 group-hover:shadow-lg font-[cormorant-garamond]">
+                  <h3 className="text-[#F5F1E8] text-2xl md:text-3xl tracking-wide mb-3">
+                    {category.name}
+                  </h3>
 
-                {/* Top vignette */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background:
-                      "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 40%)",
-                  }}
-                />
+                  <div className="w-16 h-[1px] bg-[#C6A75D] mb-3"></div>
 
-                {/* Badge */}
-                <div
-                  className="absolute flex items-center justify-center z-10"
-                  style={{
-                    top: "20px",
-                    left: "20px",
-                    width: "42px",
-                    height: "42px",
-                    borderRadius: "50%",
-                    background: "rgba(255,255,255,0.08)",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                  }}
-                >
-                  <span style={{ color: "white", fontSize: "16px", lineHeight: 1 }}>✦</span>
-                </div>
+                  <p className="text-[#e8ddd0] text-sm tracking-wide">{category.desc}</p>
 
-                {/* Image — fixed to right side */}
-                {item.image && (
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="absolute object-contain pointer-events-none z-[5]
-                               transition-transform duration-500 group-hover:scale-105"
-                    style={{
-                      width: "52%",
-                      height: "100%",
-                      top: "-5%",
-                      right: "-10%",
-                      filter: "drop-shadow(0 12px 32px rgba(0,0,0,0.55))",
-                    }}
-                  />
-                )}
-
-                {/* Text content */}
-                <div className="relative z-10 h-full flex flex-col justify-end">
-                  <div className="mb-auto pt-14">
-                    <h3
-                      className="text-white font-semibold mb-2"
-                      style={{ fontSize: "26px", lineHeight: 1.2, letterSpacing: "-0.3px" }}
-                    >
-                      {item.name}
-                    </h3>
-                    <p
-                      className="text-sm leading-relaxed"
-                      style={{ color: "rgba(255,255,255,0.6)", maxWidth: "55%" }}
-                    >
-                      {item.description ||
-                        "Lorem ipsum dolor sit amet consectetur adipisicing elit."}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between mt-6">
-                    <span
-                      className="text-sm font-semibold tracking-wide"
-                      style={{ color: "rgba(255,255,255,0.85)" }}
-                    >
-                      {item.product_count != null ? `${item.product_count} items` : "Explore"}
-                    </span>
-                    <span
-                      className="text-xl leading-none"
-                      style={{ color: "rgba(255,255,255,0.7)" }}
-                    >
-                      →
-                    </span>
-                  </div>
+                  <span className="text-[#d2b88c] text-xs mt-2">{category.total_products} items</span>
                 </div>
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       </section>
 
@@ -144,6 +109,4 @@ const ExploreCategories = () => {
       )}
     </>
   );
-};
-
-export default ExploreCategories;
+}

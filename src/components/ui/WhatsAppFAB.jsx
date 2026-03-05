@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { IoLogoWhatsapp } from "react-icons/io";
 
-const WA_NUMBER = "971569778080"; // no + sign for wa.me
+const WA_NUMBER = "971569778080";
 const WA_MESSAGE = encodeURIComponent(
-  "Hello,\n\nI would like to know more about Chronos Gallery products and services.\n\nThank you."
+  "Hello,\n\nI would like to know more about Chronos Gallery products and services.\n\nThank you.",
 );
 
 export default function WhatsAppFAB() {

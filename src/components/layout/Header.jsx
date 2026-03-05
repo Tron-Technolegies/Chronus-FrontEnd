@@ -19,7 +19,6 @@ const Header = () => {
   const isHome = location.pathname === "/";
   const isLoggedIn = !!localStorage.getItem("accessToken");
 
- 
   useEffect(() => {
     if (!isHome) {
       setScrolled(true);
@@ -34,11 +33,9 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHome]);
 
-
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
   }, [menuOpen]);
-
 
   const scrollToSection = (id) => {
     if (!isHome) {
@@ -50,8 +47,7 @@ const Header = () => {
     if (element) {
       const headerOffset = 70;
       const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition =
-        elementPosition + window.pageYOffset - headerOffset;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
       window.scrollTo({
         top: offsetPosition,
@@ -59,7 +55,6 @@ const Header = () => {
       });
     }
   };
-
 
   const handleNavClick = (link) => {
     setMenuOpen(false);
@@ -79,12 +74,11 @@ const Header = () => {
     { label: "Collections", path: "/shop" },
     { label: "About", section: "about" },
     { label: "Contact", section: "contact" },
-    
   ];
 
   return (
     <header
-      className="fixed top-0 left-0 w-full z-50 h-16 transition-all duration-300 text-white"
+      className="fixed top-0 left-0 w-full z-50 h-16 transition-all duration-300 text-[#F7F1E7]"
       style={{
         backgroundColor: isHome && !scrolled ? "transparent" : HEADER_COLOR,
       }}
