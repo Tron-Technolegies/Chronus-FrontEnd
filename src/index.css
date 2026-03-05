@@ -30,14 +30,11 @@
   font-style: normal;
 }
 
-
 .bayon-regular {
   font-family: "Bayon", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
-
-
 
 .inter {
   font-family: "Inter", sans-serif;
@@ -45,6 +42,11 @@
   font-style: normal;
 }
 
+.cormorant-garamond {
+  font-family: "Cormorant Garamond", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
 
 @font-face {
   font-family: "Bastoni";
@@ -54,34 +56,30 @@
   font-display: swap;
 }
 
-
 /*global colors*/
-:root{
-  --primary-color : #3D1613;
-  --secondary-color : #FFCA0A;  
-   
-  
+:root {
+  --primary-color: #3d1613;
+  --secondary-color: #ffca0a;
 }
 
 /* Utility: hide scrollbar while still allowing scroll */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE / Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none; /* IE / Edge */
+  scrollbar-width: none; /* Firefox */
 }
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;             /* Chrome / Safari / Opera */
+  display: none; /* Chrome / Safari / Opera */
 }
 
 /* Prevent horizontal overflow globally */
-html, body {
+html,
+body {
   overflow-x: hidden;
 }
 
 /* Global cursor pointer on interactive elements */
-button, a, [role="button"] {
+button,
+a,
+[role="button"] {
   cursor: pointer;
 }
-
-
-
-

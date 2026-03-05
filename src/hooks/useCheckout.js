@@ -28,18 +28,13 @@ export function useCheckout() {
 
         // Step 3: Create payment intent
         let secret = null;
-        try {
-          const paymentRes = await createPaymentIntentAPI(id);
-          secret = paymentRes.data?.client_secret;
-          if (secret) {
-            setClientSecret(secret);
-            sessionStorage.setItem("payment_client_secret", secret);
-          }
-        } catch (payErr) {
-          console.warn("Payment intent failed:", payErr?.message);
-        }
+        const paymentRes = await createPaymentIntentAPI(id);
+        secret = paymentRes.data?.client_secret;
+        if (!secret) throw new Error("Payment setup failed. Please try again.");
+        setClientSecret(secret);
+        sessionStorage.setItem("payment_client_secret", secret);
 
-        // Step 4: Clear local cart
+        // Step 4: Clear local cart (only after payment is fully set up)
         clearCart();
 
         // NOTE: We do NOT navigate here.

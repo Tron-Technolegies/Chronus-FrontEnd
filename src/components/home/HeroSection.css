@@ -4,8 +4,7 @@
   width: 100%;
 
   background:
-    radial-gradient(circle at right, rgba(255, 0, 0, 0.35), rgba(0, 0, 0, 0.295) 60%),
-    url(/herosection.jpg);
+    /* radial-gradient(circle at right, rgba(255, 0, 0, 0.35), rgba(0, 0, 0, 0.295) 60%), */ url(/hero-img.jpg);
 
   background-size: cover;
   background-position: center;
@@ -26,12 +25,8 @@
   color: white;
 }
 
-.hero-badge {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 12px;
-  padding: 6px 16px;
-  border-radius: 30px;
+.hero-img {
+  height: 25px;
   margin-bottom: 26px;
 }
 
@@ -44,10 +39,6 @@
   word-break: break-word;
 }
 
-.herosection-contents h2 span {
-  color: gold;
-}
-
 .herosection-contents p {
   font-size: 15px;
   line-height: 1.7;
@@ -56,8 +47,7 @@
 }
 
 .hero-cta {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: #89170f;
   color: white;
   padding: 12px 30px;
   border-radius: 30px;
@@ -67,6 +57,7 @@
 .hero-cta:hover {
   background: white;
   color: black;
+  transform: scale(1.05);
 }
 
 .hero-limited-edition-watch {
@@ -124,6 +115,9 @@
   .herosection-contents p {
     font-size: 14px;
   }
+  .hero-img {
+    height: 20px;
+  }
 }
 
 /* ── Mobile (≤ 480px) ──────────────────────────── */
@@ -153,6 +147,9 @@
   .hero-cta {
     padding: 10px 24px;
     font-size: 13px;
+  }
+  .hero-img {
+    height: 14px;
   }
 }
 

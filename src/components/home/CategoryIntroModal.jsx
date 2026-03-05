@@ -8,7 +8,7 @@ const CategoryIntroModal = ({ category, onClose }) => {
 
   const handleExplore = () => {
     onClose();
-    navigate(`/shop?category=${category.id}`);
+    navigate(`/shop?category=${category.slug}`);
   };
 
   const handleBackdrop = (e) => {
@@ -16,10 +16,13 @@ const CategoryIntroModal = ({ category, onClose }) => {
   };
 
   return (
-    /* Full-screen backdrop with backdrop-blur — no dark overlay */
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
-      style={{ backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", background: "rgba(255,255,255,0.15)" }}
+      style={{
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        background: "rgba(0,0,0,0.4)",
+      }}
       onClick={handleBackdrop}
     >
       {/* Modal card */}
@@ -27,9 +30,10 @@ const CategoryIntroModal = ({ category, onClose }) => {
         className="relative w-full max-w-3xl flex overflow-hidden"
         style={{
           borderRadius: "4px",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.15)",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)",
           maxHeight: "90vh",
         }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
@@ -40,55 +44,105 @@ const CategoryIntroModal = ({ category, onClose }) => {
           ✕
         </button>
 
-        {/* LEFT — image (40% width) */}
-        <div className="w-[42%] shrink-0 relative bg-gray-100 overflow-hidden">
-          {category.image ? (
-            <img
-              src={category.image}
-              alt={category.name}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div
-              className="w-full h-full flex items-center justify-center"
-              style={{
-                background:
-                  "linear-gradient(160deg, #0d1021 0%, #111528 40%, #3d0a14 75%, #6b0f1a 100%)",
-                minHeight: "340px",
-              }}
-            >
-              <span className="text-white/30 text-5xl">✦</span>
-            </div>
-          )}
+        {/* LEFT — decorative panel */}
+        <div className="w-[42%] shrink-0 hidden sm:flex">
+          <div
+            className="w-full h-full flex flex-col items-center justify-center gap-3"
+            style={{
+              background:
+                "linear-gradient(160deg, #0d1021 0%, #111528 40%, #3d0a14 75%, #6b0f1a 100%)",
+              minHeight: "360px",
+            }}
+          >
+            {category.image ? (
+              <img
+                src={category.image}
+                alt={category.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <>
+                <span style={{ color: "rgba(255,255,255,0.2)", fontSize: "48px" }}>✦</span>
+                <p
+                  style={{
+                    color: "rgba(255,255,255,0.45)",
+                    fontSize: "11px",
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    textAlign: "center",
+                    padding: "0 24px",
+                    fontFamily: "inter, sans-serif",
+                  }}
+                >
+                  {category.name}
+                </p>
+              </>
+            )}
+          </div>
         </div>
 
         {/* RIGHT — text panel */}
-        <div className="flex-1 bg-white flex flex-col justify-center px-8 py-10 sm:px-10 sm:py-12">
-          {/* Description in all-caps tracking style */}
+        <div
+          className="flex-1 flex flex-col justify-center overflow-y-auto"
+          style={{ background: "#ffffff", padding: "44px 40px" }}
+        >
+          {/* Title */}
+          <h2
+            style={{
+              fontSize: "30px",
+              letterSpacing: "0.04em",
+              color: "#1a0a0a",
+              marginBottom: "14px",
+              fontFamily: "cormorant-garamond, serif",
+              fontWeight: 400,
+            }}
+          >
+            {category.name}
+          </h2>
+
+          {/* Gold rule */}
+          <div
+            style={{
+              width: "44px",
+              height: "1px",
+              background: "linear-gradient(to right, #b8964c, #e0c78a)",
+              marginBottom: "22px",
+            }}
+          />
+
+          {/* Description */}
           <p
-            className="text-gray-800 text-xs sm:text-sm leading-7 tracking-[0.12em] uppercase font-medium mb-8"
-            style={{ fontFamily: "inter, sans-serif" }}
+            style={{
+              color: "#555",
+              fontSize: "13px",
+              lineHeight: "1.9",
+              letterSpacing: "0.06em",
+              marginBottom: "36px",
+              fontFamily: "inter, sans-serif",
+            }}
           >
             {category.description?.trim()
               ? category.description
               : `Discover the finest ${category.name} collection, meticulously curated for the discerning collector. Each piece reflects timeless craftsmanship and refined elegance.`}
           </p>
 
-          {/* CTA */}
-          <div className="flex flex-col sm:flex-row items-start gap-3">
-            <button
-              onClick={handleExplore}
-              className="bg-[#F5C518] hover:brightness-95 transition px-7 py-3 text-xs tracking-[0.2em] uppercase font-semibold"
-            >
-              Explore Products
-            </button>
-            {/* <button
-              onClick={onClose}
-              className="text-xs tracking-widest text-gray-400 hover:text-black transition uppercase underline underline-offset-4"
-            >
-              Maybe later
-            </button> */}
-          </div>
+          <button
+            onClick={handleExplore}
+            style={{
+              alignSelf: "flex-start",
+              background: "#F5C518",
+              padding: "12px 32px",
+              fontSize: "11px",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              fontWeight: 700,
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "inter, sans-serif",
+            }}
+          >
+            Explore Collection
+          </button>
         </div>
       </div>
     </div>

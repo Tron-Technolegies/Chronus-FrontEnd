@@ -27,7 +27,7 @@ const features = [
 
 const ExclusiveMembership = () => {
   return (
-    <section className="bg-white py-16 sm:py-28 px-4 sm:px-[6%] md:px-[8%]">
+    <section className="bg-white py-6 sm:py-28 px-4 sm:px-[6%] md:px-[8%]">
       <div className="text-center max-w-3xl mx-auto">
         <span className="block text-[11px] tracking-[1.5px] text-red-600 mb-4 inter">
           EXCLUSIVE MEMBERSHIP
@@ -38,8 +38,8 @@ const ExclusiveMembership = () => {
         </h2>
 
         <p className="text-sm text-gray-500 leading-relaxed mb-10 inter">
-          Gain access to private viewings, first looks at rare acquisitions, and
-          exclusive events in the world’s finest venues.
+          Gain access to private viewings, first looks at rare acquisitions, and exclusive events in
+          the world’s finest venues.
         </p>
 
         <button

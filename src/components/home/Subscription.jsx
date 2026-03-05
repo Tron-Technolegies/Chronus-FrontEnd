@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FiSend } from "react-icons/fi";
-import { sendEnquiryMessage } from "../../utils/whatsApp"
+import { sendEnquiryMessage } from "../../utils/whatsApp";
 
 const Subscription = () => {
   const [email, setEmail] = useState("");
@@ -23,7 +23,7 @@ const Subscription = () => {
   };
 
   return (
-    <section className="bg-white py-16 sm:py-28 px-4 sm:px-[6%] md:px-[8%]">
+    <section className="bg-white py-10 sm:py-28 px-4 sm:px-[6%] md:px-[8%]">
       <div className="max-w-3xl mx-auto text-center">
         <span className="block text-[11px] tracking-[1.5px] text-gray-500 mb-4 inter">
           STAY CONNECTED
@@ -34,8 +34,7 @@ const Subscription = () => {
         </h2>
 
         <p className="text-sm text-gray-500 leading-relaxed mb-10 inter">
-          Be the first to know about new acquisitions, private sales, and
-          exclusive events.
+          Be the first to know about new acquisitions, private sales, and exclusive events.
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-2">
@@ -49,9 +48,7 @@ const Subscription = () => {
             }}
             className={`w-full sm:w-[320px] px-4 py-3 text-sm bg-gray-100 border rounded-md focus:outline-none focus:ring-1 inter
               ${
-                error
-                  ? "border-red-400 focus:ring-red-400"
-                  : "border-gray-200 focus:ring-gray-400"
+                error ? "border-red-400 focus:ring-red-400" : "border-gray-200 focus:ring-gray-400"
               }`}
           />
 
@@ -64,15 +61,12 @@ const Subscription = () => {
           </button>
         </div>
 
-        
-        {error && (
-          <p className="text-xs text-(--primary-color) mt-1 inter">{error}</p>
-        )}
+        {error && <p className="text-xs text-(--primary-color) mt-1 inter">{error}</p>}
 
         <p className="text-[11px] text-gray-400 mt-6 inter">
           By subscribing, you agree to our{" "}
-          <span className="underline cursor-pointer">Privacy Policy</span> and
-          consent to receive updates.
+          <span className="underline cursor-pointer">Privacy Policy</span> and consent to receive
+          updates.
         </p>
       </div>
     </section>
