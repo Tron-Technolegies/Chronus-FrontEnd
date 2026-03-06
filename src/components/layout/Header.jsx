@@ -164,7 +164,7 @@ const Header = () => {
       {/* ================= MOBILE MENU ================= */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-50 flex flex-col text-white"
+          className="fixed inset-0 z-50 flex flex-col text-[#F7F1E7]"
           style={{ backgroundColor: HEADER_COLOR }}
         >
           <div className="flex items-center justify-between px-5 h-16 border-b border-white/10">

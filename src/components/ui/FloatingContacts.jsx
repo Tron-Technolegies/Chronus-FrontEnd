@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { FaInstagram } from "react-icons/fa";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
 
 export default function FloatingContacts() {
-  const [open, setOpen] = useState(false); // desktop visible by default
   const [isMobile, setIsMobile] = useState(false);
   const WA_NUMBER = "971569778080";
   const WA_MESSAGE = encodeURIComponent(
@@ -14,8 +12,6 @@ export default function FloatingContacts() {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-
-      setOpen(!mobile);
     };
 
     handleResize();
@@ -26,7 +22,7 @@ export default function FloatingContacts() {
   const containerStyle = {
     position: "fixed",
     bottom: isMobile ? "20px" : "60px",
-    right: "0",
+    right: isMobile ? "10px" : "0",
     zIndex: 999,
     display: "flex",
     flexDirection: "row",
@@ -36,37 +32,20 @@ export default function FloatingContacts() {
   const buttonGroupStyle = {
     display: "flex",
     flexDirection: "column",
-    gap: "12px",
+    gap: isMobile ? "12px" : "12px",
     transition: "all 0.3s ease",
-    opacity: open ? 1 : 0,
-    pointerEvents: open ? "auto" : "none",
-    transform: open ? "translateX(0)" : "translateX(-120%)",
-    marginRight: isMobile && open ? "12px" : "0",
+    marginRight: "0",
   };
 
   const iconBaseStyle = {
-    width: "48px",
-    height: "48px",
+    width: isMobile ? "40px" : "48px",
+    height: isMobile ? "40px" : "48px",
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     color: "white",
     boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-  };
-
-  const toggleButtonStyle = {
-    width: "48px",
-    height: "48px",
-    borderRadius: "50%",
-    background: "#89170f",
-    color: "white",
-    border: "none",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
   };
 
   return (
@@ -82,7 +61,7 @@ export default function FloatingContacts() {
             background: "linear-gradient(135deg,#405DE6,#833AB4,#E1306C,#FCAF45)",
           }}
         >
-          <FaInstagram size={24} />
+          <FaInstagram size={isMobile ? 20 : 24} />
         </a>
 
         <a
@@ -91,16 +70,9 @@ export default function FloatingContacts() {
           rel="noreferrer"
           style={{ ...iconBaseStyle, background: "#25D366" }}
         >
-          <IoLogoWhatsapp size={26} />
+          <IoLogoWhatsapp size={isMobile ? 22 : 26} />
         </a>
       </div>
-
-      {/* Toggle Button - only on mobile */}
-      {isMobile && (
-        <button onClick={() => setOpen(!open)} style={toggleButtonStyle}>
-          {open ? <FaChevronLeft /> : <FaChevronRight />}
-        </button>
-      )}
     </div>
   );
 }

@@ -1,71 +1,96 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getCategories, getProductsByCategory } from "../../api/product";
 import CategoryIntroModal from "./CategoryIntroModal";
+import SubcategorySelectModal from "../shop/SubcategorySelectModal";
 
-const categories = [
-  {
-    id: 1,
-    name: "Watches",
-    slug: "watches",
-    desc: "Luxury timepieces",
-    total_products: 24,
-    hasSubcategories: true,
-    description:
-      "Discover the finest watch collection, meticulously curated for the discerning collector. Each timepiece reflects Swiss precision and refined elegance.",
-  },
-  {
-    id: 2,
-    name: "Travel Bags",
-    slug: "bijouterie",
-    desc: "Premium precious jewelry",
-    total_products: 18,
-    hasSubcategories: true,
-    description:
-      "From diamond necklaces to signet rings — our jewelry collection is crafted from the world's finest gemstones and precious metals.",
-  },
-  {
-    id: 3,
-    name: "Bags",
-    slug: "accessories",
-    desc: "Premium leather bags",
-    total_products: 12,
-    hasSubcategories: true,
-    description:
-      "From velvet evening clutches to executive briefcases — our bag collection merges functionality with luxury craftsmanship.",
-  },
-  {
-    id: 4,
-    name: "Fine Art",
-    slug: "fine-art",
-    desc: "Exclusive art collection",
-    total_products: 9,
-    hasSubcategories: false,
-    description:
-      "A curated selection of original works and limited-edition prints from celebrated contemporary artists.",
-  },
-  {
-    id: 5,
-    name: "Winter Collection",
-    slug: "winter-collection",
-    desc: "Seasonal luxury items",
-    total_products: 14,
-    hasSubcategories: true,
-    description:
-      "Wrap yourself in warmth and luxury. Our winter collection is crafted from the finest cashmere, wool, and exotic furs.",
-  },
-  {
-    id: 6,
-    name: "Burgundy Room",
-    slug: "burgundy-room",
-    desc: "Curated premium pieces",
-    total_products: 7,
-    hasSubcategories: false,
-    description:
-      "An intimate selection of our most exceptional pieces — each one a statement of absolute luxury.",
-  },
-];
+const getSummaryLine = (description, name) => {
+  const text = description?.trim();
+  if (!text) return `Explore our ${name} collection.`;
+
+  const firstSentence = text.match(/[^.!?]+[.!?]?/u)?.[0]?.trim();
+  return firstSentence || text;
+};
 
 export default function ExploreCategories() {
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [introCategory, setIntroCategory] = useState(null);
+  const [subcategoryModalData, setSubcategoryModalData] = useState(null);
+  const defaultSubcategories = [
+    { id: "his", name: "His", slug: "his" },
+    { id: "her", name: "Her", slug: "her" },
+  ];
+  const cardWrapperClass =
+    "cursor-pointer group transition-all duration-300 hover:-translate-y-1 w-full max-w-[380px]";
+  const cardBorderClass =
+    "p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] hover:bg-gradient-to-r hover:from-[#ffd058] hover:via-[#ffca56] hover:to-[#ffe2a4]";
+  const cardBodyClass =
+    "bg-[#3d1613] group-hover:bg-[#32110f] transition-all duration-300 rounded-sm w-full min-h-[130px] sm:min-h-[150px] flex flex-col justify-center items-center shadow-md shadow-[#4c302f8a] text-center px-3 sm:px-6 group-hover:shadow-lg font-[cormorant-garamond]";
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadCategories = async () => {
+      try {
+        const res = await getCategories();
+        const raw = res.data?.categories ?? [];
+        if (!mounted) return;
+        setCategories(Array.isArray(raw) ? raw : []);
+      } catch {
+        if (!mounted) return;
+        setCategories([]);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    loadCategories();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const findHisHerSubcategories = (products) => {
+    const subcategoryMap = new Map();
+
+    for (const product of products) {
+      const rawName = product?.subcategory?.name?.trim();
+      if (!rawName) continue;
+
+      const slug = rawName.toLowerCase();
+      const isHisOrHer = slug === "his" || slug === "her";
+      if (!isHisOrHer || subcategoryMap.has(slug)) continue;
+
+      subcategoryMap.set(slug, { id: slug, name: rawName, slug });
+    }
+
+    return [...subcategoryMap.values()];
+  };
+
+  const handleExploreFromIntro = async (category) => {
+    setIntroCategory(null);
+
+    try {
+      const res = await getProductsByCategory(category.id);
+      const products = res.data?.products ?? [];
+      const detectedSubcategories = findHisHerSubcategories(products);
+      const subcategories =
+        detectedSubcategories.length > 0 ? detectedSubcategories : defaultSubcategories;
+
+      setSubcategoryModalData({
+        id: category.id,
+        name: category.name,
+        subcategories,
+      });
+      return;
+    } catch {
+      setSubcategoryModalData({
+        id: category.id,
+        name: category.name,
+        subcategories: defaultSubcategories,
+      });
+    }
+  };
 
   return (
     <>
@@ -75,27 +100,23 @@ export default function ExploreCategories() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
+          {!loading && categories.length === 0 && (
+            <p className="text-sm text-[#e8ddd0] col-span-full text-center">No categories available.</p>
+          )}
+
           {categories.map((category) => (
             <div
               key={category.id}
-              onClick={() => setSelectedCategory(category)}
-              className="cursor-pointer group transition-all duration-300 hover:-translate-y-1 w-full max-w-[380px]"
+              onClick={() => setIntroCategory(category)}
+              className={cardWrapperClass}
             >
-              {/* Thin Gold Border */}
-              <div className="p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] hover:bg-gradient-to-r hover:from-[#ffd058] hover:via-[#ffca56] hover:to-[#ffe2a4]">
-                {/* Card */}
-                <div className="bg-[#3d1613] group-hover:bg-[#32110f] transition-all duration-300 rounded-sm w-full min-h-[150px] md:min-h-[150px] flex flex-col justify-center items-center shadow-md shadow-[#4c302f8a] text-center px-6 group-hover:shadow-lg font-[cormorant-garamond]">
-                  <h3 className="text-[#F5F1E8] text-2xl md:text-3xl tracking-wide mb-3">
-                    {category.name}
-                  </h3>
+              <div className={cardBorderClass}>
+                <div className={cardBodyClass}>
+                  <h3 className="text-[#F5F1E8] text-xl sm:text-2xl md:text-3xl tracking-wide mb-2 sm:mb-3">{category.name}</h3>
 
-                  <div className="w-16 h-[1px] bg-[#C6A75D] mb-3"></div>
+                  <div className="w-10 sm:w-16 h-[1px] bg-[#C6A75D] mb-2 sm:mb-3"></div>
 
-                  <p className="text-[#e8ddd0] text-sm tracking-wide">{category.desc}</p>
-
-                  {/* <span className="text-[#d2b88c] text-xs mt-2">
-                    {category.total_products} items
-                  </span> */}
+                  <p className="text-[#e8ddd0] text-xs sm:text-sm tracking-wide">{getSummaryLine(category.description, category.name)}</p>
                 </div>
               </div>
             </div>
@@ -103,8 +124,21 @@ export default function ExploreCategories() {
         </div>
       </section>
 
-      {selectedCategory && (
-        <CategoryIntroModal category={selectedCategory} onClose={() => setSelectedCategory(null)} />
+      {introCategory && (
+        <CategoryIntroModal
+          category={introCategory}
+          onClose={() => setIntroCategory(null)}
+          onExplore={handleExploreFromIntro}
+        />
+      )}
+
+      {subcategoryModalData && (
+        <SubcategorySelectModal
+          categorySlug={subcategoryModalData.id}
+          categoryName={subcategoryModalData.name}
+          subcategories={subcategoryModalData.subcategories}
+          onClose={() => setSubcategoryModalData(null)}
+        />
       )}
     </>
   );

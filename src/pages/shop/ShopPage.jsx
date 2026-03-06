@@ -8,9 +8,9 @@ import SearchBox from "../../components/shop/SearchBox";
 import CategoryTabs from "../../components/shop/CategoryTabs";
 import SubcategoryFilter from "../../components/shop/SubcategoryFilter";
 import SubcategorySelectModal from "../../components/shop/SubcategorySelectModal";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { FiSliders, FiX, FiAlertCircle } from "react-icons/fi";
-import { useLocalProducts } from "../../hooks/useLocalProducts"; // TODO: swap to useProducts when backend is ready
+import { useProducts } from "../../hooks/useProducts";
 
 const PAGE_SIZE = 12;
 
@@ -18,8 +18,8 @@ const ShopPage = () => {
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   // ── URL params: ?category=<id>&type=his|her ──────────────────────────────
-  const [searchParams] = useSearchParams();
-  const categoryId = searchParams.get("category") ?? null;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryParam = searchParams.get("category") ?? null;
   const typeParam = searchParams.get("type") ?? null; // "his" | "her" | null
 
   // Human-readable label shown in the header
@@ -45,33 +45,61 @@ const ShopPage = () => {
   const [priceRange, setPriceRange] = useState([0, 999999]);
 
   // Reset subcategory when category or type changes
-  useEffect(() => { setActiveSubcategory("all"); }, [categoryId, typeParam]);
+  useEffect(() => { setActiveSubcategory("all"); }, [categoryParam, typeParam]);
 
-  const { products, loading, error, categories, subcategories } = useLocalProducts(
-    categoryId ? { categoryId } : {}
+  const handleSubcategoryChange = (nextValue) => {
+    if (!categoryParam) {
+      setActiveSubcategory(nextValue);
+      return;
+    }
+
+    const nextParams = new URLSearchParams(searchParams);
+    if (nextValue === "all") {
+      nextParams.delete("type");
+    } else {
+      nextParams.set("type", nextValue);
+    }
+    setSearchParams(nextParams);
+  };
+
+  const subcategoryActiveValue = categoryParam ? typeParam ?? "all" : activeSubcategory;
+  const hasTypeSwitchContext =
+    typeParam === "his" ||
+    typeParam === "her" ||
+    subcategories.some((s) => ["his", "her"].includes(String(s.slug).toLowerCase()));
+
+  const subcategoryOptions = hasTypeSwitchContext
+    ? [
+        { id: "his", name: "His", slug: "his" },
+        { id: "her", name: "Her", slug: "her" },
+      ]
+    : subcategories;
+
+  const { products, loading, error, categories, subcategories } = useProducts(
+    categoryParam ? { category: categoryParam, type: typeParam } : { type: typeParam },
   );
 
   // Once products load, show subcategory selector if category has subcategories and no type selected
   useEffect(() => {
-    if (categoryId && !typeParam && !loading && subcategories.length > 0) {
+    if (categoryParam && !typeParam && !loading && subcategories.length > 0) {
       setShowSubModal(true);
     } else {
       setShowSubModal(false);
     }
-  }, [categoryId, typeParam, loading, subcategories.length]);
+  }, [categoryParam, typeParam, loading, subcategories.length]);
 
   // When we're in category mode, derive the category name from the first product
   const categoryName = useMemo(() => {
-    if (!categoryId) return null;
+    if (!categoryParam) return null;
     return products[0]?.categoryName ?? null;
-  }, [categoryId, products]);
+  }, [categoryParam, products]);
 
   // ── Derived: filtered + sorted products ─────────────────────────────────
   const filtered = useMemo(() => {
     let list = [...products];
 
     // Category tab (only in global mode)
-    if (!categoryId && activeCategory !== "all") {
+    if (!categoryParam && activeCategory !== "all") {
       list = list.filter((p) => p.category === activeCategory);
     }
 
@@ -83,7 +111,7 @@ const ShopPage = () => {
     }
 
     // Subcategory filter pill (only in category mode, when no type param)
-    if (categoryId && !typeParam && activeSubcategory !== "all") {
+    if (categoryParam && !typeParam && activeSubcategory !== "all") {
       list = list.filter((p) => p.subcategory === activeSubcategory);
     }
 
@@ -121,7 +149,7 @@ const ShopPage = () => {
     if (sort === "name-asc") list.sort((a, b) => a.name.localeCompare(b.name));
 
     return list;
-  }, [products, categoryId, typeParam, activeCategory, activeSubcategory, collection, priceRange, search, sort]);
+  }, [products, categoryParam, typeParam, activeCategory, activeSubcategory, collection, priceRange, search, sort]);
 
   // Reset pagination whenever filters change
   useEffect(() => { setPage(1); }, [search, sort, typeParam, activeCategory, activeSubcategory, collection, priceRange]);
@@ -147,7 +175,7 @@ const ShopPage = () => {
       {/* Subcategory selector — shown when entering a category with His/Her products */}
       {showSubModal && (
         <SubcategorySelectModal
-          categorySlug={categoryId}
+          categorySlug={categoryParam}
           categoryName={categoryName}
           subcategories={subcategories}
           onClose={() => setShowSubModal(false)}
@@ -192,7 +220,7 @@ const ShopPage = () => {
 
         <main className="flex-1 min-w-0">
           {/* Category tabs — only shown in global shop mode */}
-          {!categoryId && (
+          {!categoryParam && (
             <div className="border-b border-t border-gray-200 px-4 sm:px-6 py-5 overflow-hidden">
               <CategoryTabs
                 categories={categories}
@@ -203,11 +231,11 @@ const ShopPage = () => {
           )}
 
           {/* Subcategory filter — only shown in category mode, auto-hides when empty */}
-          {categoryId && (
+          {categoryParam && (
             <SubcategoryFilter
-              subcategories={subcategories}
-              activeSubcategory={activeSubcategory}
-              setActiveSubcategory={setActiveSubcategory}
+              subcategories={subcategoryOptions}
+              activeSubcategory={subcategoryActiveValue}
+              setActiveSubcategory={handleSubcategoryChange}
             />
           )}
 
