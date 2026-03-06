@@ -60,6 +60,7 @@
 :root {
   --primary-color: #3d1613;
   --secondary-color: #ffca0a;
+  --off-white-color: #f7f1e7;
 }
 
 /* Utility: hide scrollbar while still allowing scroll */

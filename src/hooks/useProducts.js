@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { fetchProductsAPI, getProductsByCategory } from "../api/product";
+import { fetchProductsAPI } from "../api/product";
 
 /**
  * Normalises the backend product shape → the shape the UI expects.
@@ -23,6 +23,7 @@ const normalise = (p) => ({
   price: `$${Number(p.price).toLocaleString()}`,
   _rawPrice: Number(p.price),          // numeric, used for price filter / sort
   originalPrice: null,
+  image: p.image ?? null,
   images: [p.image, ...(p.gallery ?? [])].filter(Boolean),
   category: p.category?.name?.toLowerCase().replace(/\s+/g, "-") ?? "other",
   categoryName: p.category?.name ?? "Other",
@@ -34,6 +35,7 @@ const normalise = (p) => ({
   brandId: p.brand?.id ?? null,
   shortDesc: p.description?.slice(0, 80) ?? "",
   description: p.description ?? "",
+  specification: p.specification && typeof p.specification === "object" ? p.specification : {},
   stock: p.stock ?? 0,
   is_featured: p.is_featured ?? false,
   is_best_seller: p.is_best_seller ?? false,
@@ -45,11 +47,12 @@ const normalise = (p) => ({
 });
 
 /**
- * Fetches products from the API (optionally filtered by categoryId),
+ * Fetches products from the API (optionally filtered by URL params),
  * normalises them, and provides derived helpers for filter UIs.
  *
  * @param {object} [options]
- * @param {number|string|null} [options.categoryId] - When set, fetches only that category's products
+ * @param {number|string|null} [options.category] - category param sent to backend
+ * @param {string|null} [options.type] - type param sent to backend (his/her)
  *
  * Returns:
  *   products      – normalised list
@@ -60,7 +63,7 @@ const normalise = (p) => ({
  *   brands        – unique { id, name } list derived from products
  *   subcategories – unique non-null { id, name, slug } from products (for category pages)
  */
-export function useProducts({ categoryId = null } = {}) {
+export function useProducts({ category = null, type = null } = {}) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -69,9 +72,11 @@ export function useProducts({ categoryId = null } = {}) {
     try {
       setLoading(true);
       setError(null);
-      const res = categoryId
-        ? await getProductsByCategory(categoryId)
-        : await fetchProductsAPI();
+      const params = {};
+      if (category) params.category = category;
+      if (type) params.type = type;
+
+      const res = await fetchProductsAPI(params);
       const raw = res.data?.products ?? res.data ?? [];
       setProducts(Array.isArray(raw) ? raw.map(normalise) : []);
     } catch (err) {
@@ -81,7 +86,7 @@ export function useProducts({ categoryId = null } = {}) {
     } finally {
       setLoading(false);
     }
-  }, [categoryId]);
+  }, [category, type]);
 
   useEffect(() => {
     load();

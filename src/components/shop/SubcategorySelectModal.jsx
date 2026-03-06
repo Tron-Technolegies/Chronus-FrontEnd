@@ -15,6 +15,11 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories, onC
     navigate(`/shop?category=${categorySlug}&type=${type}`);
   };
 
+  const handleViewAll = () => {
+    onClose();
+    navigate(`/shop?category=${categorySlug}`);
+  };
+
   const hisEntry = subcategories.find(
     (s) => s.slug?.toLowerCase().includes("his") || s.name?.toLowerCase().includes("his"),
   );
@@ -25,6 +30,12 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories, onC
 
   const showHis = hisEntry || subcategories.length > 0;
   const showHer = herEntry || subcategories.length > 0;
+  const cardWrapperClass =
+    "cursor-pointer group transition-all duration-300 hover:-translate-y-1 w-full";
+  const cardBorderClass =
+    "p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] hover:bg-gradient-to-r hover:from-[#ffd058] hover:via-[#ffca56] hover:to-[#ffe2a4]";
+  const cardBodyClass =
+    "bg-[#3d1613] group-hover:bg-[#32110f] transition-all duration-300 rounded-sm w-full min-h-[130px] sm:min-h-[150px] flex flex-col justify-center items-center shadow-md shadow-[#4c302f8a] text-center px-3 sm:px-6 group-hover:shadow-lg font-[cormorant-garamond]";
 
   return (
     <div
@@ -60,7 +71,7 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories, onC
           cursor: "pointer",
         }}
       >
-        ✕
+        X
       </button>
 
       <div
@@ -111,78 +122,40 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories, onC
         />
 
         {/* Cards */}
-        <div className="flex gap-6 justify-center flex-wrap">
-          {/* HIS */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 max-w-[500px] mx-auto px-1">
           {showHis && (
             <div
               onClick={() => handleSelect("his")}
-              className="group cursor-pointer transition-transform duration-300 hover:-translate-y-1"
+              className={cardWrapperClass}
             >
-              <div className="p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] group-hover:from-[#ffd058] group-hover:via-[#ffca56] group-hover:to-[#ffe2a4] transition-all duration-300">
-                <div className="bg-[#3d1613] group-hover:bg-[#32110f] rounded-sm min-h-[180px] flex flex-col items-center justify-center px-6 py-8 gap-3 transition-colors duration-300">
-                  <h3
-                    style={{
-                      color: "#F5F1E8",
-                      fontSize: "24px",
-                      letterSpacing: "0.06em",
-                      fontFamily: "cormorant-garamond",
-                      fontWeight: 400,
-                    }}
-                  >
+              <div className={cardBorderClass}>
+                <div className={cardBodyClass}>
+                  <h3 className="text-[#F5F1E8] text-xl sm:text-2xl md:text-3xl tracking-wide mb-2 sm:mb-3">
                     His Collection
                   </h3>
 
-                  <div className="w-10 h-[1px] bg-[#C6A75D]" />
+                  <div className="w-10 sm:w-16 h-[1px] bg-[#C6A75D] mb-2 sm:mb-3"></div>
 
-                  <span
-                    style={{
-                      color: "#d2b88c",
-                      fontSize: "11px",
-                      letterSpacing: "0.18em",
-                      textTransform: "uppercase",
-                      fontFamily: "inter",
-                    }}
-                  >
-                    Explore →
-                  </span>
+                  <p className="text-[#e8ddd0] text-xs sm:text-sm tracking-wide">Explore</p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* HER */}
           {showHer && (
             <div
               onClick={() => handleSelect("her")}
-              className="group cursor-pointer transition-transform duration-300 hover:-translate-y-1"
+              className={cardWrapperClass}
             >
-              <div className="p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] group-hover:from-[#ffd058] group-hover:via-[#ffca56] group-hover:to-[#ffe2a4] transition-all duration-300">
-                <div className="bg-[#3d1613] group-hover:bg-[#32110f] rounded-sm min-h-[180px] flex flex-col items-center justify-center px-6 py-8 gap-3 transition-colors duration-300">
-                  <h3
-                    style={{
-                      color: "#F5F1E8",
-                      fontSize: "24px",
-                      letterSpacing: "0.06em",
-                      fontFamily: "cormorant-garamond",
-                      fontWeight: 400,
-                    }}
-                  >
+              <div className={cardBorderClass}>
+                <div className={cardBodyClass}>
+                  <h3 className="text-[#F5F1E8] text-xl sm:text-2xl md:text-3xl tracking-wide mb-2 sm:mb-3">
                     Her Collection
                   </h3>
 
-                  <div className="w-10 h-[1px] bg-[#C6A75D]" />
+                  <div className="w-10 sm:w-16 h-[1px] bg-[#C6A75D] mb-2 sm:mb-3"></div>
 
-                  <span
-                    style={{
-                      color: "#d2b88c",
-                      fontSize: "11px",
-                      letterSpacing: "0.18em",
-                      textTransform: "uppercase",
-                      fontFamily: "inter",
-                    }}
-                  >
-                    Explore →
-                  </span>
+                  <p className="text-[#e8ddd0] text-xs sm:text-sm tracking-wide">Explore</p>
                 </div>
               </div>
             </div>
@@ -191,7 +164,7 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories, onC
 
         {/* Skip */}
         <button
-          onClick={onClose}
+          onClick={handleViewAll}
           style={{
             marginTop: "28px",
             background: "none",

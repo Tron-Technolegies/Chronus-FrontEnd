@@ -36,6 +36,8 @@ const ProductDetailPage = () => {
           brand: p.brand?.name ?? "",
           shortDesc: p.description?.slice(0, 80) ?? "",
           description: p.description ?? "",
+          specification:
+            p.specification && typeof p.specification === "object" ? p.specification : {},
           stock: p.stock ?? 0,
           is_featured: p.is_featured ?? false,
           is_best_seller: p.is_best_seller ?? false,

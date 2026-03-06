@@ -5,9 +5,13 @@ import { Link } from "react-router-dom";
 import { useWishlistToggle } from "../../hooks/useWishlistToggle";
 import { useAddToCart } from "../../hooks/useAddToCart";
 
+const IMAGE_PLACEHOLDER =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='1200' viewBox='0 0 900 1200'%3E%3Crect width='900' height='1200' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='36' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
+
 export default function ProductCard({ product }) {
   const { handleAddToCart, loading: cartLoading } = useAddToCart();
   const { handleToggle, isWishlisted } = useWishlistToggle();
+  const productImage = product.images?.[0] || product.image || IMAGE_PLACEHOLDER;
 
   return (
     <div className="bg-white group cursor-pointer">
@@ -30,8 +34,13 @@ export default function ProductCard({ product }) {
         <Link to={`/product/${product.id}`}>
           <div className="flex items-center justify-center">
             <img
-              src={product.images?.[0]}
+              src={productImage}
               alt={product.name}
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = IMAGE_PLACEHOLDER;
+              }}
               className="w-full max-w-[350px] h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px] object-cover"
             />
           </div>

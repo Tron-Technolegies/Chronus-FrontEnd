@@ -1,14 +1,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const CategoryIntroModal = ({ category, onClose }) => {
+const CategoryIntroModal = ({ category, onClose, onExplore }) => {
   const navigate = useNavigate();
 
   if (!category) return null;
 
   const handleExplore = () => {
+    if (onExplore) {
+      onExplore(category);
+      return;
+    }
     onClose();
-    navigate(`/shop?category=${category.slug}`);
+    navigate(`/shop?category=${category.id ?? category.slug}`);
   };
 
   const handleBackdrop = (e) => {
