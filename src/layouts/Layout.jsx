@@ -8,7 +8,7 @@ import GuestBanner from "../components/ui/GuestBanner";
 import WishlistToast from "../components/ui/WishlistToast";
 import WhatsAppFAB from "../components/ui/WhatsAppFAB";
 import InstagramFAB from "../components/ui/InstagramFAB";
-
+import FloatingContacts from "../components/ui/FloatingContacts";
 const Layout = () => {
   return (
     <div>
@@ -21,8 +21,9 @@ const Layout = () => {
       <CartDrawer />
       <WishlistToast />
       {/* <GuestBanner /> */}
-      <InstagramFAB />
-      <WhatsAppFAB />
+      <FloatingContacts />
+      {/* <InstagramFAB />
+      <WhatsAppFAB /> */}
     </div>
   );
 };

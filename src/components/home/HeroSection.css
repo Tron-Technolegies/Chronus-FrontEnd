@@ -47,11 +47,13 @@
 }
 
 .hero-cta {
-  background: #89170f;
+  background: transparent;
   color: white;
   padding: 12px 30px;
   border-radius: 30px;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid #f7f1e7;
 }
 
 .hero-cta:hover {

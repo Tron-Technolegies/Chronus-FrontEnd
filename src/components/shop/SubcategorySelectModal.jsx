@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-
-const SubcategorySelectModal = ({
-  categorySlug,
-  categoryName,
-  subcategories,
-  onClose,
-}) => {
+const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories, onClose }) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [visible, setVisible] = useState(false);
 
-  // Smooth fade-in on mount
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 30);
     return () => clearTimeout(t);
@@ -23,15 +15,14 @@ const SubcategorySelectModal = ({
     navigate(`/shop?category=${categorySlug}&type=${type}`);
   };
 
-  // Detect His / Her from subcategory slug/name
   const hisEntry = subcategories.find(
-    (s) => s.slug?.toLowerCase().includes("his") || s.name?.toLowerCase().includes("his")
-  );
-  const herEntry = subcategories.find(
-    (s) => s.slug?.toLowerCase().includes("her") || s.name?.toLowerCase().includes("her")
+    (s) => s.slug?.toLowerCase().includes("his") || s.name?.toLowerCase().includes("his"),
   );
 
-  // Determine which types to show. Fall back to generic "his"/"her" if not in subcategories
+  const herEntry = subcategories.find(
+    (s) => s.slug?.toLowerCase().includes("her") || s.name?.toLowerCase().includes("her"),
+  );
+
   const showHis = hisEntry || subcategories.length > 0;
   const showHer = herEntry || subcategories.length > 0;
 
@@ -43,18 +34,16 @@ const SubcategorySelectModal = ({
         inset: 0,
         zIndex: 60,
         display: "flex",
-        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         padding: "24px",
         background: "rgba(0,0,0,0.6)",
         backdropFilter: "blur(14px)",
-        WebkitBackdropFilter: "blur(14px)",
         opacity: visible ? 1 : 0,
         transition: "opacity 0.4s ease",
       }}
     >
-      {/* Close (skip) button */}
+      {/* Close button */}
       <button
         onClick={onClose}
         style={{
@@ -69,17 +58,11 @@ const SubcategorySelectModal = ({
           color: "rgba(255,255,255,0.7)",
           fontSize: "16px",
           cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 10,
         }}
-        aria-label="Skip — view all"
       >
         ✕
       </button>
 
-      {/* Content wrapper — stop backdrop click propagating */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -98,7 +81,7 @@ const SubcategorySelectModal = ({
             letterSpacing: "0.32em",
             textTransform: "uppercase",
             marginBottom: "12px",
-            fontFamily: "inter, sans-serif",
+            fontFamily: "inter",
           }}
         >
           {categoryName}
@@ -109,7 +92,7 @@ const SubcategorySelectModal = ({
             color: "#F5F1E8",
             fontSize: "36px",
             letterSpacing: "0.04em",
-            fontFamily: "cormorant-garamond, serif",
+            fontFamily: "cormorant-garamond",
             fontWeight: 400,
             marginBottom: "12px",
           }}
@@ -117,7 +100,7 @@ const SubcategorySelectModal = ({
           Shop by Collection
         </h2>
 
-        {/* Gold divider */}
+        {/* Divider */}
         <div
           style={{
             width: "56px",
@@ -127,80 +110,37 @@ const SubcategorySelectModal = ({
           }}
         />
 
-        {/* His + Her cards */}
-        <div
-          style={{
-            display: "flex",
-            gap: "20px",
-            justifyContent: "center",
-            flexWrap: "wrap",
-          }}
-        >
+        {/* Cards */}
+        <div className="flex gap-6 justify-center flex-wrap">
           {/* HIS */}
           {showHis && (
             <div
               onClick={() => handleSelect("his")}
-              className="group"
-              style={{
-                flex: "1",
-                minWidth: "200px",
-                maxWidth: "260px",
-                cursor: "pointer",
-                transition: "transform 0.28s ease",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-6px)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+              className="group cursor-pointer transition-transform duration-300 hover:-translate-y-1"
             >
-              {/* Gold border */}
-              <div
-                style={{
-                  padding: "2.5px",
-                  borderRadius: "3px",
-                  background: "linear-gradient(135deg, #b8964c 0%, #e0c78a 50%, #b8964c 100%)",
-                  transition: "filter 0.25s ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.filter = "brightness(1.15)")}
-                onMouseLeave={(e) => (e.currentTarget.style.filter = "brightness(1)")}
-              >
-                {/* Burgundy card */}
-                <div
-                  style={{
-                    background: "linear-gradient(160deg, #1a0608 0%, #2d0d10 40%, #3d1613 100%)",
-                    borderRadius: "2px",
-                    minHeight: "180px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: "32px 24px",
-                    gap: "10px",
-                  }}
-                >
+              <div className="p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] group-hover:from-[#ffd058] group-hover:via-[#ffca56] group-hover:to-[#ffe2a4] transition-all duration-300">
+                <div className="bg-[#3d1613] group-hover:bg-[#32110f] rounded-sm min-h-[180px] flex flex-col items-center justify-center px-6 py-8 gap-3 transition-colors duration-300">
                   <h3
                     style={{
                       color: "#F5F1E8",
                       fontSize: "24px",
                       letterSpacing: "0.06em",
-                      fontFamily: "cormorant-garamond, serif",
+                      fontFamily: "cormorant-garamond",
                       fontWeight: 400,
                     }}
                   >
                     His Collection
                   </h3>
-                  <div
-                    style={{
-                      width: "40px",
-                      height: "1px",
-                      background: "#C6A75D",
-                    }}
-                  />
+
+                  <div className="w-10 h-[1px] bg-[#C6A75D]" />
+
                   <span
                     style={{
                       color: "#d2b88c",
                       fontSize: "11px",
                       letterSpacing: "0.18em",
                       textTransform: "uppercase",
-                      fontFamily: "inter, sans-serif",
+                      fontFamily: "inter",
                     }}
                   >
                     Explore →
@@ -214,66 +154,31 @@ const SubcategorySelectModal = ({
           {showHer && (
             <div
               onClick={() => handleSelect("her")}
-              style={{
-                flex: "1",
-                minWidth: "200px",
-                maxWidth: "260px",
-                cursor: "pointer",
-                transition: "transform 0.28s ease",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-6px)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+              className="group cursor-pointer transition-transform duration-300 hover:-translate-y-1"
             >
-              {/* Gold border */}
-              <div
-                style={{
-                  padding: "2.5px",
-                  borderRadius: "3px",
-                  background: "linear-gradient(135deg, #b8964c 0%, #e0c78a 50%, #b8964c 100%)",
-                  transition: "filter 0.25s ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.filter = "brightness(1.15)")}
-                onMouseLeave={(e) => (e.currentTarget.style.filter = "brightness(1)")}
-              >
-                {/* Burgundy card */}
-                <div
-                  style={{
-                    background: "linear-gradient(160deg, #1a0608 0%, #2d0d10 40%, #3d1613 100%)",
-                    borderRadius: "2px",
-                    minHeight: "180px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: "32px 24px",
-                    gap: "10px",
-                  }}
-                >
+              <div className="p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] group-hover:from-[#ffd058] group-hover:via-[#ffca56] group-hover:to-[#ffe2a4] transition-all duration-300">
+                <div className="bg-[#3d1613] group-hover:bg-[#32110f] rounded-sm min-h-[180px] flex flex-col items-center justify-center px-6 py-8 gap-3 transition-colors duration-300">
                   <h3
                     style={{
                       color: "#F5F1E8",
                       fontSize: "24px",
                       letterSpacing: "0.06em",
-                      fontFamily: "cormorant-garamond, serif",
+                      fontFamily: "cormorant-garamond",
                       fontWeight: 400,
                     }}
                   >
                     Her Collection
                   </h3>
-                  <div
-                    style={{
-                      width: "40px",
-                      height: "1px",
-                      background: "#C6A75D",
-                    }}
-                  />
+
+                  <div className="w-10 h-[1px] bg-[#C6A75D]" />
+
                   <span
                     style={{
                       color: "#d2b88c",
                       fontSize: "11px",
                       letterSpacing: "0.18em",
                       textTransform: "uppercase",
-                      fontFamily: "inter, sans-serif",
+                      fontFamily: "inter",
                     }}
                   >
                     Explore →
@@ -284,7 +189,7 @@ const SubcategorySelectModal = ({
           )}
         </div>
 
-        {/* Skip link */}
+        {/* Skip */}
         <button
           onClick={onClose}
           style={{
@@ -298,7 +203,7 @@ const SubcategorySelectModal = ({
             textDecoration: "underline",
             textUnderlineOffset: "4px",
             cursor: "pointer",
-            fontFamily: "inter, sans-serif",
+            fontFamily: "inter",
           }}
         >
           View All Products

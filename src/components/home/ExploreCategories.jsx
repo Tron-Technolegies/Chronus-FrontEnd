@@ -14,7 +14,7 @@ const categories = [
   },
   {
     id: 2,
-    name: "Fine Jewelry",
+    name: "Travel Bags",
     slug: "bijouterie",
     desc: "Premium precious jewelry",
     total_products: 18,
@@ -24,7 +24,7 @@ const categories = [
   },
   {
     id: 3,
-    name: "Handbags",
+    name: "Bags",
     slug: "accessories",
     desc: "Premium leather bags",
     total_products: 12,
@@ -84,7 +84,7 @@ export default function ExploreCategories() {
               {/* Thin Gold Border */}
               <div className="p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] hover:bg-gradient-to-r hover:from-[#ffd058] hover:via-[#ffca56] hover:to-[#ffe2a4]">
                 {/* Card */}
-                <div className="bg-[#3d1613] group-hover:bg-[#32110f] transition-all duration-300 rounded-sm w-full min-h-[180px] md:min-h-[200px] flex flex-col justify-center items-center shadow-md shadow-[#4c302f8a] text-center px-6 group-hover:shadow-lg font-[cormorant-garamond]">
+                <div className="bg-[#3d1613] group-hover:bg-[#32110f] transition-all duration-300 rounded-sm w-full min-h-[150px] md:min-h-[150px] flex flex-col justify-center items-center shadow-md shadow-[#4c302f8a] text-center px-6 group-hover:shadow-lg font-[cormorant-garamond]">
                   <h3 className="text-[#F5F1E8] text-2xl md:text-3xl tracking-wide mb-3">
                     {category.name}
                   </h3>
@@ -93,7 +93,9 @@ export default function ExploreCategories() {
 
                   <p className="text-[#e8ddd0] text-sm tracking-wide">{category.desc}</p>
 
-                  <span className="text-[#d2b88c] text-xs mt-2">{category.total_products} items</span>
+                  {/* <span className="text-[#d2b88c] text-xs mt-2">
+                    {category.total_products} items
+                  </span> */}
                 </div>
               </div>
             </div>
@@ -102,10 +104,7 @@ export default function ExploreCategories() {
       </section>
 
       {selectedCategory && (
-        <CategoryIntroModal
-          category={selectedCategory}
-          onClose={() => setSelectedCategory(null)}
-        />
+        <CategoryIntroModal category={selectedCategory} onClose={() => setSelectedCategory(null)} />
       )}
     </>
   );
