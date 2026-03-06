@@ -2,7 +2,7 @@ import React from "react";
 
 const AboutSection = () => {
   return (
-    <section className="bg-white pt-20 pb-8 px-6 md:px-[10%] text-center" id="about">
+    <section className="bg-white pt-12 pb-8 px-6 md:px-[10%] text-center" id="about">
       <div className="max-w-4xl mx-auto">
         {/* Small Label */}
         <p className="uppercase tracking-[0.4em] text-xs text-black mb-6 inter">About Chronos</p>

@@ -24,7 +24,7 @@ const HomePage = () => {
       }
     }
   }, [location]);
-  
+
   return (
     <div>
       <section id="hero">
@@ -33,8 +33,8 @@ const HomePage = () => {
       {/* <FeaturedProducts /> */}
       <ExploreCategories />
       {/* <NewArrivals /> */}
-      <AboutSection/>
-      <ExclusiveMembership />
+      <AboutSection />
+      {/* <ExclusiveMembership /> */}
       <Testimonials />
       <Subscription />
     </div>
