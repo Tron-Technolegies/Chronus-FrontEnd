@@ -6,6 +6,53 @@ import ProductTabs from "../../../components/shop/productdetails/ProductTabs";
 import YouMayAlsoLike from "../../../components/shop/YouMayAlsoLike";
 import { fetchProductByIdAPI } from "../../../api/product";
 
+const formatProductDetails = (rawProduct) => {
+  if (!rawProduct) return null;
+
+  return {
+    id: rawProduct.id,
+    name: rawProduct.name ?? "",
+    price: `$${Number(rawProduct.price ?? 0).toLocaleString()}`,
+    _rawPrice: Number(rawProduct.price ?? 0),
+    originalPrice: null,
+    image: rawProduct.image ?? null,
+    images: [rawProduct.image, ...(rawProduct.gallery ?? [])].filter(Boolean),
+    category: rawProduct.category?.name?.toLowerCase().replace(/\s+/g, "-") ?? "other",
+    categoryName: rawProduct.category?.name ?? "Other",
+    categoryId: rawProduct.category?.id ?? null,
+    subcategory: rawProduct.subcategory?.name?.toLowerCase().replace(/\s+/g, "-") ?? null,
+    subcategoryName: rawProduct.subcategory?.name ?? null,
+    subcategoryId: rawProduct.subcategory?.id ?? null,
+    brand: rawProduct.brand?.name ?? "",
+    brandId: rawProduct.brand?.id ?? null,
+    shortDesc: rawProduct.description?.slice(0, 140) ?? "",
+    description: rawProduct.description ?? "",
+    specification:
+      rawProduct.specification && typeof rawProduct.specification === "object"
+        ? rawProduct.specification
+        : {},
+    stock: rawProduct.stock ?? 0,
+    is_featured: rawProduct.is_featured ?? false,
+    is_best_seller: rawProduct.is_best_seller ?? false,
+    created_at: rawProduct.created_at ?? null,
+    rating: Number(rawProduct.average_rating ?? 0),
+    reviewsCount: Number(rawProduct.review_count ?? 0),
+    reviews: (rawProduct.reviews ?? []).map((review) => ({
+      id: review.id,
+      name: review.name ?? "Guest",
+      rating: Number(review.rating ?? 0),
+      comment: review.comment ?? "",
+      date: review.created_at
+        ? new Date(review.created_at).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })
+        : "",
+    })),
+  };
+};
+
 const ProductDetailPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -14,54 +61,30 @@ const ProductDetailPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  });
+  }, []);
+
+  const loadProduct = async (showLoader = true) => {
+    if (!id) return;
+
+    if (showLoader) setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetchProductByIdAPI(id);
+      const payload = response.data;
+      const rawProduct = Array.isArray(payload?.products)
+        ? payload.products.find((item) => String(item.id) === String(id))
+        : payload?.product ?? payload;
+      setProduct(formatProductDetails(rawProduct));
+    } catch (err) {
+      setError(err?.response?.status === 404 ? "Product not found." : "Failed to load product.");
+    } finally {
+      if (showLoader) setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    setError(null);
-    fetchProductByIdAPI(id)
-      .then((res) => {
-        const p = res.data;
-        setProduct({
-          id: p.id,
-          name: p.name,
-          price: `$${Number(p.price).toLocaleString()}`,
-          _rawPrice: Number(p.price),
-          originalPrice: null,
-          images: [p.image, ...(p.gallery ?? [])].filter(Boolean),
-          category: p.category?.name?.toLowerCase().replace(/\s+/g, "-") ?? "other",
-          categoryName: p.category?.name ?? "Other",
-          subcategoryName: p.subcategory?.name ?? null,
-          brand: p.brand?.name ?? "",
-          shortDesc: p.description?.slice(0, 80) ?? "",
-          description: p.description ?? "",
-          specification:
-            p.specification && typeof p.specification === "object" ? p.specification : {},
-          stock: p.stock ?? 0,
-          is_featured: p.is_featured ?? false,
-          is_best_seller: p.is_best_seller ?? false,
-          created_at: p.created_at,
-          // Real rating & reviews from API
-          rating: p.average_rating ?? 0,
-          reviewsCount: p.review_count ?? 0,
-          reviews: (p.reviews ?? []).map((r) => ({
-            id: r.id,
-            name: r.name,
-            rating: r.rating,
-            comment: r.comment,
-            date: r.created_at
-              ? new Date(r.created_at).toLocaleDateString("en-US", {
-                  year: "numeric", month: "short", day: "numeric",
-                })
-              : "",
-          })),
-        });
-      })
-      .catch((err) => {
-        setError(err?.response?.status === 404 ? "Product not found." : "Failed to load product.");
-      })
-      .finally(() => setLoading(false));
+    loadProduct();
   }, [id]);
 
   if (loading) {
@@ -103,7 +126,7 @@ const ProductDetailPage = () => {
       </div>
 
       <div className="mt-12 sm:mt-20">
-        <ProductTabs product={product} />
+        <ProductTabs product={product} onReviewAdded={() => loadProduct(false)} />
       </div>
       <YouMayAlsoLike currentProduct={product} />
     </div>

@@ -30,7 +30,7 @@ const FiltersSection = ({ collection, setCollection, resetFilters }) => {
               className={`px-3 py-1 border rounded text-xs cursor-pointer transition
                 ${
                   collection === c.key
-                    ? "bg-[#3D1613] text-white border-[#3D1613]"
+                    ? "bg-[#3D1613] text-off-white border-[#3D1613]"
                     : "border-gray-200 hover:bg-gray-100"
                 }`}
             >
@@ -44,3 +44,4 @@ const FiltersSection = ({ collection, setCollection, resetFilters }) => {
 };
 
 export default FiltersSection;
+

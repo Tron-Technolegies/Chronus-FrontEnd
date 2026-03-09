@@ -26,7 +26,7 @@ export default function WishlistToast() {
           <FiHeart className="text-black text-sm" />
         </div>
         <div>
-          <p className="text-white text-sm font-medium tracking-wide">
+          <p className="text-off-white text-sm font-medium tracking-wide">
             {wishlistToast}
           </p>
           <p className="text-xs" style={{ color: "rgba(255,202,10,0.7)" }}>
@@ -44,3 +44,4 @@ export default function WishlistToast() {
     </div>
   );
 }
+

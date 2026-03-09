@@ -63,6 +63,38 @@
   --off-white-color: #f7f1e7;
 }
 
+.text-off-white {
+  color: var(--off-white-color);
+}
+
+.text-off-white-80 {
+  color: rgba(247, 241, 231, 0.8);
+}
+
+.text-off-white-70 {
+  color: rgba(247, 241, 231, 0.7);
+}
+
+.text-off-white-60 {
+  color: rgba(247, 241, 231, 0.6);
+}
+
+.text-off-white-50 {
+  color: rgba(247, 241, 231, 0.5);
+}
+
+.text-off-white-40 {
+  color: rgba(247, 241, 231, 0.4);
+}
+
+.text-off-white-15 {
+  color: rgba(247, 241, 231, 0.15);
+}
+
+.hover\:text-off-white:hover {
+  color: var(--off-white-color);
+}
+
 /* Utility: hide scrollbar while still allowing scroll */
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE / Edge */

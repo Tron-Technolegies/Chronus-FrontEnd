@@ -105,7 +105,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-black text-white py-3 rounded-md text-sm font-medium hover:bg-black/90 transition disabled:opacity-60"
+              className="w-full bg-black text-off-white py-3 rounded-md text-sm font-medium hover:bg-black/90 transition disabled:opacity-60"
             >
               Sign in
             </button>
@@ -124,3 +124,4 @@ const Login = () => {
 };
 
 export default Login;
+

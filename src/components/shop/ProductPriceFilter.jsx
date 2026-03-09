@@ -1,78 +1,151 @@
-import { useState, useCallback } from "react";
+import { useCallback, useRef } from "react";
 
-const MIN = 0;
-const MAX = 100000;
+const STEP = 500;
 
-const ProductPriceFilter = ({ priceRange, setPriceRange }) => {
-  const [minVal, setMinVal] = useState(priceRange?.[0] ?? MIN);
-  const [maxVal, setMaxVal] = useState(priceRange?.[1] ?? MAX);
+const ProductPriceFilter = ({ priceRange, setPriceRange, min = 0, max = 100000 }) => {
+  const dragRef = useRef(null);
 
-  const getPercent = useCallback((value) => Math.round(((value - MIN) / (MAX - MIN)) * 100), []);
+  const clamp = useCallback((value, lower, upper) => Math.min(Math.max(value, lower), upper), []);
+  const toStep = useCallback((value) => Math.round(value / STEP) * STEP, []);
 
-  const formatPrice = (val) => `$${val.toLocaleString("en-US", { minimumFractionDigits: 0 })}`;
+  const minVal = clamp(priceRange?.[0] ?? min, min, max - STEP);
+  const maxVal = clamp(priceRange?.[1] ?? max, minVal + STEP, max);
+
+  const getPercent = useCallback(
+    (value) => Math.round(((value - min) / (max - min)) * 100),
+    [min, max],
+  );
+
+  const formatPrice = (val) =>
+    `$${Number(val).toLocaleString("en-US", { minimumFractionDigits: 0 })}`;
 
   const minPercent = getPercent(minVal);
   const maxPercent = getPercent(maxVal);
 
+  const updateMin = useCallback(
+    (value) => {
+      const nextMin = clamp(toStep(value), min, maxVal - STEP);
+      setPriceRange([nextMin, maxVal]);
+    },
+    [clamp, maxVal, min, setPriceRange, toStep],
+  );
+
+  const updateMax = useCallback(
+    (value) => {
+      const nextMax = clamp(toStep(value), minVal + STEP, max);
+      setPriceRange([minVal, nextMax]);
+    },
+    [clamp, max, minVal, setPriceRange, toStep],
+  );
+
+  const startNumberDrag = useCallback(
+    (e, target) => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+
+      dragRef.current = {
+        target,
+        startX: e.clientX,
+        startMin: minVal,
+        startMax: maxVal,
+      };
+
+      const onMove = (moveEvent) => {
+        if (!dragRef.current) return;
+
+        const deltaX = moveEvent.clientX - dragRef.current.startX;
+        const offset = Math.round(deltaX / 8) * STEP;
+
+        if (dragRef.current.target === "min") {
+          updateMin(dragRef.current.startMin + offset);
+          return;
+        }
+
+        updateMax(dragRef.current.startMax + offset);
+      };
+
+      const onUp = () => {
+        dragRef.current = null;
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", onUp);
+      };
+
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+    },
+    [maxVal, minVal, updateMax, updateMin],
+  );
+
   return (
-    <div className="w-full px-5 py-5 border-b border-gray-200">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-5">
-        <span className="text-sm font-semibold text-gray-900 tracking-tight">Price Range</span>
-        <span className="text-xs font-medium text-gray-400">${MAX.toLocaleString()}</span>
+    <div className="w-full px-4 md:px-5 py-5 border-b border-gray-200 lg:sticky lg:top-24">
+      <div className="flex justify-between items-center mb-4">
+        <span className="text-sm font-semibold text-gray-900">Price Range</span>
+        <span className="text-xs text-gray-400">{formatPrice(max)}</span>
       </div>
 
-      {/* Slider track + thumbs */}
-      <div className="relative w-full max-w-full overflow-hidden h-6 flex items-center mb-4">
-        {" "}
-        {/* Base track */}
-        <div className="absolute inset-x-0 h-[3px] rounded-full bg-gray-200" />
-        {/* Active fill */}
+      <div className="relative w-full h-6 flex items-center mb-4">
+        <div className="absolute w-full h-[3px] bg-gray-200 rounded-full" />
+
         <div
-          className="absolute h-[3px] rounded-full bg-gray-900"
-          style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }}
+          className="absolute h-[3px] bg-gray-900 rounded-full"
+          style={{
+            left: `${minPercent}%`,
+            width: `${maxPercent - minPercent}%`,
+          }}
         />
-        {/* Min thumb */}
+
         <input
           type="range"
-          min={MIN}
-          max={MAX}
-          step={500}
+          min={min}
+          max={max}
+          step={STEP}
           value={minVal}
-          onChange={(e) => {
-            const val = Math.min(Number(e.target.value), maxVal - 500);
-            setMinVal(val);
-            setPriceRange([val, maxVal]);
-          }}
-          className="price-thumb absolute inset-x-0 w-full h-[3px] appearance-none bg-transparent cursor-pointer"
-          style={{ zIndex: minVal > MAX - 1000 ? 5 : 3 }}
+          onChange={(e) => updateMin(Number(e.target.value))}
+          className="price-thumb absolute w-full appearance-none bg-transparent cursor-pointer"
+          style={{ zIndex: minVal > max - STEP * 2 ? 5 : 3 }}
         />
-        {/* Max thumb */}
+
         <input
           type="range"
-          min={MIN}
-          max={MAX}
-          step={500}
+          min={min}
+          max={max}
+          step={STEP}
           value={maxVal}
-          onChange={(e) => {
-            const val = Math.max(Number(e.target.value), minVal + 500);
-            setMaxVal(val);
-            setPriceRange([minVal, val]);
-          }}
-          className="price-thumb absolute inset-x-0 w-full h-[3px] appearance-none bg-transparent cursor-pointer"
+          onChange={(e) => updateMax(Number(e.target.value))}
+          className="price-thumb absolute w-full appearance-none bg-transparent cursor-pointer"
           style={{ zIndex: 4 }}
         />
       </div>
 
-      {/* Value labels */}
-      <div className="flex items-center gap-2 w-full">
-        <div className="flex-1 min-w-0 bg-gray-50 border border-gray-200 rounded-md py-1.5 px-2 text-xs font-medium text-gray-900 text-center truncate">
-          {formatPrice(minVal)}
-        </div>
-        <span className="text-xs text-gray-400 shrink-0">—</span>
-        <div className="flex-1 min-w-0 bg-gray-50 border border-gray-200 rounded-md py-1.5 px-2 text-xs font-medium text-gray-900 text-center truncate">
-          {formatPrice(maxVal)}
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] items-center gap-2">
+        <label className="text-[11px] text-gray-500 uppercase tracking-wide flex flex-col gap-1">
+          Min
+          <input
+            type="number"
+            min={min}
+            max={maxVal - STEP}
+            step={STEP}
+            value={minVal}
+            onChange={(e) => updateMin(Number(e.target.value))}
+            onPointerDown={(e) => startNumberDrag(e, "min")}
+            className="w-full bg-gray-50 border border-gray-200 rounded-md py-2 text-xs sm:text-sm text-center touch-none"
+          />
+        </label>
+
+        <span className="hidden sm:inline text-xs text-gray-400">-</span>
+
+        <label className="text-[11px] text-gray-500 uppercase tracking-wide flex flex-col gap-1">
+          Max
+          <input
+            type="number"
+            min={minVal + STEP}
+            max={max}
+            step={STEP}
+            value={maxVal}
+            onChange={(e) => updateMax(Number(e.target.value))}
+            onPointerDown={(e) => startNumberDrag(e, "max")}
+            className="w-full bg-gray-50 border border-gray-200 rounded-md py-2 text-xs sm:text-sm text-center touch-none"
+          />
+        </label>
       </div>
 
       <style>{`
@@ -82,30 +155,31 @@ const ProductPriceFilter = ({ priceRange, setPriceRange }) => {
           height: 18px;
           border-radius: 50%;
           background: #111827;
-          border: 2.5px solid #fff;
-          box-shadow: 0 1px 6px rgba(0,0,0,0.25);
+          border: 2px solid white;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.25);
           cursor: pointer;
-          transition: transform 0.15s, box-shadow 0.15s;
-          touch-action: pan-x;
+          transition: transform 0.15s ease;
         }
-        .price-thumb::-webkit-slider-thumb:hover,
-        .price-thumb:active::-webkit-slider-thumb {
-          transform: scale(1.2);
-          box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+
+        .price-thumb::-webkit-slider-thumb:hover {
+          transform: scale(1.15);
         }
+
         .price-thumb::-moz-range-thumb {
           width: 18px;
           height: 18px;
           border-radius: 50%;
           background: #111827;
-          border: 2.5px solid #fff;
-          box-shadow: 0 1px 6px rgba(0,0,0,0.25);
+          border: 2px solid white;
           cursor: pointer;
         }
-        /* Remove default focus outline on range in Firefox */
-        .price-thumb:focus { outline: none; }
-        .price-thumb:focus::-webkit-slider-thumb {
-          box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+
+        .price-thumb:focus {
+          outline: none;
+        }
+
+        .price-thumb {
+          touch-action: none;
         }
       `}</style>
     </div>

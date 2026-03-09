@@ -139,7 +139,7 @@ const ProfileForm = () => {
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 bg-[#5a0f0f] text-white px-8 py-3 rounded-md hover:opacity-90 transition disabled:opacity-60"
+            className="flex items-center gap-2 bg-[#5a0f0f] text-off-white px-8 py-3 rounded-md hover:opacity-90 transition disabled:opacity-60"
           >
             {saving ? <FiLoader className="animate-spin" size={15} /> : <FiSave size={15} />}
             {saving ? "Saving…" : "Save Changes"}

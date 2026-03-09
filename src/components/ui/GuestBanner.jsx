@@ -54,11 +54,11 @@ export default function GuestBanner() {
 
         {/* Message */}
         <div className="flex-1 min-w-0">
-          <p className="text-white text-xs sm:text-sm font-medium leading-snug">
+          <p className="text-off-white text-xs sm:text-sm font-medium leading-snug">
             You&apos;re browsing as a{" "}
             <span style={{ color: "#FFCA0A" }}>Guest</span>
           </p>
-          <p className="text-white/60 text-[11px] mt-0.5">
+          <p className="text-off-white-60 text-[11px] mt-0.5">
             Login to sync your cart &amp; wishlist across devices.
           </p>
         </div>
@@ -75,7 +75,7 @@ export default function GuestBanner() {
         {/* Dismiss for this session */}
         <button
           onClick={() => setDismissed(true)}
-          className="shrink-0 text-white/40 hover:text-white transition-colors p-1"
+          className="shrink-0 text-off-white-40 hover:text-off-white transition-colors p-1"
           aria-label="Dismiss"
         >
           <FiX size={16} />
@@ -91,3 +91,4 @@ export default function GuestBanner() {
     </div>
   );
 }
+

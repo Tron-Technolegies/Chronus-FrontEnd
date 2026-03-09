@@ -1,14 +1,5 @@
 import React from "react";
 
-/**
- * SubcategoryFilter — renders pill buttons for each subcategory.
- * Hidden entirely when subcategories list is empty.
- *
- * Props:
- *  subcategories       – array of { id, name, slug }
- *  activeSubcategory   – slug string or "all"
- *  setActiveSubcategory – setter
- */
 const SubcategoryFilter = ({ subcategories = [], activeSubcategory, setActiveSubcategory }) => {
   if (!subcategories.length) return null;
 

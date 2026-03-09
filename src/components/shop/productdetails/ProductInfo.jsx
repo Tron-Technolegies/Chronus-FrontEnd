@@ -21,27 +21,25 @@ export default function ProductInfo({ product }) {
 
   return (
     <div className="space-y-6">
-      {/* SALE */}
       {product.originalPrice && (
-        <span className="inline-block text-xs bg-red-500 text-white px-3 py-1 tracking-widest">
+        <span className="inline-block text-xs bg-red-500 text-off-white px-3 py-1 tracking-widest">
           SALE
         </span>
       )}
 
-      {/* Title */}
       <h1 className="text-lg sm:text-xl tracking-widest font-[Bayon]">{product.name}</h1>
 
-      {/* Rating */}
       <div className="flex items-center gap-2 text-sm text-gray-400 flex-wrap">
         {product.rating > 0 ? (
           <>
             <div className="flex text-[#CBA61F]">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <span key={i}>{i <= Math.round(product.rating) ? "★" : "☆"}</span>
+              {[1, 2, 3, 4, 5].map((index) => (
+                <span key={index}>{index <= Math.round(product.rating) ? "\u2605" : "\u2606"}</span>
               ))}
             </div>
             <span>
-              {product.rating.toFixed(1)} ({product.reviewsCount} review{product.reviewsCount !== 1 ? "s" : ""})
+              {product.rating.toFixed(1)} ({product.reviewsCount} review
+              {product.reviewsCount !== 1 ? "s" : ""})
             </span>
           </>
         ) : (
@@ -49,7 +47,6 @@ export default function ProductInfo({ product }) {
         )}
       </div>
 
-      {/* Price */}
       <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
         <span className="text-2xl sm:text-3xl font-semibold">{product.price}</span>
 
@@ -60,12 +57,9 @@ export default function ProductInfo({ product }) {
         )}
       </div>
 
-      {/* Short desc */}
       <p className="text-gray-500 leading-6 max-w-md text-sm sm:text-base">{product.shortDesc}</p>
 
-      {/* Qty + Buy + Wishlist row */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
-        {/* Qty */}
         <div className="flex border border-gray-300 w-fit">
           <button onClick={decrease} className="px-4 py-2 cursor-pointer hover:bg-gray-50">
             -
@@ -76,7 +70,6 @@ export default function ProductInfo({ product }) {
           </button>
         </div>
 
-        {/* Buy Now — adds to cart then goes to checkout */}
         <button
           onClick={async () => {
             await handleAddToCart(product, qty);
@@ -88,7 +81,6 @@ export default function ProductInfo({ product }) {
           BUY NOW
         </button>
 
-        {/* Add to Cart */}
         <button
           onClick={() => handleAddToCart(product, qty)}
           disabled={cartLoading}
@@ -103,7 +95,6 @@ export default function ProductInfo({ product }) {
         </button>
       </div>
 
-      {/* Divider */}
       <div className="border-t border-[#D9D9D9] pt-8">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div className="flex flex-col items-center gap-2">

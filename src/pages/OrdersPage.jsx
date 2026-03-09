@@ -67,10 +67,10 @@ export default function OrdersPage() {
                     <FiPackage className="text-[#FFCA0A]" size={18} />
                   </div>
                   <div>
-                    <p className="text-white text-sm font-semibold tracking-wide">
+                    <p className="text-off-white text-sm font-semibold tracking-wide">
                       Order #{lastGuestOrderId}
                     </p>
-                    <p className="text-white/50 text-xs mt-0.5">Guest order</p>
+                    <p className="text-off-white-50 text-xs mt-0.5">Guest order</p>
                   </div>
                   <span
                     className="ml-auto flex items-center gap-1 text-[10px] px-3 py-1 rounded-full font-medium"
@@ -81,7 +81,7 @@ export default function OrdersPage() {
                   </span>
                 </div>
 
-                <p className="text-white/50 text-xs leading-relaxed">
+                <p className="text-off-white-50 text-xs leading-relaxed">
                   This is your last guest order. Login to view your full order history and track all orders.
                 </p>
 
@@ -191,7 +191,7 @@ function LoggedInEmptyState() {
       <p className="text-gray-400 text-sm tracking-wide">You haven&apos;t placed any orders yet.</p>
       <Link
         to="/shop"
-        className="bg-[#3D1613] text-white text-xs tracking-[0.2em] px-8 py-3 hover:bg-[#5a2019] transition-colors"
+        className="bg-[#3D1613] text-off-white text-xs tracking-[0.2em] px-8 py-3 hover:bg-[#5a2019] transition-colors"
       >
         EXPLORE COLLECTIONS
       </Link>
@@ -210,7 +210,7 @@ function GuestEmptyState() {
       <div className="flex gap-3">
         <Link
           to="/login"
-          className="bg-[#3D1613] text-white text-xs tracking-[0.2em] px-6 py-3 hover:bg-[#5a2019] transition-colors"
+          className="bg-[#3D1613] text-off-white text-xs tracking-[0.2em] px-6 py-3 hover:bg-[#5a2019] transition-colors"
         >
           LOGIN
         </Link>
@@ -224,3 +224,4 @@ function GuestEmptyState() {
     </div>
   );
 }
+

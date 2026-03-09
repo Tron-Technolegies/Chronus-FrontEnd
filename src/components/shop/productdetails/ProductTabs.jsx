@@ -1,31 +1,37 @@
 import { useEffect, useMemo, useState } from "react";
 import { addReviewAPI } from "../../../api/product";
 
-export default function ProductTabs({ product }) {
+export default function ProductTabs({ product, onReviewAdded }) {
   const [tab, setTab] = useState("description");
   const [reviews, setReviews] = useState(product.reviews ?? []);
   const [reviewsCount, setReviewsCount] = useState(product.reviewsCount ?? 0);
+  const [averageRating, setAverageRating] = useState(Number(product.rating ?? 0));
 
   // Review form state
   const [form, setForm] = useState({ name: "", rating: 0, comment: "" });
   const [hoverStar, setHoverStar] = useState(0);
   const [submitting, setSubmitting] = useState(false);
-  const [submitMsg, setSubmitMsg] = useState(null); // { type: "success"|"error", text }
+  const [submitMsg, setSubmitMsg] = useState(null);
 
   useEffect(() => {
     setReviews(product.reviews ?? []);
     setReviewsCount(product.reviewsCount ?? 0);
+    setAverageRating(Number(product.rating ?? 0));
     setForm({ name: "", rating: 0, comment: "" });
     setHoverStar(0);
     setSubmitMsg(null);
     setTab("description");
-  }, [product.id, product.reviews, product.reviewsCount]);
+  }, [product.id, product.reviews, product.reviewsCount, product.rating]);
 
-  const tabs = [
-    { id: "description", label: "DESCRIPTION" },
-    { id: "specs", label: "SPECIFICATIONS" },
-    { id: "reviews", label: `REVIEWS (${reviewsCount})` },
-  ];
+  useEffect(() => {
+    if (reviewsCount <= 0) {
+      setAverageRating(0);
+      return;
+    }
+
+    const total = reviews.reduce((sum, review) => sum + Number(review.rating ?? 0), 0);
+    setAverageRating(total / reviewsCount);
+  }, [reviews, reviewsCount]);
 
   const specificationEntries = useMemo(() => {
     if (!product.specification || typeof product.specification !== "object") return [];
@@ -33,6 +39,12 @@ export default function ProductTabs({ product }) {
       ([key, value]) => key && value !== null && value !== undefined && String(value).trim() !== "",
     );
   }, [product.specification]);
+
+  const tabs = [
+    { id: "description", label: "DESCRIPTION" },
+    { id: "specs", label: `SPECIFICATIONS (${specificationEntries.length})` },
+    { id: "reviews", label: `REVIEWS (${reviewsCount})` },
+  ];
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
@@ -48,10 +60,12 @@ export default function ProductTabs({ product }) {
     setSubmitMsg(null);
     try {
       await addReviewAPI({
+        product: product.id,
         product_id: product.id,
         name: form.name.trim() || "Guest",
         rating: form.rating,
         comment: form.comment.trim(),
+        review: form.comment.trim(),
       });
       const newReview = {
         id: Date.now(),
@@ -66,13 +80,18 @@ export default function ProductTabs({ product }) {
       };
       setReviews((prev) => [newReview, ...prev]);
       setReviewsCount((c) => c + 1);
+      if (typeof onReviewAdded === "function") {
+        onReviewAdded();
+      }
       setForm({ name: "", rating: 0, comment: "" });
       setHoverStar(0);
       setSubmitMsg({ type: "success", text: "Thank you! Your review has been submitted." });
     } catch (err) {
+      const apiMessage =
+        err?.response?.data?.detail ?? err?.response?.data?.error ?? err?.response?.data?.message;
       setSubmitMsg({
         type: "error",
-        text: err?.response?.data?.error ?? "Failed to submit. Please try again.",
+        text: apiMessage ?? "Failed to submit. Please try again.",
       });
     } finally {
       setSubmitting(false);
@@ -102,7 +121,9 @@ export default function ProductTabs({ product }) {
         {tab === "description" && (
           <div className="max-w-2xl">
             {product.description ? (
-              <p className="whitespace-pre-line text-sm sm:text-base leading-8">{product.description}</p>
+              <p className="whitespace-pre-line text-sm sm:text-base leading-8">
+                {product.description}
+              </p>
             ) : (
               <p className="text-gray-400 text-sm italic">No description available.</p>
             )}
@@ -113,6 +134,10 @@ export default function ProductTabs({ product }) {
           <div className="max-w-2xl">
             {specificationEntries.length > 0 ? (
               <table className="w-full text-sm">
+                <caption className="text-left text-xs text-gray-400 mb-2">
+                  {specificationEntries.length} specification
+                  {specificationEntries.length !== 1 ? "s" : ""} available
+                </caption>
                 <tbody>
                   {specificationEntries.map(([key, value], i) => (
                     <tr key={key} className={i % 2 === 0 ? "bg-gray-50" : ""}>
@@ -152,11 +177,11 @@ export default function ProductTabs({ product }) {
             <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 lg:gap-10">
               <div className="border-b lg:border-b-0 lg:border-r border-[#D9D9D9] pb-8 lg:pb-0 lg:pr-8">
                 <div className="text-4xl font-semibold">
-                  {product.rating > 0 ? product.rating.toFixed(1) : "-"}
+                  {averageRating > 0 ? averageRating.toFixed(1) : "-"}
                 </div>
                 <div className="flex text-[#CBA61F] mt-2">
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <span key={i}>{i <= Math.round(product.rating) ? "\u2605" : "\u2606"}</span>
+                    <span key={i}>{i <= Math.round(averageRating) ? "\u2605" : "\u2606"}</span>
                   ))}
                 </div>
                 <p className="text-sm text-gray-400 mt-2">{reviewsCount} Reviews</p>
@@ -166,7 +191,7 @@ export default function ProductTabs({ product }) {
                     const pct = reviewsCount > 0 ? (count / reviewsCount) * 100 : 0;
                     return (
                       <div key={star} className="flex items-center gap-3">
-                        <span className="w-6 text-gray-500">{star}\u2605</span>
+                        <span className="w-6 text-gray-500">{star}</span>
                         <div className="flex-1 h-[3px] bg-gray-200">
                           <div className="h-full bg-[#CBA61F]" style={{ width: `${pct}%` }} />
                         </div>
@@ -204,7 +229,9 @@ export default function ProductTabs({ product }) {
             </div>
 
             <div className="border-t border-[#D9D9D9] pt-8">
-              <h3 className="text-base font-semibold text-gray-900 mb-5 tracking-wide">Write a Review</h3>
+              <h3 className="text-base font-semibold text-gray-900 mb-5 tracking-wide">
+                Write a Review
+              </h3>
 
               {submitMsg && (
                 <p
@@ -243,7 +270,9 @@ export default function ProductTabs({ product }) {
                         onMouseLeave={() => setHoverStar(0)}
                         onClick={() => setForm((p) => ({ ...p, rating: star }))}
                         className="text-2xl leading-none transition-transform hover:scale-110"
-                        style={{ color: star <= (hoverStar || form.rating) ? "#CBA61F" : "#D1D5DB" }}
+                        style={{
+                          color: star <= (hoverStar || form.rating) ? "#CBA61F" : "#D1D5DB",
+                        }}
                       >
                         {"\u2605"}
                       </button>
@@ -270,7 +299,7 @@ export default function ProductTabs({ product }) {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="bg-[#3D1613] text-white text-xs tracking-widest px-8 py-3 rounded-md hover:bg-[#5a2019] transition disabled:opacity-60"
+                  className="bg-[#3D1613] text-off-white text-xs tracking-widest px-8 py-3 rounded-md hover:bg-[#5a2019] transition disabled:opacity-60"
                 >
                   {submitting ? "SUBMITTING..." : "SUBMIT REVIEW"}
                 </button>
