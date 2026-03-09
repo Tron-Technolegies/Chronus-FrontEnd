@@ -74,11 +74,12 @@ const Header = () => {
     { label: "Collections", path: "/shop" },
     { label: "About", section: "about" },
     { label: "Contact", section: "contact" },
+    { label: "FAQ", path: "/faq" },
   ];
 
   return (
     <header
-      className="fixed top-0 left-0 w-full z-50 h-16 transition-all duration-300 text-[#F7F1E7]"
+      className="fixed top-0 left-0 w-full z-50 h-16 transition-all duration-300 text-off-white"
       style={{
         backgroundColor: isHome && !scrolled ? "transparent" : HEADER_COLOR,
       }}
@@ -100,7 +101,7 @@ const Header = () => {
 
         {/* Center logo */}
         <img
-          src="/chronus-logo.png"
+          src="/header-new-logo.svg"
           alt="Chronos"
           className="h-4 object-contain cursor-pointer absolute left-1/2 -translate-x-1/2"
           onClick={() => navigate("/")}
@@ -164,7 +165,7 @@ const Header = () => {
       {/* ================= MOBILE MENU ================= */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-50 flex flex-col text-[#F7F1E7]"
+          className="fixed inset-0 z-50 flex flex-col text-off-white"
           style={{ backgroundColor: HEADER_COLOR }}
         >
           <div className="flex items-center justify-between px-5 h-16 border-b border-white/10">

@@ -30,7 +30,7 @@ const SERVICES = [
 const Footer = () => {
   return (
     <footer
-      className="bg-[#1a0806] pt-10 sm:pt-14 md:pt-16 relative flex flex-col items-center overflow-hidden inter text-[#F7F1E7]"
+      className="bg-[#1a0806] pt-10 sm:pt-14 md:pt-16 relative flex flex-col items-center overflow-hidden inter text-off-white"
       id="contact"
     >
       <div className="w-[94%] sm:w-[92%] max-w-[1400px] bg-[#2a0e0c] rounded-[22px] sm:rounded-[36px] md:rounded-[40px] px-5 py-8 sm:px-8 sm:py-10 md:px-12 md:py-14 lg:px-16 lg:py-16 relative z-10 border border-[#78241e5d] shadow-2xl shadow-[#541a1685]">
@@ -44,7 +44,7 @@ const Footer = () => {
               className="h-6 sm:h-7 w-auto object-contain"
             />
 
-            <p className="text-[#F7F1E7]/70 text-sm leading-relaxed max-w-[280px]">
+            <p className="text-off-white-70 text-sm leading-relaxed max-w-[280px]">
               Curating the world's finest timepieces, accessories, and art since 1892. Each piece
               tells a story of uncompromising craftsmanship.
             </p>
@@ -57,7 +57,7 @@ const Footer = () => {
                   target={href.startsWith("http") ? "_blank" : undefined}
                   rel="noreferrer"
                   aria-label={label}
-                  className="w-9 h-9 rounded-full bg-[#1a0806] flex items-center justify-center text-[#F7F1E7]/80 hover:bg-[#F7F1E7] hover:text-[#1a0806] transition-all duration-200"
+                  className="w-9 h-9 rounded-full bg-[#1a0806] flex items-center justify-center text-off-white-80 hover:bg-[#F7F1E7] hover:text-[#1a0806] transition-all duration-200"
                 >
                   <Icon size={15} />
                 </a>
@@ -65,7 +65,7 @@ const Footer = () => {
             </div>
           </div>
           {/* Collections */}
-          <div className="text-[#F7F1E7]/80 sm:pl-4 lg:pl-10">
+          <div className="text-off-white-80 sm:pl-4 lg:pl-10">
             <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">Collections</h3>
 
             <ul className="space-y-3 text-sm">
@@ -73,7 +73,7 @@ const Footer = () => {
                 <li key={label}>
                   <Link
                     to={to}
-                    className="text-[#F7F1E7]/70 hover:text-[#F7F1E7] hover:translate-x-1 inline-block transition-all duration-200"
+                    className="text-off-white-70 hover:text-off-white hover:translate-x-1 inline-block transition-all duration-200"
                   >
                     {label}
                   </Link>
@@ -100,7 +100,7 @@ const Footer = () => {
             </ul>
           </div> */}
           {/* Contact */}
-          <div className="text-[#F7F1E7]/80">
+          <div className="text-off-white-80">
             <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">Contact Us</h3>
 
             <ul className="space-y-4 text-sm opacity-70">
@@ -134,23 +134,23 @@ const Footer = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-6 sm:pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-[#F7F1E7]/50 text-[10px] sm:text-[11px] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-center">
+        <div className="pt-6 sm:pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-off-white-50 text-[10px] sm:text-[11px] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-center">
           <p>© 2026 CHRONOS. All rights reserved.</p>
 
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8">
-            <Link to="/privacy" className="hover:text-[#F7F1E7] transition-colors duration-200">
+            <Link to="/privacy" className="hover:text-off-white transition-colors duration-200">
               Privacy Policy
             </Link>
 
-            <Link to="/terms" className="hover:text-[#F7F1E7] transition-colors duration-200">
+            <Link to="/terms" className="hover:text-off-white transition-colors duration-200">
               Terms of Service
             </Link>
 
-            <Link to="/shipping" className="hover:text-[#F7F1E7] transition-colors duration-200">
+            <Link to="/shipping" className="hover:text-off-white transition-colors duration-200">
               Shipping Policy
             </Link>
 
-            <Link to="/legal" className="hover:text-[#F7F1E7] transition-colors duration-200">
+            <Link to="/legal" className="hover:text-off-white transition-colors duration-200">
               Legal Notice
             </Link>
           </div>
@@ -171,3 +171,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

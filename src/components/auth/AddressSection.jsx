@@ -152,7 +152,7 @@ const AddressSection = () => {
         <div>
           <button
             type="submit"
-            className="bg-[#5a0f0f] text-white px-8 py-3 rounded-md hover:opacity-90 transition"
+            className="bg-[#5a0f0f] text-off-white px-8 py-3 rounded-md hover:opacity-90 transition"
           >
             Add Address
           </button>
@@ -163,3 +163,4 @@ const AddressSection = () => {
 };
 
 export default AddressSection;
+

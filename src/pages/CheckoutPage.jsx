@@ -121,7 +121,7 @@ export default function CheckoutPage() {
                 <div className="flex flex-col items-center">
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all
-                      ${done ? "bg-[#CBA61F] text-white" : active ? "bg-[#3D1613] text-[#CBA61F]" : "bg-gray-200 text-gray-400"}`}
+                      ${done ? "bg-[#CBA61F] text-off-white" : active ? "bg-[#3D1613] text-[#CBA61F]" : "bg-gray-200 text-gray-400"}`}
                   >
                     {done ? "✓" : i + 1}
                   </div>
@@ -207,7 +207,7 @@ export default function CheckoutPage() {
             {/* Cart items */}
             <div className="px-6 py-4 space-y-4 max-h-[300px] overflow-y-auto scrollbar-hide">
               {cart.length === 0 ? (
-                <p className="text-white/50 text-sm text-center py-4">Your cart is empty</p>
+                <p className="text-off-white-50 text-sm text-center py-4">Your cart is empty</p>
               ) : (
                 cart.map((p) => (
                   <div key={p.id} className="flex gap-3 pb-4 border-b border-white/10 last:border-0">
@@ -215,8 +215,8 @@ export default function CheckoutPage() {
                       <img src={p.images?.[0]} className="w-10 h-10 object-contain" alt={p.name} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white text-xs font-medium tracking-wide leading-snug line-clamp-2">{p.name}</p>
-                      <p className="text-white/50 text-[11px] mt-0.5">Qty: {p.qty}</p>
+                      <p className="text-off-white text-xs font-medium tracking-wide leading-snug line-clamp-2">{p.name}</p>
+                      <p className="text-off-white-50 text-[11px] mt-0.5">Qty: {p.qty}</p>
                       <p className="text-[#FFCA0A] text-sm font-semibold mt-0.5">{p.price}</p>
                     </div>
                   </div>
@@ -226,16 +226,16 @@ export default function CheckoutPage() {
 
             {/* Totals */}
             <div className="px-6 py-5 border-t border-white/10 space-y-3">
-              <div className="flex justify-between text-white/70 text-xs">
+              <div className="flex justify-between text-off-white-70 text-xs">
                 <span>Subtotal</span>
-                <span className="text-white">${subtotal.toLocaleString()}</span>
+                <span className="text-off-white">${subtotal.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between text-white/70 text-xs">
+              <div className="flex justify-between text-off-white-70 text-xs">
                 <span>Shipping</span>
                 <span className="text-[#FFCA0A] font-medium">Free</span>
               </div>
               <div className="flex justify-between pt-2 border-t border-white/10">
-                <span className="text-white text-sm font-semibold tracking-wide">Total</span>
+                <span className="text-off-white text-sm font-semibold tracking-wide">Total</span>
                 <span className="text-[#FFCA0A] text-base font-bold">${total.toFixed(0)}</span>
               </div>
             </div>
@@ -245,3 +245,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

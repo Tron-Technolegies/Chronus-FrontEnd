@@ -34,7 +34,7 @@ const AccountSidebar = ({ activeTab, setActiveTab }) => {
       <div className="lg:hidden mb-4 relative z-50">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full bg-[#5a0f0f] text-white py-3 px-4 rounded-md flex items-center justify-between"
+          className="w-full bg-[#5a0f0f] text-off-white py-3 px-4 rounded-md flex items-center justify-between"
         >
           <span>{activeLabel}</span>
 
@@ -69,7 +69,7 @@ const AccountSidebar = ({ activeTab, setActiveTab }) => {
             className={`px-4 py-3 rounded-md text-left transition
               ${
                 activeTab === item.id && item.id !== "logout"
-                  ? "bg-[#3D1613] text-white shadow"
+                  ? "bg-[#3D1613] text-off-white shadow"
                   : "bg-[#E8E8E8] hover:bg-gray-200"
               }`}
           >
@@ -82,3 +82,4 @@ const AccountSidebar = ({ activeTab, setActiveTab }) => {
 };
 
 export default AccountSidebar;
+

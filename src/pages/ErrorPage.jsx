@@ -50,10 +50,10 @@ export default function ErrorPage() {
       </div> */}
 
       {/* Message */}
-      <p className="text-white/40 text-[16px] tracking-[0.35em] uppercase mb-3">
+      <p className="text-off-white-40 text-[16px] tracking-[0.35em] uppercase mb-3">
         Page Not Found
       </p>
-      <p className="text-white/60 text-sm sm:text-base max-w-md leading-relaxed mb-10">
+      <p className="text-off-white-60 text-sm sm:text-base max-w-md leading-relaxed mb-10">
         The page you're looking for may have been moved, renamed, or simply
         doesn't exist in our collection.
       </p>
@@ -68,14 +68,14 @@ export default function ErrorPage() {
         </button>
         <button
           onClick={() => navigate("/shop")}
-          className="border border-white/20 text-white/70 text-xs tracking-[0.2em] px-8 py-3.5 hover:bg-white/5 hover:border-white/40 transition-all"
+          className="border border-white/20 text-off-white-70 text-xs tracking-[0.2em] px-8 py-3.5 hover:bg-white/5 hover:border-white/40 transition-all"
         >
           EXPLORE SHOP
         </button>
       </div>
 
       {/* Bottom watermark text
-      <p className="absolute bottom-8 text-[10px] tracking-[0.3em] text-white/15 uppercase select-none">
+      <p className="absolute bottom-8 text-[10px] tracking-[0.3em] text-off-white-15 uppercase select-none">
         © 2026 Chronus — Curated Excellence
       </p> */}
 
@@ -88,3 +88,4 @@ export default function ErrorPage() {
     </div>
   );
 }
+

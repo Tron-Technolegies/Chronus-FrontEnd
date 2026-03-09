@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
 
 const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories, onClose }) => {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
+  const hisHerSubcategories = extractHisHerSubcategories(subcategories);
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 30);
@@ -20,22 +22,19 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories, onC
     navigate(`/shop?category=${categorySlug}`);
   };
 
-  const hisEntry = subcategories.find(
-    (s) => s.slug?.toLowerCase().includes("his") || s.name?.toLowerCase().includes("his"),
-  );
+  const hisEntry = hisHerSubcategories.find((s) => s.slug === "his");
+  const herEntry = hisHerSubcategories.find((s) => s.slug === "her");
 
-  const herEntry = subcategories.find(
-    (s) => s.slug?.toLowerCase().includes("her") || s.name?.toLowerCase().includes("her"),
-  );
-
-  const showHis = hisEntry || subcategories.length > 0;
-  const showHer = herEntry || subcategories.length > 0;
+  const showHis = Boolean(hisEntry);
+  const showHer = Boolean(herEntry);
   const cardWrapperClass =
     "cursor-pointer group transition-all duration-300 hover:-translate-y-1 w-full";
   const cardBorderClass =
     "p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] hover:bg-gradient-to-r hover:from-[#ffd058] hover:via-[#ffca56] hover:to-[#ffe2a4]";
   const cardBodyClass =
     "bg-[#3d1613] group-hover:bg-[#32110f] transition-all duration-300 rounded-sm w-full min-h-[130px] sm:min-h-[150px] flex flex-col justify-center items-center shadow-md shadow-[#4c302f8a] text-center px-3 sm:px-6 group-hover:shadow-lg font-[cormorant-garamond]";
+
+  if (!showHis && !showHer) return null;
 
   return (
     <div
@@ -57,6 +56,7 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories, onC
       {/* Close button */}
       <button
         onClick={onClose}
+        aria-label="Close"
         style={{
           position: "absolute",
           top: "20px",
@@ -67,11 +67,11 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories, onC
           width: "36px",
           height: "36px",
           color: "rgba(255,255,255,0.7)",
-          fontSize: "16px",
+          fontSize: "14px",
           cursor: "pointer",
         }}
       >
-        X
+        x
       </button>
 
       <div
@@ -124,38 +124,36 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories, onC
         {/* Cards */}
         <div className="grid grid-cols-2 gap-3 sm:gap-6 max-w-[500px] mx-auto px-1">
           {showHis && (
-            <div
-              onClick={() => handleSelect("his")}
-              className={cardWrapperClass}
-            >
+            <div onClick={() => handleSelect("his")} className={cardWrapperClass}>
               <div className={cardBorderClass}>
                 <div className={cardBodyClass}>
-                  <h3 className="text-[#F5F1E8] text-xl sm:text-2xl md:text-3xl tracking-wide mb-2 sm:mb-3">
+                  <h3 className="text-off-white text-xl sm:text-2xl md:text-3xl tracking-wide mb-2 sm:mb-3">
                     His Collection
                   </h3>
 
                   <div className="w-10 sm:w-16 h-[1px] bg-[#C6A75D] mb-2 sm:mb-3"></div>
 
-                  <p className="text-[#e8ddd0] text-xs sm:text-sm tracking-wide">Explore</p>
+                  <p className="text-off-white text-xs sm:text-sm tracking-wide">
+                    Explore Collection
+                  </p>
                 </div>
               </div>
             </div>
           )}
 
           {showHer && (
-            <div
-              onClick={() => handleSelect("her")}
-              className={cardWrapperClass}
-            >
+            <div onClick={() => handleSelect("her")} className={cardWrapperClass}>
               <div className={cardBorderClass}>
                 <div className={cardBodyClass}>
-                  <h3 className="text-[#F5F1E8] text-xl sm:text-2xl md:text-3xl tracking-wide mb-2 sm:mb-3">
+                  <h3 className="text-off-white text-xl sm:text-2xl md:text-3xl tracking-wide mb-2 sm:mb-3">
                     Her Collection
                   </h3>
 
                   <div className="w-10 sm:w-16 h-[1px] bg-[#C6A75D] mb-2 sm:mb-3"></div>
 
-                  <p className="text-[#e8ddd0] text-xs sm:text-sm tracking-wide">Explore</p>
+                  <p className="text-off-white text-xs sm:text-sm tracking-wide">
+                    Explore Collection
+                  </p>
                 </div>
               </div>
             </div>

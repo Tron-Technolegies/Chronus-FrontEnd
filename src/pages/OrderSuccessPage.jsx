@@ -39,10 +39,10 @@ export default function OrderSuccessPage() {
             </div>
 
             <div>
-              <h1 className="text-white text-xl sm:text-2xl font-semibold tracking-widest mb-2">
+              <h1 className="text-off-white text-xl sm:text-2xl font-semibold tracking-widest mb-2">
                 Order Placed!
               </h1>
-              <p className="text-white/60 text-sm leading-relaxed">
+              <p className="text-off-white-60 text-sm leading-relaxed">
                 Thank you for your purchase. Your order is being processed.
               </p>
             </div>
@@ -111,3 +111,4 @@ export default function OrderSuccessPage() {
     </div>
   );
 }
+

@@ -53,7 +53,7 @@ const OrdersList = () => {
             onClick={() => setFilter(f)}
             className={`px-4 py-1.5 rounded-full text-sm border transition
               ${filter === f
-                ? "bg-[#3D1613] text-white border-[#3D1613]"
+                ? "bg-[#3D1613] text-off-white border-[#3D1613]"
                 : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
               }`}
           >

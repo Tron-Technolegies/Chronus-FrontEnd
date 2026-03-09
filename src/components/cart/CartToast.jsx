@@ -29,7 +29,7 @@ export default function CartToast() {
 
         {/* Text */}
         <div>
-          <p className="text-white text-sm font-medium tracking-wide">{toast}</p>
+          <p className="text-off-white text-sm font-medium tracking-wide">{toast}</p>
           <p className="text-xs" style={{ color: "rgba(255,202,10,0.7)" }}>
             Item added to your cart
           </p>
@@ -45,3 +45,4 @@ export default function CartToast() {
     </div>
   );
 }
+

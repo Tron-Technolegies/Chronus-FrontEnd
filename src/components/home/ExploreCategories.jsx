@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getCategories, getProductsByCategory } from "../../api/product";
 import CategoryIntroModal from "./CategoryIntroModal";
 import SubcategorySelectModal from "../shop/SubcategorySelectModal";
+import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
 
 const getSummaryLine = (description, name) => {
   const text = description?.trim();
@@ -12,14 +14,11 @@ const getSummaryLine = (description, name) => {
 };
 
 export default function ExploreCategories() {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [introCategory, setIntroCategory] = useState(null);
   const [subcategoryModalData, setSubcategoryModalData] = useState(null);
-  const defaultSubcategories = [
-    { id: "his", name: "His", slug: "his" },
-    { id: "her", name: "Her", slug: "her" },
-  ];
   const cardWrapperClass =
     "cursor-pointer group transition-all duration-300 hover:-translate-y-1 w-full max-w-[380px]";
   const cardBorderClass =
@@ -50,32 +49,18 @@ export default function ExploreCategories() {
     };
   }, []);
 
-  const findHisHerSubcategories = (products) => {
-    const subcategoryMap = new Map();
-
-    for (const product of products) {
-      const rawName = product?.subcategory?.name?.trim();
-      if (!rawName) continue;
-
-      const slug = rawName.toLowerCase();
-      const isHisOrHer = slug === "his" || slug === "her";
-      if (!isHisOrHer || subcategoryMap.has(slug)) continue;
-
-      subcategoryMap.set(slug, { id: slug, name: rawName, slug });
-    }
-
-    return [...subcategoryMap.values()];
-  };
-
   const handleExploreFromIntro = async (category) => {
     setIntroCategory(null);
 
     try {
       const res = await getProductsByCategory(category.id);
       const products = res.data?.products ?? [];
-      const detectedSubcategories = findHisHerSubcategories(products);
-      const subcategories =
-        detectedSubcategories.length > 0 ? detectedSubcategories : defaultSubcategories;
+      const subcategories = extractHisHerSubcategories(products);
+
+      if (subcategories.length === 0) {
+        navigate(`/shop?category=${category.id}`);
+        return;
+      }
 
       setSubcategoryModalData({
         id: category.id,
@@ -84,11 +69,7 @@ export default function ExploreCategories() {
       });
       return;
     } catch {
-      setSubcategoryModalData({
-        id: category.id,
-        name: category.name,
-        subcategories: defaultSubcategories,
-      });
+      navigate(`/shop?category=${category.id}`);
     }
   };
 
@@ -101,7 +82,9 @@ export default function ExploreCategories() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
           {!loading && categories.length === 0 && (
-            <p className="text-sm text-[#e8ddd0] col-span-full text-center">No categories available.</p>
+            <p className="text-sm text-off-white col-span-full text-center">
+              No categories available.
+            </p>
           )}
 
           {categories.map((category) => (
@@ -112,11 +95,15 @@ export default function ExploreCategories() {
             >
               <div className={cardBorderClass}>
                 <div className={cardBodyClass}>
-                  <h3 className="text-[#F5F1E8] text-xl sm:text-2xl md:text-3xl tracking-wide mb-2 sm:mb-3">{category.name}</h3>
+                  <h3 className="text-off-white text-xl sm:text-2xl md:text-3xl tracking-wide mb-2 sm:mb-3">
+                    {category.name}
+                  </h3>
 
                   <div className="w-10 sm:w-16 h-[1px] bg-[#C6A75D] mb-2 sm:mb-3"></div>
 
-                  <p className="text-[#e8ddd0] text-xs sm:text-sm tracking-wide">{getSummaryLine(category.description, category.name)}</p>
+                  <p className="text-off-white text-xs sm:text-sm tracking-wide max-w-[280px] truncate">
+                    {getSummaryLine(category.subdescription, category.name)}
+                  </p>
                 </div>
               </div>
             </div>

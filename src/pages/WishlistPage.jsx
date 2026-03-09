@@ -41,7 +41,7 @@ export default function WishlistPage() {
             <p className="text-gray-400 text-sm tracking-wide">Your wishlist is empty</p>
             <button
               onClick={() => navigate("/shop")}
-              className="bg-[#3D1613] text-white text-xs tracking-[0.2em] px-8 py-3 hover:bg-[#5a2019] transition-colors"
+              className="bg-[#3D1613] text-off-white text-xs tracking-[0.2em] px-8 py-3 hover:bg-[#5a2019] transition-colors"
             >
               EXPLORE COLLECTIONS
             </button>
@@ -83,7 +83,7 @@ export default function WishlistPage() {
                     onClick={() => {
                       addToCart(product);
                     }}
-                    className="flex items-center gap-2 bg-[#3D1613] text-white text-xs px-4 sm:px-5 py-2.5 rounded-sm hover:bg-[#5a2019] transition-colors whitespace-nowrap"
+                    className="flex items-center gap-2 bg-[#3D1613] text-off-white text-xs px-4 sm:px-5 py-2.5 rounded-sm hover:bg-[#5a2019] transition-colors whitespace-nowrap"
                   >
                     <LuShoppingBag size={14} />
                     <span className="hidden sm:inline">Add to bag</span>
@@ -123,3 +123,4 @@ export default function WishlistPage() {
     </div>
   );
 }
+

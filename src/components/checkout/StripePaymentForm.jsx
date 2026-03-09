@@ -62,7 +62,7 @@ export default function StripePaymentForm({ orderId, onSuccess }) {
       <button
         onClick={handlePay}
         disabled={loading || !stripe}
-        className="w-full bg-[#3D1613] text-white py-3.5 text-xs tracking-[0.2em] font-semibold hover:bg-[#5a2019] transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+        className="w-full bg-[#3D1613] text-off-white py-3.5 text-xs tracking-[0.2em] font-semibold hover:bg-[#5a2019] transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
       >
         {loading ? (
           <>
@@ -76,3 +76,4 @@ export default function StripePaymentForm({ orderId, onSuccess }) {
     </div>
   );
 }
+

@@ -26,7 +26,7 @@ const NewArrivals = () => {
         </div>
         <a
           href="/shop"
-          className="flex items-center gap-2 text-sm font-medium text-black border border-black/20 rounded-full px-5 py-2.5 hover:bg-black hover:text-white transition-all duration-300 whitespace-nowrap"
+          className="flex items-center gap-2 text-sm font-medium text-black border border-black/20 rounded-full px-5 py-2.5 hover:bg-black hover:text-off-white transition-all duration-300 whitespace-nowrap"
         >
           View All <span className="text-base leading-none">→</span>
         </a>
@@ -48,3 +48,4 @@ const NewArrivals = () => {
 };
 
 export default NewArrivals;
+
