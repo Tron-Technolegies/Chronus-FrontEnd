@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { addToCartAPI, clearCartAPI, fetchCartAPI, removeCartItemAPI } from "../api/cart";
+import { addToCartAPI, fetchCartAPI, removeCartItemAPI } from "../api/cart";
 
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
@@ -82,39 +82,33 @@ export const CartProvider = ({ children }) => {
   }, [fetchCart]);
 
   // ── addToCart ────────────────────────────────────────────────────────────────
-  const addToCart = useCallback(
-    async (product, qty = 1) => {
-      // Optimistic update
-      setCart((prev) => {
-        const exists = prev.find((p) => p.id === product.id);
-        if (exists) {
-          return prev.map((p) =>
-            p.id === product.id ? { ...p, qty: p.qty + qty } : p,
-          );
-        }
-        return [...prev, { ...product, qty }];
-      });
-
-      setOpen(true);
-      showToast(product.name ?? "Item");
-
-      // API call (best-effort — failures don't break UI)
-      try {
-        await addToCartAPI(product.id, qty);
-      } catch (err) {
-        console.warn("Add to cart API failed:", err?.message);
+  const addToCart = useCallback(async (product, qty = 1) => {
+    // Optimistic update
+    setCart((prev) => {
+      const exists = prev.find((p) => p.id === product.id);
+      if (exists) {
+        return prev.map((p) => (p.id === product.id ? { ...p, qty: p.qty + qty } : p));
       }
-    },
-    [],
-  );
+      return [...prev, { ...product, qty }];
+    });
 
-  // ── removeItem ───────────────────────────────────────────────────────────────
+    setOpen(true);
+    showToast(product.name ?? "Item");
+
+    // API call (best-effort — failures don't break UI)
+    try {
+      await addToCartAPI(product.id, qty);
+    } catch (err) {
+      console.warn("Add to cart API failed:", err?.message);
+    }
+  }, []);
+
   const removeItem = useCallback((id) => {
     // Optimistic local removal
     setCart((prev) => prev.filter((p) => p.id !== id));
     // Sync with server (best-effort — local state is already updated)
     removeCartItemAPI(id).catch((err) =>
-      console.warn("Remove cart item API failed:", err?.message)
+      console.warn("Remove cart item API failed:", err?.message),
     );
   }, []);
 
@@ -130,18 +124,12 @@ export const CartProvider = ({ children }) => {
   }, []);
 
   // ── clearCart ────────────────────────────────────────────────────────────────
-  const clearCart = useCallback(async () => {
+  const clearCart = useCallback(() => {
     // Clear local state & storage immediately
     setCart([]);
     localStorage.removeItem(LS_KEY);
     // Set flag so next fetchCart call (on re-mount) is skipped
     justCleared.current = true;
-    // Also clear server-side cart (guest session) so it doesn't come back
-    try {
-      await clearCartAPI();
-    } catch (err) {
-      console.warn("Server cart clear failed:", err?.message);
-    }
   }, []);
 
   // ── syncCartOnLogin ──────────────────────────────────────────────────────────
@@ -155,9 +143,7 @@ export const CartProvider = ({ children }) => {
     if (localCart.length > 0) {
       try {
         // Push every guest item to the server
-        await Promise.all(
-          localCart.map((item) => addToCartAPI(item.id, item.qty)),
-        );
+        await Promise.all(localCart.map((item) => addToCartAPI(item.id, item.qty)));
       } catch (err) {
         console.warn("Cart sync failed:", err?.message);
       }
