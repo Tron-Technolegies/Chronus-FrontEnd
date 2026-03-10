@@ -17,6 +17,11 @@ import { useProducts } from "../../hooks/useProducts";
 import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
 
 const PAGE_SIZE = 12;
+const normalizeFilterValue = (value) => {
+  if (!value || value === "all") return null;
+  if (/^\d+$/.test(String(value))) return String(value);
+  return String(value).replace(/-/g, " ").trim();
+};
 
 const ShopPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,28 +32,36 @@ const ShopPage = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
   const [sort, setSort] = useState("default");
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeSubcategory, setActiveSubcategory] = useState("all");
   const [collection, setCollection] = useState("all");
-  const [priceRange, setPriceRange] = useState([0, 100000]);
+  const [priceRangeDraft, setPriceRangeDraft] = useState([0, 100000]);
+  const [appliedPriceRange, setAppliedPriceRange] = useState([0, 100000]);
   const [dismissSubcategoryModal, setDismissSubcategoryModal] = useState(false);
 
   const { categories } = useCategories();
 
-  const selectedCategory = categoryParam ?? (activeCategory === "all" ? null : activeCategory);
+  const selectedCategory = categoryParam
+    ? normalizeFilterValue(categoryParam)
+    : activeCategory === "all"
+      ? null
+      : normalizeFilterValue(activeCategory);
   const selectedSubcategory =
-    categoryParam && !typeParam && activeSubcategory !== "all" ? activeSubcategory : null;
+    categoryParam && !typeParam && activeSubcategory !== "all"
+      ? normalizeFilterValue(activeSubcategory)
+      : null;
 
   const { products, loading, error, subcategories, hasMore, totalCount } = useProducts({
     category: selectedCategory,
     type: typeParam,
     subcategory: selectedSubcategory,
-    search,
+    search: appliedSearch,
     sort,
-    minPrice: priceRange[0],
-    maxPrice: priceRange[1],
+    minPrice: appliedPriceRange[0],
+    maxPrice: appliedPriceRange[1],
     page,
     pageSize: PAGE_SIZE,
     append: page > 1,
@@ -79,7 +92,15 @@ const ShopPage = () => {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(1);
-  }, [search, sort, typeParam, activeCategory, activeSubcategory, collection, priceRange]);
+  }, [appliedSearch, sort, typeParam, activeCategory, activeSubcategory, collection, appliedPriceRange]);
+
+  const handleSearchApply = () => {
+    setAppliedSearch(searchInput.trim());
+  };
+
+  const handlePriceApply = () => {
+    setAppliedPriceRange([...priceRangeDraft]);
+  };
 
   const handleSubcategoryChange = (value) => {
     setActiveSubcategory(value);
@@ -128,12 +149,14 @@ const ShopPage = () => {
   }, [products, collection]);
 
   const resetFilters = () => {
-    setSearch("");
+    setSearchInput("");
+    setAppliedSearch("");
     setSort("default");
     setActiveCategory("all");
     setActiveSubcategory("all");
     setCollection("all");
-    setPriceRange([0, 100000]);
+    setPriceRangeDraft([0, 100000]);
+    setAppliedPriceRange([0, 100000]);
     setPage(1);
   };
 
@@ -176,7 +199,11 @@ const ShopPage = () => {
               resetFilters={resetFilters}
             />
 
-            <ProductPriceFilter priceRange={priceRange} setPriceRange={setPriceRange} />
+            <ProductPriceFilter
+              priceRange={priceRangeDraft}
+              setPriceRange={setPriceRangeDraft}
+              onApply={handlePriceApply}
+            />
 
             <ShippingDetails />
           </div>
@@ -191,7 +218,11 @@ const ShopPage = () => {
             resetFilters={resetFilters}
           />
 
-          <ProductPriceFilter priceRange={priceRange} setPriceRange={setPriceRange} />
+          <ProductPriceFilter
+            priceRange={priceRangeDraft}
+            setPriceRange={setPriceRangeDraft}
+            onApply={handlePriceApply}
+          />
 
           <ShippingDetails />
         </aside>
@@ -216,7 +247,13 @@ const ShopPage = () => {
           )}
 
           <div className="flex flex-col sm:flex-row sm:justify-end gap-3 px-4 sm:px-6 py-5">
-            <SearchBox search={search} setSearch={setSearch} sort={sort} setSort={setSort} />
+            <SearchBox
+              search={searchInput}
+              setSearch={setSearchInput}
+              onSearch={handleSearchApply}
+              sort={sort}
+              setSort={setSort}
+            />
           </div>
 
           {!loading && !error && (

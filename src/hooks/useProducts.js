@@ -42,7 +42,8 @@ const addParam = (params, key, value) => {
 };
 
 const toPagination = (payload, itemCount) => {
-  const count = Number(payload?.count ?? payload?.total ?? itemCount) || itemCount;
+  const count =
+    Number(payload?.count ?? payload?.total ?? payload?.total_products ?? itemCount) || itemCount;
   const currentPage = Number(payload?.page ?? payload?.current_page ?? 1) || 1;
   const pageSize = Number(payload?.page_size ?? payload?.limit ?? itemCount) || itemCount;
   const totalPages =
@@ -98,7 +99,7 @@ export function useProducts({
       addParam(params, "max_price", maxPrice);
       addParam(params, "subcategory", effectiveSubcategory);
       addParam(params, "page", page);
-      addParam(params, "page_size", pageSize);
+      addParam(params, "limit", pageSize);
 
       const ordering = SORT_PARAM_MAP[sort] ?? null;
       addParam(params, "ordering", ordering);

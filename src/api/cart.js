@@ -8,5 +8,3 @@ export const fetchCartAPI = () => axiosInstance.get("/cart/");
 export const removeCartItemAPI = (productId) =>
   axiosInstance.delete(`/cart/remove/${productId}/`);
 
-export const clearCartAPI = () => axiosInstance.delete("/cart/clear/");
-

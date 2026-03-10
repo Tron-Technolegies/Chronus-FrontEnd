@@ -2,7 +2,13 @@ import { useCallback, useRef } from "react";
 
 const STEP = 500;
 
-const ProductPriceFilter = ({ priceRange, setPriceRange, min = 0, max = 100000 }) => {
+const ProductPriceFilter = ({
+  priceRange,
+  setPriceRange,
+  onApply,
+  min = 0,
+  max = 100000,
+}) => {
   const dragRef = useRef(null);
 
   const clamp = useCallback((value, lower, upper) => Math.min(Math.max(value, lower), upper), []);
@@ -147,6 +153,16 @@ const ProductPriceFilter = ({ priceRange, setPriceRange, min = 0, max = 100000 }
           />
         </label>
       </div>
+
+      {typeof onApply === "function" && (
+        <button
+          type="button"
+          onClick={onApply}
+          className="mt-4 w-full py-2.5 text-xs tracking-widest font-semibold bg-[#FFCA0A] text-black rounded-md"
+        >
+          Apply Price Filter
+        </button>
+      )}
 
       <style>{`
         .price-thumb::-webkit-slider-thumb {
