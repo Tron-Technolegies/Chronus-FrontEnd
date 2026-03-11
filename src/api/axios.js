@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ensureGuestId } from "../hooks/useGuestId";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -13,12 +14,9 @@ axiosInstance.interceptors.request.use((config) => {
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
-  } else {
-    const guestId = localStorage.getItem("guest_id");
-    if (guestId) {
-      config.headers["X-Guest-ID"] = guestId;
-    }
   }
+
+  config.headers["X-Guest-ID"] = ensureGuestId();
 
   return config;
 });

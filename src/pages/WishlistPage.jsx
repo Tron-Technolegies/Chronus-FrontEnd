@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../hooks/useCart";
 import { LuShoppingBag } from "react-icons/lu";
 import { FiX, FiHeart } from "react-icons/fi";
 import { useEffect } from "react";

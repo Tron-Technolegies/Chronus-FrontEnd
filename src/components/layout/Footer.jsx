@@ -3,6 +3,7 @@ import { FaInstagram, FaSnapchatGhost, FaWeixin } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { IoLocationOutline, IoCallOutline, IoMailOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { useFooterCollections } from "../../hooks/useFooterCollections";
 
 const SOCIALS = [
   { Icon: FaInstagram, href: "https://instagram.com/chronos_ae", label: "Instagram" },
@@ -11,23 +12,9 @@ const SOCIALS = [
   { Icon: FaWeixin, href: "https://weixin.qq.com/t/chronosgallery", label: "WeChat" },
 ];
 
-const COLLECTIONS = [
-  { label: "Timepieces", to: "/shop" },
-  { label: "Accessories", to: "/shop" },
-  { label: "Fine Art", to: "/shop" },
-  { label: "New Arrivals", to: "/shop" },
-  { label: "Featured", to: "/shop" },
-];
-
-const SERVICES = [
-  { label: "My Account", to: "/my-account" },
-  { label: "FAQ", to: "/faq" },
-  { label: "Shipping Policy", to: "/shipping" },
-  { label: "Privacy Policy", to: "/privacy" },
-  { label: "Terms of Service", to: "/terms" },
-];
-
 const Footer = () => {
+  const { collections, loading: collectionsLoading } = useFooterCollections();
+
   return (
     <footer
       className="bg-[#1a0806] pt-10 sm:pt-14 md:pt-16 relative flex flex-col items-center overflow-hidden inter text-off-white"
@@ -50,16 +37,16 @@ const Footer = () => {
             </p>
 
             <div className="flex gap-3 flex-wrap">
-              {SOCIALS.map(({ Icon, href, label }) => (
+              {SOCIALS.map((social) => (
                 <a
-                  key={label}
-                  href={href}
-                  target={href.startsWith("http") ? "_blank" : undefined}
+                  key={social.label}
+                  href={social.href}
+                  target={social.href.startsWith("http") ? "_blank" : undefined}
                   rel="noreferrer"
-                  aria-label={label}
+                  aria-label={social.label}
                   className="w-9 h-9 rounded-full bg-[#1a0806] flex items-center justify-center text-off-white-80 hover:bg-[#F7F1E7] hover:text-[#1a0806] transition-all duration-200"
                 >
-                  <Icon size={15} />
+                  <social.Icon size={15} />
                 </a>
               ))}
             </div>
@@ -69,7 +56,12 @@ const Footer = () => {
             <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">Collections</h3>
 
             <ul className="space-y-3 text-sm">
-              {COLLECTIONS.map(({ label, to }) => (
+              {collectionsLoading && (
+                <li className="text-off-white-50">Loading collections...</li>
+              )}
+
+              {!collectionsLoading &&
+                collections.map(({ label, to }) => (
                 <li key={label}>
                   <Link
                     to={to}
@@ -78,7 +70,7 @@ const Footer = () => {
                     {label}
                   </Link>
                 </li>
-              ))}
+                ))}
             </ul>
           </div>
           {/* Services */}

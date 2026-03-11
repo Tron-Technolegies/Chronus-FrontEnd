@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../hooks/useCart";
 import { FiCheckCircle, FiPackage, FiShoppingBag } from "react-icons/fi";
 
 export default function OrderSuccessPage() {

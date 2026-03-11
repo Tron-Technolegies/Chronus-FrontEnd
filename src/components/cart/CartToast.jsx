@@ -1,5 +1,5 @@
 import { LuShoppingBag } from "react-icons/lu";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../hooks/useCart";
 
 export default function CartToast() {
   const { toast } = useCart();

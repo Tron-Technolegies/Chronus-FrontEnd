@@ -15,7 +15,7 @@ export default function ProductCard({ product }) {
 
   return (
     <div className="bg-white group cursor-pointer">
-      <div className="border border-gray-200 bg-[#FFF5E6] p-5 relative pb-7 w-full overflow-hidden">
+      <div className="border border-gray-200 bg-[#f7f1e7] p-5 relative pb-7 w-full overflow-hidden">
         <button
           onClick={(e) => {
             e.preventDefault();

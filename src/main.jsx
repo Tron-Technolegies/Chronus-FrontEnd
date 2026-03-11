@@ -5,10 +5,6 @@ import App from "./App.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import { WishlistProvider } from "./context/WishlistContext.jsx";
 
-if (!localStorage.getItem("guest_id")) {
-  localStorage.setItem("guest_id", crypto.randomUUID());
-}
-
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <CartProvider>

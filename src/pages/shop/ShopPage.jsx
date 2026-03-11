@@ -14,6 +14,7 @@ import SubcategorySelectModal from "../../components/shop/SubcategorySelectModal
 
 import { useCategories } from "../../hooks/useCategories";
 import { useProducts } from "../../hooks/useProducts";
+import { fetchCategoryHisHerSubcategories } from "../../utils/fetchCategoryHisHerSubcategories";
 import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
 
 const PAGE_SIZE = 12;
@@ -41,6 +42,8 @@ const ShopPage = () => {
   const [priceRangeDraft, setPriceRangeDraft] = useState([0, 100000]);
   const [appliedPriceRange, setAppliedPriceRange] = useState([0, 100000]);
   const [dismissSubcategoryModal, setDismissSubcategoryModal] = useState(false);
+  const [resolvedHisHerSubcategories, setResolvedHisHerSubcategories] = useState([]);
+  const [hisHerLookupLoading, setHisHerLookupLoading] = useState(false);
 
   const { categories } = useCategories();
 
@@ -54,7 +57,7 @@ const ShopPage = () => {
       ? normalizeFilterValue(activeSubcategory)
       : null;
 
-  const { products, loading, error, subcategories, hasMore, totalCount } = useProducts({
+  const { products, loading, error, subcategories, totalCount, pagination } = useProducts({
     category: selectedCategory,
     type: typeParam,
     subcategory: selectedSubcategory,
@@ -64,13 +67,19 @@ const ShopPage = () => {
     maxPrice: appliedPriceRange[1],
     page,
     pageSize: PAGE_SIZE,
-    append: page > 1,
+    append: false,
   });
 
-  const hisHerSubcategories = useMemo(
+  const currentPage = pagination?.currentPage ?? page;
+  const totalPages = pagination?.totalPages ?? 1;
+
+  const hisHerSubcategoriesFromProducts = useMemo(
     () => extractHisHerSubcategories(subcategories),
     [subcategories],
   );
+
+  const hisHerSubcategories =
+    resolvedHisHerSubcategories.length > 0 ? resolvedHisHerSubcategories : hisHerSubcategoriesFromProducts;
 
   const hasHisHerContext = hisHerSubcategories.length > 0;
   const subcategoryOptions = hasHisHerContext ? hisHerSubcategories : subcategories;
@@ -80,8 +89,42 @@ const ShopPage = () => {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+
     if (!categoryParam) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setResolvedHisHerSubcategories([]);
+      setHisHerLookupLoading(false);
+      return;
+    }
+
+    const run = async () => {
+      try {
+        setHisHerLookupLoading(true);
+        const results = await fetchCategoryHisHerSubcategories(categoryParam);
+
+        if (!cancelled) {
+          setResolvedHisHerSubcategories(results);
+        }
+      } catch {
+        if (!cancelled) {
+          setResolvedHisHerSubcategories([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setHisHerLookupLoading(false);
+        }
+      }
+    };
+
+    run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [categoryParam]);
+
+  useEffect(() => {
+    if (!categoryParam) {
       setActiveSubcategory("all");
       return;
     }
@@ -90,9 +133,18 @@ const ShopPage = () => {
   }, [categoryParam, typeParam, subcategoryParam]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(1);
-  }, [appliedSearch, sort, typeParam, activeCategory, activeSubcategory, collection, appliedPriceRange]);
+  }, [
+    categoryParam,
+    subcategoryParam,
+    appliedSearch,
+    sort,
+    typeParam,
+    activeCategory,
+    activeSubcategory,
+    collection,
+    appliedPriceRange,
+  ]);
 
   const handleSearchApply = () => {
     setAppliedSearch(searchInput.trim());
@@ -124,6 +176,7 @@ const ShopPage = () => {
     Boolean(categoryParam) &&
     !typeParam &&
     !loading &&
+    !hisHerLookupLoading &&
     hasHisHerContext &&
     !dismissSubcategoryModal;
 
@@ -278,7 +331,9 @@ const ShopPage = () => {
             </div>
           )}
 
-          {!loading && !error && filteredProducts.length > 0 && <ProductsGrid products={filteredProducts} />}
+          {!loading && !error && filteredProducts.length > 0 && (
+            <ProductsGrid products={filteredProducts} />
+          )}
 
           {!loading && !error && filteredProducts.length === 0 && (
             <div className="flex flex-col items-center py-24 gap-4 text-center px-6">
@@ -292,19 +347,48 @@ const ShopPage = () => {
             </div>
           )}
 
-          {!loading && !error && hasMore && (
+          {!loading && !error && totalPages > 1 && (
             <div className="flex justify-center py-10">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage <= 1}
+                  className="border border-gray-300 px-4 py-2 text-sm disabled:opacity-50"
+                >
+                  Prev
+                </button>
+
+                <span className="text-sm text-gray-500">
+                  Page {currentPage} of {totalPages}
+                </span>
+
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage >= totalPages}
+                  className="border border-gray-300 px-4 py-2 text-sm disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!loading && !error && totalPages > 1 && (
+            <div className="flex justify-center pb-8">
               <button
-                onClick={() => setPage((p) => p + 1)}
-                className="bg-[#FFCA0A] text-black px-6 py-3"
+                onClick={() => setPage(1)}
+                disabled={currentPage === 1}
+                className="text-xs tracking-widest underline text-gray-500 disabled:opacity-50"
               >
-                Load More
+                Back to first page
               </button>
             </div>
           )}
 
           {loading && page > 1 && (
-            <div className="flex justify-center py-6 text-sm text-gray-500">Loading more products...</div>
+            <div className="flex justify-center py-6 text-sm text-gray-500">
+              Loading products...
+            </div>
           )}
         </main>
       </div>

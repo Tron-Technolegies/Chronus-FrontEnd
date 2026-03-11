@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../hooks/useCart";
 import { useCheckout } from "../hooks/useCheckout";
 import {
   FiPackage,
@@ -112,7 +112,7 @@ export default function CheckoutPage() {
         <h1 className="text-xl sm:text-2xl tracking-[0.15em] font-medium mb-8">Secure Checkout</h1>
 
         {/* ─── Step Indicator ─── */}
-        <div className="flex items-center mb-10 max-w-sm">
+        <div className="flex items-center mb-10 max-w-sm w-full overflow-x-auto pb-1">
           {STEPS.map((s, i) => {
             const active = step === i + 1;
             const done   = step > i + 1;
@@ -210,12 +210,16 @@ export default function CheckoutPage() {
                 <p className="text-off-white-50 text-sm text-center py-4">Your cart is empty</p>
               ) : (
                 cart.map((p) => (
-                  <div key={p.id} className="flex gap-3 pb-4 border-b border-white/10 last:border-0">
+                  <div
+                    key={p.cartKey ?? `${p.id}-${p.selectedSize ?? "default"}`}
+                    className="flex gap-3 pb-4 border-b border-white/10 last:border-0"
+                  >
                     <div className="w-12 h-12 bg-white/10 rounded-sm flex items-center justify-center shrink-0">
                       <img src={p.images?.[0]} className="w-10 h-10 object-contain" alt={p.name} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-off-white text-xs font-medium tracking-wide leading-snug line-clamp-2">{p.name}</p>
+                      {p.selectedSize && <p className="text-off-white-50 text-[11px] mt-0.5">Size: {p.selectedSize}</p>}
                       <p className="text-off-white-50 text-[11px] mt-0.5">Qty: {p.qty}</p>
                       <p className="text-[#FFCA0A] text-sm font-semibold mt-0.5">{p.price}</p>
                     </div>

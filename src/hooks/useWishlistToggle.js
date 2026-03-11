@@ -1,9 +1,6 @@
 import { useState, useCallback } from "react";
 import { useWishlist } from "../context/WishlistContext";
 
-/**
- * Thin wrapper around WishlistContext.toggleWishlist that exposes a loading flag.
- */
 export function useWishlistToggle() {
   const { toggleWishlist, isWishlisted } = useWishlist();
   const [loading, setLoading] = useState(false);

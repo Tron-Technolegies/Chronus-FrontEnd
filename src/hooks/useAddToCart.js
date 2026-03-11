@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useCart } from "../context/CartContext";
+import { useCart } from "./useCart";
 
 export function useAddToCart() {
   const { addToCart } = useCart();

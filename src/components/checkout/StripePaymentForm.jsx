@@ -42,7 +42,6 @@ export default function StripePaymentForm({ orderId, onSuccess }) {
         <PaymentElement
           options={{
             layout: "tabs",
-            paymentMethodOrder: ["card"],
           }}
         />
       </div>
