@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FiUser, FiShoppingBag, FiMenu, FiX, FiHeart } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../hooks/useCart";
 import { useWishlist } from "../../context/WishlistContext";
 
 const HEADER_COLOR = "#3D1613";

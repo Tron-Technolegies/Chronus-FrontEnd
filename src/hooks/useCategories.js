@@ -2,9 +2,18 @@ import { useCallback, useEffect, useState } from "react";
 import { getCategories } from "../api/product";
 
 const toCategoryOption = (category) => ({
+  ...category,
   id: category.id,
   name: category.name,
   slug: category.name?.toLowerCase().replace(/\s+/g, "-") ?? String(category.id),
+  priority: Number.isFinite(Number(category.priority)) ? Number(category.priority) : Number.MAX_SAFE_INTEGER,
+  image:
+    category.image ??
+    category.image_url ??
+    category.thumbnail ??
+    category.banner ??
+    null,
+  description: category.description ?? category.subdescription ?? "",
 });
 
 export function useCategories() {
@@ -18,7 +27,12 @@ export function useCategories() {
       setError(null);
       const response = await getCategories();
       const raw = response.data?.categories ?? [];
-      setCategories(Array.isArray(raw) ? raw.map(toCategoryOption) : []);
+      const normalized = Array.isArray(raw) ? raw.map(toCategoryOption) : [];
+      normalized.sort((a, b) => {
+        if (a.priority !== b.priority) return a.priority - b.priority;
+        return String(a.name).localeCompare(String(b.name));
+      });
+      setCategories(normalized);
     } catch (err) {
       setError(err?.response?.data?.detail ?? err?.message ?? "Failed to load categories.");
       setCategories([]);

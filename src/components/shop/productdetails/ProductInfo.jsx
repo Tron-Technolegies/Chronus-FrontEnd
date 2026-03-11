@@ -5,18 +5,39 @@ import { LuShoppingBag } from "react-icons/lu";
 import { MdOutlineLocalShipping } from "react-icons/md";
 import { RiLoopLeftFill } from "react-icons/ri";
 import { useAddToCart } from "../../../hooks/useAddToCart";
+import { useProductSizePricing } from "../../../hooks/useProductSizePricing";
 
 export default function ProductInfo({ product }) {
   const [qty, setQty] = useState(1);
   const navigate = useNavigate();
   const { handleAddToCart, loading: cartLoading } = useAddToCart();
+  const {
+    selectedSize,
+    setSelectedSize,
+    sizeOptions,
+    hasSizeOptions,
+    activeSizeOption,
+    displayPrice,
+    productForCart,
+  } = useProductSizePricing(product);
+  const parsedStock = Number(product?.stock);
+  const maxQty = Number.isFinite(parsedStock) && parsedStock > 0 ? parsedStock : 99;
 
   const increase = () => {
-    if (qty < product.stock) setQty(qty + 1);
+    setQty((prev) => (prev < maxQty ? prev + 1 : prev));
   };
 
   const decrease = () => {
-    if (qty > 1) setQty(qty - 1);
+    setQty((prev) => (prev > 1 ? prev - 1 : prev));
+  };
+
+  const handleQtyInput = (event) => {
+    const raw = Number.parseInt(event.target.value, 10);
+    if (Number.isNaN(raw)) {
+      setQty(1);
+      return;
+    }
+    setQty(Math.min(maxQty, Math.max(1, raw)));
   };
 
   return (
@@ -48,7 +69,7 @@ export default function ProductInfo({ product }) {
       </div>
 
       <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
-        <span className="text-2xl sm:text-3xl font-semibold">{product.price}</span>
+        <span className="text-2xl sm:text-3xl font-semibold">{displayPrice}</span>
 
         {product.originalPrice && (
           <span className="line-through text-gray-400 text-base sm:text-lg">
@@ -59,20 +80,64 @@ export default function ProductInfo({ product }) {
 
       <p className="text-gray-500 leading-6 max-w-md text-sm sm:text-base">{product.shortDesc}</p>
 
+      {hasSizeOptions && (
+        <div className="space-y-2">
+          <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Size</p>
+          <div className="flex flex-wrap gap-2">
+            {sizeOptions.map((option) => {
+              const active = option.size === (activeSizeOption?.size ?? selectedSize);
+              return (
+                <button
+                  key={option.size}
+                  type="button"
+                  onClick={() => setSelectedSize(option.size)}
+                  className={`px-3 py-1.5 text-xs border transition-colors ${
+                    active
+                      ? "border-[#CBA61F] bg-[#CBA61F]/10 text-[#3D1613]"
+                      : "border-gray-300 text-gray-700 hover:border-gray-400"
+                  }`}
+                >
+                  {option.size}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
         <div className="flex border border-gray-300 w-fit">
-          <button onClick={decrease} className="px-4 py-2 cursor-pointer hover:bg-gray-50">
+          <button
+            type="button"
+            onClick={decrease}
+            className="px-4 py-2 cursor-pointer hover:bg-gray-50"
+            aria-label="Decrease quantity"
+          >
             -
           </button>
-          <span className="px-6 flex items-center">{qty}</span>
-          <button onClick={increase} className="px-4 py-2 cursor-pointer hover:bg-gray-50">
+          <input
+            type="number"
+            min={1}
+            max={maxQty}
+            value={qty}
+            onChange={handleQtyInput}
+            className="w-14 text-center outline-none"
+            aria-label="Quantity"
+          />
+          <button
+            type="button"
+            onClick={increase}
+            className="px-4 py-2 cursor-pointer hover:bg-gray-50"
+            aria-label="Increase quantity"
+          >
             +
           </button>
         </div>
 
         <button
+          type="button"
           onClick={async () => {
-            await handleAddToCart(product, qty);
+            await handleAddToCart(productForCart, qty);
             navigate("/checkout");
           }}
           disabled={cartLoading}
@@ -82,7 +147,8 @@ export default function ProductInfo({ product }) {
         </button>
 
         <button
-          onClick={() => handleAddToCart(product, qty)}
+          type="button"
+          onClick={() => handleAddToCart(productForCart, qty)}
           disabled={cartLoading}
           className="bg-gray-50 cursor-pointer p-3 shrink-0 disabled:opacity-50 border border-gray-200"
           aria-label="Add to cart"

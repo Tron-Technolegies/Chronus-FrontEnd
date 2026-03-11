@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../hooks/useCart";
 
 export default function CartDrawer() {
   const { cart, open, setOpen, subtotal, updateQty, removeItem } = useCart();
@@ -20,7 +20,7 @@ export default function CartDrawer() {
           <h2 className="tracking-widest font-medium font-[bastoni]">Shopping Bag</h2>
 
           <button onClick={() => setOpen(false)} className="text-lg cursor-pointer">
-            ✕
+            x
           </button>
         </div>
 
@@ -29,44 +29,47 @@ export default function CartDrawer() {
             <p className="text-gray-400 text-center mt-20">Your cart is empty</p>
           )}
 
-          {cart.map((p) => (
-            <div key={p.id} className="flex gap-4 border-b border-[#D9D9D9] pb-4">
-              <img
-                src={p.images?.[0]}
-                className="w-16 h-16 object-contain border border-[#D9D9D9] p-1"
-              />
+          {cart.map((p) => {
+            return (
+              <div key={p.id} className="flex gap-4 border-b border-[#D9D9D9] pb-4">
+                <img
+                  src={p.images?.[0]}
+                  className="w-16 h-16 object-contain border border-[#D9D9D9] p-1"
+                  alt={p.name}
+                />
 
-              <div className="flex-1 space-y-2">
-                <p className="text-sm font-[BAYON]">{p.name}</p>
-                <p className="text-xs font-semibold text-[#000000] ">{p.price}</p>
+                <div className="flex-1 space-y-2">
+                  <p className="text-sm font-[BAYON]">{p.name}</p>
+                  <p className="text-xs font-semibold text-[#000000] ">{p.price}</p>
 
-                <div className="flex items-center gap-3 mt-2">
-                  <button
-                    onClick={() => updateQty(p.id, "dec")}
-                    className="px-3 py-1 border border-gray-300 hover:bg-gray-100 rounded"
-                  >
-                    −
-                  </button>
+                  <div className="flex items-center gap-3 mt-2">
+                    <button
+                      onClick={() => updateQty(p.id, "dec")}
+                      className="px-3 py-1 border border-gray-300 hover:bg-gray-100 rounded"
+                    >
+                      -
+                    </button>
 
-                  <span className="min-w-[20px] text-center">{p.qty}</span>
+                    <span className="min-w-[20px] text-center">{p.qty}</span>
 
-                  <button
-                    onClick={() => updateQty(p.id, "inc")}
-                    className="px-3 py-1 border border-gray-300 hover:bg-gray-100 rounded"
-                  >
-                    +
-                  </button>
+                    <button
+                      onClick={() => updateQty(p.id, "inc")}
+                      className="px-3 py-1 border border-gray-300 hover:bg-gray-100 rounded"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <button
-                onClick={() => removeItem(p.id)}
-                className="cursor-pointer text-gray-400 hover:text-black"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
+                <button
+                  onClick={() => removeItem(p.id)}
+                  className="cursor-pointer text-gray-400 hover:text-black"
+                >
+                  x
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         <div className="p-6 border-t border-gray-200 space-y-4">

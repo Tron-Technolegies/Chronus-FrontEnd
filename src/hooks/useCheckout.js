@@ -1,6 +1,30 @@
 import { useState, useCallback } from "react";
 import { placeOrderAPI } from "../api/checkout";
 import { createPaymentIntentAPI } from "../api/payment";
+
+const COUNTRY_TO_CURRENCY = {
+  India: "inr",
+  UAE: "aed",
+  USA: "usd",
+  UK: "gbp",
+};
+
+const normalizeCurrency = (value) => {
+  if (!value) return null;
+  const normalized = String(value).trim().toLowerCase();
+  return /^[a-z]{3}$/.test(normalized) ? normalized : null;
+};
+
+const resolveCurrency = (formData) => {
+  const fromForm = normalizeCurrency(formData?.currency);
+  if (fromForm) return fromForm;
+
+  const fromCountry = normalizeCurrency(COUNTRY_TO_CURRENCY[formData?.country]);
+  if (fromCountry) return fromCountry;
+
+  return "usd";
+};
+
 export function useCheckout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,7 +44,8 @@ export function useCheckout() {
       localStorage.setItem("last_order_id", String(id));
       setOrderId(id);
 
-      const paymentRes = await createPaymentIntentAPI(id);
+      const currency = resolveCurrency(formData);
+      const paymentRes = await createPaymentIntentAPI(id, currency);
       const secret = paymentRes.data?.client_secret;
 
       if (!secret) throw new Error("Payment setup failed. Please try again.");

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCategories, getProductsByCategory } from "../../api/product";
 import CategoryIntroModal from "./CategoryIntroModal";
 import SubcategorySelectModal from "../shop/SubcategorySelectModal";
-import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
+import { useCategories } from "../../hooks/useCategories";
+import { fetchCategoryHisHerSubcategories } from "../../utils/fetchCategoryHisHerSubcategories";
 
 const getSummaryLine = (description, name) => {
   const text = description?.trim();
@@ -15,8 +15,7 @@ const getSummaryLine = (description, name) => {
 
 export default function ExploreCategories() {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { categories, loading } = useCategories();
   const [introCategory, setIntroCategory] = useState(null);
   const [subcategoryModalData, setSubcategoryModalData] = useState(null);
   const cardWrapperClass =
@@ -26,36 +25,11 @@ export default function ExploreCategories() {
   const cardBodyClass =
     "bg-[#3d1613] group-hover:bg-[#32110f] transition-all duration-300 rounded-sm w-full min-h-[130px] sm:min-h-[150px] flex flex-col justify-center items-center shadow-md shadow-[#4c302f8a] text-center px-3 sm:px-6 group-hover:shadow-lg font-[cormorant-garamond]";
 
-  useEffect(() => {
-    let mounted = true;
-
-    const loadCategories = async () => {
-      try {
-        const res = await getCategories();
-        const raw = res.data?.categories ?? [];
-        if (!mounted) return;
-        setCategories(Array.isArray(raw) ? raw : []);
-      } catch {
-        if (!mounted) return;
-        setCategories([]);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    loadCategories();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
   const handleExploreFromIntro = async (category) => {
     setIntroCategory(null);
 
     try {
-      const res = await getProductsByCategory(category.id);
-      const products = res.data?.products ?? [];
-      const subcategories = extractHisHerSubcategories(products);
+      const subcategories = await fetchCategoryHisHerSubcategories(category.id);
 
       if (subcategories.length === 0) {
         navigate(`/shop?category=${category.id}`);
