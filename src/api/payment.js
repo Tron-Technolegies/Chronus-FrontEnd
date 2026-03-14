@@ -5,3 +5,9 @@ export const createPaymentIntentAPI = (orderId, currency = null) =>
     order_id: orderId,
     ...(currency ? { currency } : {}),
   });
+
+export const createZiinaPaymentAPI = (orderId, currency = null) =>
+  axiosInstance.post("/payments/ziina/create/", {
+    order_id: orderId,
+    ...(currency ? { currency } : {}),
+  });

@@ -8,7 +8,7 @@ const AccountSidebar = ({ activeTab, setActiveTab }) => {
 
   const menuItems = [
     { id: "profile", label: "My Profile" },
-    { id: "orders", label: "My Orders" },
+    // { id: "orders", label: "My Orders" },
     // { id: "address", label: "Saved Address" },
     // { id: "password", label: "Change Password" },
     { id: "logout", label: "Logout" },
@@ -39,9 +39,7 @@ const AccountSidebar = ({ activeTab, setActiveTab }) => {
           <span>{activeLabel}</span>
 
           <FiChevronDown
-            className={`transition-transform duration-300 ${
-              isOpen ? "rotate-180" : ""
-            }`}
+            className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
             size={20}
           />
         </button>
@@ -82,4 +80,3 @@ const AccountSidebar = ({ activeTab, setActiveTab }) => {
 };
 
 export default AccountSidebar;
-

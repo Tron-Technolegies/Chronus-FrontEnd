@@ -41,19 +41,18 @@ export default function ProductCard({ product }) {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = IMAGE_PLACEHOLDER;
               }}
-              className="w-full max-w-[350px] h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px] object-cover"
+              className="w-full max-w-[350px] h-[220px] sm:h-[320px] md:h-[420px] lg:h-[500px] object-cover"
             />
           </div>
         </Link>
 
         <div
           className="
-            flex absolute gap-4 items-center justify-center w-full bottom-0 left-0 px-3 py-6
-            transform transition-all duration-300
-            translate-y-0 opacity-100
-            sm:translate-y-full sm:opacity-0
-            sm:group-hover:translate-y-0 sm:group-hover:opacity-100
-          "
+flex md:absolute gap-4 items-center justify-center w-full bottom-0 left-0 px-3 py-4
+md:transform md:transition-all md:duration-300
+md:translate-y-full md:opacity-0
+md:group-hover:translate-y-0 md:group-hover:opacity-100
+"
         >
           <Link to={`/product/${product.id}`} className="w-full">
             <button className="bg-yellow-400 p-2 w-full text-sm">Buy Now</button>

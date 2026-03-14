@@ -5,38 +5,47 @@ import { useCart } from "../../hooks/useCart";
 import { useWishlist } from "../../context/WishlistContext";
 
 const HEADER_COLOR = "#3D1613";
+const LOGO = "/header-new-logo.svg";
+
+const navLinks = [
+  { label: "Collections", path: "/shop" },
+  { label: "About", section: "about" },
+  { label: "Contact", section: "contact" },
+  { label: "FAQ", path: "/faq" },
+];
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const { setOpen } = useCart();
-  const { wishlist } = useWishlist();
-
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { setOpen } = useCart();
+  const { wishlist } = useWishlist();
 
   const isHome = location.pathname === "/";
   const isLoggedIn = !!localStorage.getItem("accessToken");
 
+  /* ---------------- Scroll Behaviour ---------------- */
   useEffect(() => {
     if (!isHome) {
       setScrolled(true);
       return;
     }
 
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 10);
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHome]);
 
+  /* ---------------- Lock body when menu open ---------------- */
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
   }, [menuOpen]);
 
+  /* ---------------- Scroll To Section ---------------- */
   const scrollToSection = (id) => {
     if (!isHome) {
       navigate("/", { state: { scrollTo: id } });
@@ -44,18 +53,19 @@ const Header = () => {
     }
 
     const element = document.getElementById(id);
+
     if (element) {
       const headerOffset = 70;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      const position = element.getBoundingClientRect().top + window.pageYOffset - headerOffset;
 
       window.scrollTo({
-        top: offsetPosition,
+        top: position,
         behavior: "smooth",
       });
     }
   };
 
+  /* ---------------- Navigation Click ---------------- */
   const handleNavClick = (link) => {
     setMenuOpen(false);
 
@@ -70,12 +80,7 @@ const Header = () => {
     navigate(isLoggedIn ? "/my-account" : "/login");
   };
 
-  const navLinks = [
-    { label: "Collections", path: "/shop" },
-    { label: "About", section: "about" },
-    { label: "Contact", section: "contact" },
-    { label: "FAQ", path: "/faq" },
-  ];
+  const wishlistCount = wishlist.length > 9 ? "9+" : wishlist.length;
 
   return (
     <header
@@ -86,7 +91,7 @@ const Header = () => {
     >
       {/* ================= DESKTOP ================= */}
       <div className="hidden md:flex relative h-full px-6 lg:px-10 items-center">
-        {/* Left nav */}
+        {/* LEFT NAV */}
         <nav className="flex gap-5 lg:gap-10 text-xs lg:text-sm font-medium tracking-wide">
           {navLinks.map((link) => (
             <button
@@ -99,22 +104,23 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* Center logo */}
+        {/* LOGO */}
         <img
-          src="/header-new-logo.svg"
+          src={LOGO}
           alt="Chronos"
           className="h-4 object-contain cursor-pointer absolute left-1/2 -translate-x-1/2"
           onClick={() => navigate("/")}
         />
 
-        {/* Right icons */}
+        {/* RIGHT ICONS */}
         <div className="ml-auto flex items-center gap-5 lg:gap-6">
           {/* Wishlist */}
           <button onClick={() => navigate("/wishlist")} className="relative">
             <FiHeart size={18} className="hover:text-gray-300 transition-colors" />
+
             {wishlist.length > 0 && (
               <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full bg-[#FFCA0A] text-black text-[8px] font-bold flex items-center justify-center">
-                {wishlist.length > 9 ? "9+" : wishlist.length}
+                {wishlistCount}
               </span>
             )}
           </button>
@@ -127,8 +133,8 @@ const Header = () => {
           {/* User */}
           <FiUser
             size={18}
-            className="hover:text-gray-300 transition-colors cursor-pointer"
             onClick={handleUserClick}
+            className="hover:text-gray-300 transition-colors cursor-pointer"
           />
         </div>
       </div>
@@ -140,22 +146,25 @@ const Header = () => {
         </button>
 
         <img
-          src="/chronus-logo.png"
+          src={LOGO}
           alt="Chronos"
           className="h-4 object-contain cursor-pointer absolute left-1/2 -translate-x-1/2"
           onClick={() => navigate("/")}
         />
 
         <div className="ml-auto flex items-center gap-3">
+          {/* Wishlist */}
           <button onClick={() => navigate("/wishlist")} className="relative p-1">
             <FiHeart size={18} />
+
             {wishlist.length > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#FFCA0A] text-black text-[7px] font-bold flex items-center justify-center">
-                {wishlist.length > 9 ? "9+" : wishlist.length}
+                {wishlistCount}
               </span>
             )}
           </button>
 
+          {/* Cart */}
           <button onClick={() => setOpen(true)} className="p-1">
             <FiShoppingBag size={18} />
           </button>
@@ -169,7 +178,8 @@ const Header = () => {
           style={{ backgroundColor: HEADER_COLOR }}
         >
           <div className="flex items-center justify-between px-5 h-16 border-b border-white/10">
-            <img src="/chronus-logo.png" alt="Chronos" className="h-4" />
+            <img src={LOGO} alt="Chronos" className="h-4" />
+
             <button onClick={() => setMenuOpen(false)}>
               <FiX size={22} />
             </button>
