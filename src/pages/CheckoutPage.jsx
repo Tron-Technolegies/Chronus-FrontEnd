@@ -31,6 +31,19 @@ const INITIAL_FORM = {
   phone:       "",
 };
 
+const PAYMENT_GATEWAYS = [
+  {
+    id: "stripe",
+    label: "Stripe",
+    description: "Pay by card with Stripe's secure checkout form.",
+  },
+  {
+    id: "ziina",
+    label: "Ziina",
+    description: "Continue to Ziina to complete your payment.",
+  },
+];
+
 // ── Validators ──────────────────────────────────────────────────────────────
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+\d][\d\s\-().]{6,19}$/;
@@ -57,7 +70,19 @@ export default function CheckoutPage() {
   const [form, setForm] = useState(INITIAL_FORM);
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const { submit, loading, error, clientSecret, orderId } = useCheckout();
+  const [selectedGateway, setSelectedGateway] = useState("stripe");
+  const [paymentCurrency, setPaymentCurrency] = useState("usd");
+  const {
+    submit,
+    startStripePayment,
+    startZiinaPayment,
+    loading,
+    error,
+    clientSecret,
+    orderId,
+    paymentGateway,
+    paymentUrl,
+  } = useCheckout();
 
   // No tax — total = subtotal only
   const total = subtotal;
@@ -92,8 +117,29 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async () => {
     if (cart.length === 0) return;
     try {
-      await submit(form);
+      const result = await submit(form);
+      setPaymentCurrency(result?.currency ?? "usd");
       setStep(3);
+    } catch {
+      // error shown in hook
+    }
+  };
+
+  const handleGatewayContinue = async () => {
+    if (!orderId) return;
+
+    try {
+      if (selectedGateway === "ziina") {
+        const result = await startZiinaPayment(orderId, paymentCurrency);
+        const targetUrl = result?.paymentUrl ?? paymentUrl;
+
+        if (targetUrl) {
+          window.location.href = targetUrl;
+        }
+        return;
+      }
+
+      await startStripePayment(orderId, paymentCurrency);
     } catch {
       // error shown in hook
     }
@@ -180,19 +226,80 @@ export default function CheckoutPage() {
                   <h2 className="text-sm tracking-[0.15em] font-medium uppercase">Payment Details</h2>
                 </div>
                 <hr className="border-gray-100" />
+                {!clientSecret && (
+                  <div className="space-y-5">
+                    <div className="space-y-3">
+                      {PAYMENT_GATEWAYS.map((gateway) => {
+                        const isSelected = selectedGateway === gateway.id;
 
-                {clientSecret ? (
+                        return (
+                          <button
+                            key={gateway.id}
+                            type="button"
+                            onClick={() => setSelectedGateway(gateway.id)}
+                            className={`w-full text-left border rounded-sm p-4 transition
+                              ${
+                                isSelected
+                                  ? "border-[#CBA61F] bg-[#fff9e8]"
+                                  : "border-gray-200 bg-white hover:border-gray-300"
+                              }`}
+                          >
+                            <div className="flex items-center justify-between gap-4">
+                              <div>
+                                <p className="text-sm font-medium text-black">{gateway.label}</p>
+                                <p className="text-xs text-gray-500 mt-1">{gateway.description}</p>
+                              </div>
+                              <span
+                                className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0
+                                  ${
+                                    isSelected
+                                      ? "border-[#CBA61F] bg-[#CBA61F]"
+                                      : "border-gray-300 bg-white"
+                                  }`}
+                              >
+                                {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleGatewayContinue}
+                      disabled={loading || !orderId}
+                      className="w-full bg-[#3D1613] text-off-white py-3.5 text-xs tracking-[0.2em] font-semibold hover:bg-[#5a2019] transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                    >
+                      {loading ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                          PREPARING PAYMENT...
+                        </>
+                      ) : (
+                        `CONTINUE WITH ${selectedGateway === "ziina" ? "ZIINA" : "STRIPE"}`
+                      )}
+                    </button>
+
+                    {selectedGateway === "ziina" && paymentUrl && (
+                      <p className="text-xs text-gray-500">
+                        If you are not redirected automatically,{" "}
+                        <a href={paymentUrl} className="underline">
+                          continue to Ziina
+                        </a>
+                        .
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {clientSecret && (
                   <StripeProvider clientSecret={clientSecret}>
                     <StripePaymentForm
                       orderId={orderId ?? localStorage.getItem("last_order_id")}
                       onSuccess={(id) => navigate(`/order-success/${id}`)}
                     />
                   </StripeProvider>
-                ) : (
-                  <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 text-yellow-700 text-sm px-4 py-3 rounded-sm">
-                    <FiAlertCircle size={16} />
-                    <span>Payment is being prepared. Please wait or refresh the page.</span>
-                  </div>
                 )}
               </>
             )}

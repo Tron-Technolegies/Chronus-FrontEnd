@@ -4,170 +4,128 @@ import { fetchProductsAPI } from "../api/product";
 const normalise = (p) => ({
   id: p.id,
   name: p.name,
+
   price: `$${Number(p.price).toLocaleString()}`,
   _rawPrice: Number(p.price),
-  originalPrice: null,
+
   image: p.image ?? null,
   images: [p.image, ...(p.gallery ?? [])].filter(Boolean),
-  category: p.category?.name?.toLowerCase().replace(/\s+/g, "-") ?? "other",
-  categoryName: p.category?.name ?? "Other",
+
   categoryId: p.category?.id ?? null,
-  subcategory: p.subcategory?.name?.toLowerCase().replace(/\s+/g, "-") ?? null,
-  subcategoryName: p.subcategory?.name ?? null,
+  categoryName: p.category?.name ?? "Other",
+
   subcategoryId: p.subcategory?.id ?? null,
+  subcategoryName: p.subcategory?.name ?? null,
+
   brand: p.brand?.name ?? "",
   brandId: p.brand?.id ?? null,
-  shortDesc: p.description?.slice(0, 80) ?? "",
-  description: p.description ?? "",
+
   specification: p.specification && typeof p.specification === "object" ? p.specification : {},
+
   stock: p.stock ?? 0,
   is_featured: p.is_featured ?? false,
   is_best_seller: p.is_best_seller ?? false,
+
   created_at: p.created_at ?? null,
-  rating: 4.8,
-  reviewsCount: 0,
-  reviews: [],
 });
-
-const SORT_PARAM_MAP = {
-  "price-asc": "price",
-  "price-desc": "-price",
-  newest: "-created_at",
-  "name-asc": "name",
-};
-
-const addParam = (params, key, value) => {
-  if (value === null || value === undefined || value === "") return;
-  params[key] = value;
-};
-
-const toPagination = (payload, itemCount) => {
-  const count =
-    Number(payload?.count ?? payload?.total ?? payload?.total_products ?? itemCount) || itemCount;
-  const currentPage = Number(payload?.page ?? payload?.current_page ?? 1) || 1;
-  const pageSize = Number(payload?.page_size ?? payload?.limit ?? itemCount) || itemCount;
-  const totalPages =
-    Number(payload?.total_pages ?? payload?.num_pages) ||
-    (pageSize > 0 ? Math.ceil(count / pageSize) : 1);
-
-  const hasMoreFromPage = currentPage < totalPages;
-  const hasMore = typeof payload?.next === "boolean" ? payload.next : Boolean(payload?.next) || hasMoreFromPage;
-
-  return {
-    count,
-    currentPage,
-    pageSize,
-    totalPages,
-    hasMore,
-  };
-};
 
 export function useProducts({
   category = null,
-  type = null,
+  subcategory = null,
   search = null,
-  sort = null,
   minPrice = null,
   maxPrice = null,
-  subcategory = null,
   page = 1,
   pageSize = 12,
-  append = false,
+  enabled = true,
 } = {}) {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [subcategories, setSubcategories] = useState([]);
+
   const [pagination, setPagination] = useState({
-    count: 0,
     currentPage: 1,
-    pageSize,
     totalPages: 1,
-    hasMore: false,
+    totalProducts: 0,
   });
 
-  const effectiveSubcategory = subcategory ?? type ?? null;
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const load = useCallback(async () => {
+    if (!enabled) return;
+
     try {
       setLoading(true);
       setError(null);
 
-      const params = {};
-      addParam(params, "category", category);
-      addParam(params, "search", search?.trim());
-      addParam(params, "min_price", minPrice);
-      addParam(params, "max_price", maxPrice);
-      addParam(params, "subcategory", effectiveSubcategory);
-      addParam(params, "page", page);
-      addParam(params, "limit", pageSize);
+      const params = {
+        page,
+        limit: pageSize,
+      };
 
-      const ordering = SORT_PARAM_MAP[sort] ?? null;
-      addParam(params, "ordering", ordering);
-      addParam(params, "sort", sort);
+      if (category !== null && category !== undefined && category !== "") params.category = category;
+      if (subcategory !== null && subcategory !== undefined && subcategory !== "") {
+        params.subcategory = subcategory;
+      }
+      if (search) params.search = search;
+      if (minPrice !== null && minPrice !== undefined && minPrice !== "") params.min_price = minPrice;
+      if (maxPrice !== null && maxPrice !== undefined && maxPrice !== "") params.max_price = maxPrice;
 
       const res = await fetchProductsAPI(params);
       const payload = res.data;
-      const raw = payload?.products ?? payload?.results ?? (Array.isArray(payload) ? payload : []);
-      const normalized = Array.isArray(raw) ? raw.map(normalise) : [];
 
-      setProducts((prev) => {
-        if (!append || page <= 1) return normalized;
+      const normalized = payload.products.map(normalise);
 
-        const seen = new Set(prev.map((item) => item.id));
-        const next = [...prev];
+      setProducts(normalized);
 
-        normalized.forEach((item) => {
-          if (seen.has(item.id)) return;
-          seen.add(item.id);
-          next.push(item);
-        });
-
-        return next;
+      setPagination({
+        currentPage: payload.page,
+        totalPages: payload.total_pages,
+        totalProducts: payload.total_products,
       });
 
-      setPagination(toPagination(payload, normalized.length));
+      const subs = [];
+      normalized.forEach((p) => {
+        if (p.subcategoryId && !subs.find((s) => s.id === p.subcategoryId)) {
+          subs.push({
+            id: p.subcategoryId,
+            name: p.subcategoryName,
+          });
+        }
+      });
+
+      setSubcategories(subs);
     } catch (err) {
-      setError(err?.response?.data?.detail ?? err?.message ?? "Failed to load products.");
+      setError(err?.message ?? "Failed to load products.");
     } finally {
       setLoading(false);
     }
-  }, [category, search, minPrice, maxPrice, effectiveSubcategory, page, pageSize, sort, append]);
+  }, [category, subcategory, search, minPrice, maxPrice, page, pageSize, enabled]);
 
   useEffect(() => {
+    if (!enabled) {
+      setProducts([]);
+      setSubcategories([]);
+      setPagination({
+        currentPage: 1,
+        totalPages: 1,
+        totalProducts: 0,
+      });
+      setLoading(true);
+      setError(null);
+      return;
+    }
+
     load();
-  }, [load]);
-
-  const categories = products.reduce((acc, p) => {
-    if (!acc.find((c) => c.id === p.categoryId)) {
-      acc.push({ id: p.categoryId, name: p.categoryName, slug: p.category });
-    }
-    return acc;
-  }, []);
-
-  const brands = products.reduce((acc, p) => {
-    if (p.brand && !acc.find((b) => b.name === p.brand)) {
-      acc.push({ id: p.brandId, name: p.brand });
-    }
-    return acc;
-  }, []);
-
-  const subcategories = products.reduce((acc, p) => {
-    if (p.subcategoryId && !acc.find((s) => s.id === p.subcategoryId)) {
-      acc.push({ id: p.subcategoryId, name: p.subcategoryName, slug: p.subcategory });
-    }
-    return acc;
-  }, []);
+  }, [enabled, load]);
 
   return {
     products,
     loading,
     error,
-    refetch: load,
-    categories,
-    brands,
-    subcategories,
     pagination,
-    hasMore: pagination.hasMore,
-    totalCount: pagination.count,
+    totalCount: pagination.totalProducts,
+    subcategories,
+    refetch: load,
   };
 }

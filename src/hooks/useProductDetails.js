@@ -82,10 +82,7 @@ export function useProductDetails(productId) {
 
       try {
         const response = await fetchProductByIdAPI(productId);
-        const payload = response.data;
-        const rawProduct = Array.isArray(payload?.products)
-          ? payload.products.find((item) => String(item.id) === String(productId))
-          : payload?.product ?? payload;
+        const rawProduct = response.data;
         setProduct(formatProductDetails(rawProduct));
       } catch (err) {
         setError(err?.response?.status === 404 ? "Product not found." : "Failed to load product.");

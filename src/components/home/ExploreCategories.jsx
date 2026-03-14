@@ -1,47 +1,41 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCategories } from "../../hooks/useCategories";
 import CategoryIntroModal from "./CategoryIntroModal";
 import SubcategorySelectModal from "../shop/SubcategorySelectModal";
-import { useCategories } from "../../hooks/useCategories";
 import { fetchCategoryHisHerSubcategories } from "../../utils/fetchCategoryHisHerSubcategories";
-
-const getSummaryLine = (description, name) => {
-  const text = description?.trim();
-  if (!text) return `Explore our ${name} collection.`;
-
-  const firstSentence = text.match(/[^.!?]+[.!?]?/u)?.[0]?.trim();
-  return firstSentence || text;
-};
 
 export default function ExploreCategories() {
   const navigate = useNavigate();
-  const { categories, loading } = useCategories();
-  const [introCategory, setIntroCategory] = useState(null);
-  const [subcategoryModalData, setSubcategoryModalData] = useState(null);
-  const cardWrapperClass =
-    "cursor-pointer group transition-all duration-300 hover:-translate-y-1 w-full max-w-[380px]";
-  const cardBorderClass =
-    "p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] hover:bg-gradient-to-r hover:from-[#ffd058] hover:via-[#ffca56] hover:to-[#ffe2a4]";
-  const cardBodyClass =
-    "bg-[#3d1613] group-hover:bg-[#32110f] transition-all duration-300 rounded-sm w-full min-h-[130px] sm:min-h-[150px] flex flex-col justify-center items-center shadow-md shadow-[#4c302f8a] text-center px-3 sm:px-6 group-hover:shadow-lg font-[cormorant-garamond]";
+  const { categories = [], loading } = useCategories();
 
-  const handleExploreFromIntro = async (category) => {
-    setIntroCategory(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [subcategoryModal, setSubcategoryModal] = useState(null);
+
+  const sortedCategories = [...categories].sort(
+    (a, b) => (a.priority ?? 999) - (b.priority ?? 999),
+  );
+
+  const openCategoryIntro = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const handleExploreCategory = async (category) => {
+    setSelectedCategory(null);
 
     try {
       const subcategories = await fetchCategoryHisHerSubcategories(category.id);
 
-      if (subcategories.length === 0) {
+      if (!subcategories?.length) {
         navigate(`/shop?category=${category.id}`);
         return;
       }
 
-      setSubcategoryModalData({
+      setSubcategoryModal({
         id: category.id,
         name: category.name,
         subcategories,
       });
-      return;
     } catch {
       navigate(`/shop?category=${category.id}`);
     }
@@ -55,29 +49,27 @@ export default function ExploreCategories() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
-          {!loading && categories.length === 0 && (
+          {!loading && sortedCategories.length === 0 && (
             <p className="text-sm text-off-white col-span-full text-center">
               No categories available.
             </p>
           )}
 
-          {categories.map((category) => (
+          {sortedCategories.map((category) => (
             <div
               key={category.id}
-              onClick={() => setIntroCategory(category)}
-              className={cardWrapperClass}
+              onClick={() => openCategoryIntro(category)}
+              className="cursor-pointer group transition-all duration-300 hover:-translate-y-1 w-full max-w-[380px]"
             >
-              <div className={cardBorderClass}>
-                <div className={cardBodyClass}>
-                  <h3 className="text-off-white text-xl sm:text-2xl md:text-3xl tracking-wide mb-2 sm:mb-3">
+              <div className="p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c]">
+                <div className="bg-[#3d1613] rounded-sm w-full min-h-[180px] flex flex-col justify-center items-center text-center px-6 shadow-md group-hover:shadow-lg">
+                  <h3 className="text-off-white text-2xl tracking-wide mb-3 font-[cormorant-garamond]">
                     {category.name}
                   </h3>
 
-                  <div className="w-10 sm:w-16 h-[1px] bg-[#C6A75D] mb-2 sm:mb-3"></div>
+                  <div className="w-12 h-[1px] bg-[#C6A75D] mb-3"></div>
 
-                  <p className="text-off-white text-xs sm:text-sm tracking-wide max-w-[280px] truncate">
-                    {getSummaryLine(category.subdescription, category.name)}
-                  </p>
+                  <p className="text-off-white text-sm">{category.subdescription}</p>
                 </div>
               </div>
             </div>
@@ -85,20 +77,20 @@ export default function ExploreCategories() {
         </div>
       </section>
 
-      {introCategory && (
+      {selectedCategory && (
         <CategoryIntroModal
-          category={introCategory}
-          onClose={() => setIntroCategory(null)}
-          onExplore={handleExploreFromIntro}
+          category={selectedCategory}
+          onClose={() => setSelectedCategory(null)}
+          onExplore={handleExploreCategory}
         />
       )}
 
-      {subcategoryModalData && (
+      {subcategoryModal && (
         <SubcategorySelectModal
-          categorySlug={subcategoryModalData.id}
-          categoryName={subcategoryModalData.name}
-          subcategories={subcategoryModalData.subcategories}
-          onClose={() => setSubcategoryModalData(null)}
+          categorySlug={subcategoryModal.id}
+          categoryName={subcategoryModal.name}
+          subcategories={subcategoryModal.subcategories}
+          onClose={() => setSubcategoryModal(null)}
         />
       )}
     </>
