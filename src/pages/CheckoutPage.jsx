@@ -2,12 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../hooks/useCart";
 import { useCheckout } from "../hooks/useCheckout";
-import {
-  FiPackage,
-  FiCreditCard,
-  FiCheckCircle,
-  FiAlertCircle,
-} from "react-icons/fi";
+import { FiPackage, FiCreditCard, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 import ShippingForm from "../components/checkout/ShippingForm";
 import OrderReview from "../components/checkout/OrderReview";
 import StripeProvider from "../providers/StripeProvider";
@@ -16,19 +11,19 @@ import StripePaymentForm from "../components/checkout/StripePaymentForm";
 // ── Steps: 1 Shipping → 2 Review → 3 Payment ──────────────────────────────
 const STEPS = [
   { label: "Shipping", icon: FiPackage },
-  { label: "Review",   icon: FiCheckCircle },
-  { label: "Payment",  icon: FiCreditCard },
+  { label: "Review", icon: FiCheckCircle },
+  { label: "Payment", icon: FiCreditCard },
 ];
 
 const INITIAL_FORM = {
-  first_name:  "",
-  last_name:   "",
-  email:       "",
-  address:     "",
-  city:        "",
+  first_name: "",
+  last_name: "",
+  email: "",
+  address: "",
+  city: "",
   postal_code: "",
-  country:     "",
-  phone:       "",
+  country: "",
+  phone: "",
 };
 
 const PAYMENT_GATEWAYS = [
@@ -50,15 +45,15 @@ const PHONE_RE = /^[+\d][\d\s\-().]{6,19}$/;
 
 function validateShipping(form) {
   const errs = {};
-  if (!form.first_name.trim())  errs.first_name  = "First name is required";
-  if (!form.last_name.trim())   errs.last_name   = "Last name is required";
-  if (!form.email.trim())       errs.email       = "Email is required";
+  if (!form.first_name.trim()) errs.first_name = "First name is required";
+  if (!form.last_name.trim()) errs.last_name = "Last name is required";
+  if (!form.email.trim()) errs.email = "Email is required";
   else if (!EMAIL_RE.test(form.email)) errs.email = "Enter a valid email address";
-  if (!form.address.trim())     errs.address     = "Street address is required";
-  if (!form.city.trim())        errs.city        = "City is required";
+  if (!form.address.trim()) errs.address = "Street address is required";
+  if (!form.city.trim()) errs.city = "City is required";
   if (!form.postal_code.trim()) errs.postal_code = "Postal code is required";
-  if (!form.country)            errs.country     = "Please select a country";
-  if (!form.phone.trim())       errs.phone       = "Phone number is required";
+  if (!form.country) errs.country = "Please select a country";
+  if (!form.phone.trim()) errs.phone = "Phone number is required";
   else if (!PHONE_RE.test(form.phone)) errs.phone = "Enter a valid phone number";
   return errs;
 }
@@ -87,7 +82,9 @@ export default function CheckoutPage() {
   // No tax — total = subtotal only
   const total = subtotal;
 
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -145,12 +142,13 @@ export default function CheckoutPage() {
     }
   };
 
-
   return (
     <div className="min-h-screen bg-[#f7f6f3]">
-      <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-10 pt-24 pb-16">
+      <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-10 pt-12 pb-16">
         <p className="text-xs text-gray-400 mb-6 tracking-wide">
-          <Link to="/" className="hover:text-gray-600">Home</Link>
+          <Link to="/" className="hover:text-gray-600">
+            Home
+          </Link>
           <span className="mx-2">&gt;</span>
           <span className="text-gray-600">Checkout</span>
         </p>
@@ -161,7 +159,7 @@ export default function CheckoutPage() {
         <div className="flex items-center mb-10 max-w-sm w-full overflow-x-auto pb-1">
           {STEPS.map((s, i) => {
             const active = step === i + 1;
-            const done   = step > i + 1;
+            const done = step > i + 1;
             return (
               <div key={s.label} className="flex items-center flex-1 last:flex-none">
                 <div className="flex flex-col items-center">
@@ -171,12 +169,16 @@ export default function CheckoutPage() {
                   >
                     {done ? "✓" : i + 1}
                   </div>
-                  <span className={`mt-1 text-[10px] tracking-widest ${active ? "text-[#3D1613] font-semibold" : "text-gray-400"}`}>
+                  <span
+                    className={`mt-1 text-[10px] tracking-widest ${active ? "text-[#3D1613] font-semibold" : "text-gray-400"}`}
+                  >
                     {s.label}
                   </span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className={`flex-1 h-[1px] mx-2 mb-4 ${done ? "bg-[#CBA61F]" : "bg-gray-200"}`} />
+                  <div
+                    className={`flex-1 h-[1px] mx-2 mb-4 ${done ? "bg-[#CBA61F]" : "bg-gray-200"}`}
+                  />
                 )}
               </div>
             );
@@ -187,7 +189,6 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10 items-start">
           {/* ============ LEFT — Form ============ */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow-sm p-6 sm:p-8 space-y-6">
-
             {error && (
               <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-sm">
                 <FiAlertCircle size={16} />
@@ -223,7 +224,9 @@ export default function CheckoutPage() {
               <>
                 <div className="flex items-center gap-3 mb-2">
                   <FiCreditCard className="text-[#CBA61F]" size={18} />
-                  <h2 className="text-sm tracking-[0.15em] font-medium uppercase">Payment Details</h2>
+                  <h2 className="text-sm tracking-[0.15em] font-medium uppercase">
+                    Payment Details
+                  </h2>
                 </div>
                 <hr className="border-gray-100" />
                 {!clientSecret && (
@@ -257,7 +260,9 @@ export default function CheckoutPage() {
                                       : "border-gray-300 bg-white"
                                   }`}
                               >
-                                {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                                {isSelected && (
+                                  <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                                )}
                               </span>
                             </div>
                           </button>
@@ -308,7 +313,9 @@ export default function CheckoutPage() {
           {/* ============ RIGHT — Order Summary ============ */}
           <div className="rounded-lg overflow-hidden shadow-sm" style={{ background: "#3D1613" }}>
             <div className="px-6 py-4 border-b border-white/10">
-              <h3 className="text-sm tracking-[0.2em] font-semibold text-[#FFCA0A] uppercase">Order Summary</h3>
+              <h3 className="text-sm tracking-[0.2em] font-semibold text-[#FFCA0A] uppercase">
+                Order Summary
+              </h3>
             </div>
 
             {/* Cart items */}
@@ -325,8 +332,14 @@ export default function CheckoutPage() {
                       <img src={p.images?.[0]} className="w-10 h-10 object-contain" alt={p.name} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-off-white text-xs font-medium tracking-wide leading-snug line-clamp-2">{p.name}</p>
-                      {p.selectedSize && <p className="text-off-white-50 text-[11px] mt-0.5">Size: {p.selectedSize}</p>}
+                      <p className="text-off-white text-xs font-medium tracking-wide leading-snug line-clamp-2">
+                        {p.name}
+                      </p>
+                      {p.selectedSize && (
+                        <p className="text-off-white-50 text-[11px] mt-0.5">
+                          Size: {p.selectedSize}
+                        </p>
+                      )}
                       <p className="text-off-white-50 text-[11px] mt-0.5">Qty: {p.qty}</p>
                       <p className="text-[#FFCA0A] text-sm font-semibold mt-0.5">{p.price}</p>
                     </div>
@@ -356,4 +369,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-

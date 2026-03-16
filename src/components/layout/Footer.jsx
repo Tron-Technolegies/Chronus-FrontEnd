@@ -53,23 +53,21 @@ const Footer = () => {
           </div>
           {/* Collections */}
           <div className="text-off-white-80 sm:pl-4 lg:pl-10">
-            <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">Collections</h3>
+            <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">Categories</h3>
 
             <ul className="space-y-3 text-sm">
-              {collectionsLoading && (
-                <li className="text-off-white-50">Loading collections...</li>
-              )}
+              {collectionsLoading && <li className="text-off-white-50">Loading collections...</li>}
 
               {!collectionsLoading &&
                 collections.map(({ label, to }) => (
-                <li key={label}>
-                  <Link
-                    to={to}
-                    className="text-off-white-70 hover:text-off-white hover:translate-x-1 inline-block transition-all duration-200"
-                  >
-                    {label}
-                  </Link>
-                </li>
+                  <li key={label}>
+                    <Link
+                      to={to}
+                      className="text-off-white-70 hover:text-off-white hover:translate-x-1 inline-block transition-all duration-200"
+                    >
+                      {label}
+                    </Link>
+                  </li>
                 ))}
             </ul>
           </div>
@@ -163,4 +161,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
