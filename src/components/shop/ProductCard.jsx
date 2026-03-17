@@ -16,7 +16,6 @@ export default function ProductCard({ product }) {
   return (
     <div className="bg-white group cursor-pointer">
       <div className="border border-gray-200 bg-[#f7f1e7] p-3 relative overflow-hidden">
-        {/* Wishlist */}
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -31,7 +30,6 @@ export default function ProductCard({ product }) {
           />
         </button>
 
-        {/* Product Image */}
         <Link to={`/product/${product.id}`}>
           <div className="aspect-[3/4] w-full overflow-hidden flex items-center justify-center">
             <img
@@ -46,7 +44,6 @@ export default function ProductCard({ product }) {
           </div>
         </Link>
 
-        {/* Hover Buttons */}
         <div
           className="
           flex gap-2 items-center justify-center w-full mt-3
@@ -74,11 +71,12 @@ export default function ProductCard({ product }) {
         </div>
       </div>
 
-      {/* Product Info */}
       <Link to={`/product/${product.id}`}>
         <div className="text-center text-black py-3 px-2">
           <p className="text-xs sm:text-sm leading-snug line-clamp-2">{product.name}</p>
-          <p className="text-sm sm:text-base font-medium">{product.price}</p>
+          <p className="text-sm sm:text-base font-medium">
+            {product.categoryName === "Fine Art" ? `Starts from ${product.price}` : product.price}
+          </p>
         </div>
       </Link>
     </div>

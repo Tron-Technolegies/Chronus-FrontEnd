@@ -27,7 +27,6 @@ const Header = () => {
   const isHome = location.pathname === "/";
   const isLoggedIn = !!localStorage.getItem("accessToken");
 
-  /* ---------------- Scroll Behaviour ---------------- */
   useEffect(() => {
     if (!isHome) {
       setScrolled(true);
@@ -40,12 +39,10 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHome]);
 
-  /* ---------------- Lock body when menu open ---------------- */
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
   }, [menuOpen]);
 
-  /* ---------------- Scroll To Section ---------------- */
   const scrollToSection = (id) => {
     if (!isHome) {
       navigate("/", { state: { scrollTo: id } });
@@ -65,7 +62,6 @@ const Header = () => {
     }
   };
 
-  /* ---------------- Navigation Click ---------------- */
   const handleNavClick = (link) => {
     setMenuOpen(false);
 
@@ -89,7 +85,6 @@ const Header = () => {
         backgroundColor: isHome && !scrolled ? "transparent" : HEADER_COLOR,
       }}
     >
-      {/* ================= DESKTOP ================= */}
       <div className="hidden md:flex relative h-full px-6 lg:px-10 items-center">
         {/* LEFT NAV */}
         <nav className="flex gap-5 lg:gap-10 text-xs lg:text-sm font-medium tracking-wide">
@@ -139,7 +134,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* ================= MOBILE ================= */}
       <div className="md:hidden relative flex h-full items-center px-4">
         <button onClick={() => setMenuOpen(true)} className="p-1">
           <FiMenu size={22} />
@@ -171,7 +165,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* ================= MOBILE MENU ================= */}
       {menuOpen && (
         <div
           className="fixed inset-0 z-50 flex flex-col text-off-white"
