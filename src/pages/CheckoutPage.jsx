@@ -39,7 +39,6 @@ const PAYMENT_GATEWAYS = [
   },
 ];
 
-// ── Validators ──────────────────────────────────────────────────────────────
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+\d][\d\s\-().]{6,19}$/;
 
@@ -127,12 +126,16 @@ export default function CheckoutPage() {
 
     try {
       if (selectedGateway === "ziina") {
-        const result = await startZiinaPayment(orderId, paymentCurrency);
-        const targetUrl = result?.paymentUrl ?? paymentUrl;
+        const result = await startZiinaPayment(orderId, "aed"); // 🔥 force AED
+
+        const targetUrl = result?.paymentUrl;
 
         if (targetUrl) {
-          window.location.href = targetUrl;
+          window.location.replace(targetUrl);
+        } else {
+          console.error("Ziina redirect failed", result);
         }
+
         return;
       }
 

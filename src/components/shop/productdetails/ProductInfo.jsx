@@ -46,7 +46,6 @@ export default function ProductInfo({ product }) {
         </span>
       )}
       <h1 className="text-base sm:text-xl tracking-widest font-[Bayon]">{product.name}</h1>
-      {/* Rating */}
       <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-400 flex-wrap">
         {product.rating > 0 ? (
           <>
@@ -65,7 +64,6 @@ export default function ProductInfo({ product }) {
           <span className="text-gray-300 text-xs">No reviews yet</span>
         )}
       </div>
-      {/* Price */}
       <div className="flex items-center gap-3 flex-wrap">
         <span className="text-xl sm:text-3xl font-semibold">{displayPrice}</span>
 
@@ -75,9 +73,7 @@ export default function ProductInfo({ product }) {
           </span>
         )}
       </div>
-      {/* Description */}
       <p className="text-gray-500 leading-6 max-w-md text-sm">{product.shortDesc}</p>
-      {/* Sizes */}
       {hasSizeOptions && (
         <div className="space-y-2">
           <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Size</p>
@@ -104,7 +100,6 @@ export default function ProductInfo({ product }) {
           </div>
         </div>
       )}
-      {/* Quantity + Buttons */}
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
         <div className="flex border border-gray-300 w-fit">
           <button type="button" onClick={decrease} className="px-3 sm:px-4 py-2 hover:bg-gray-50">
@@ -152,7 +147,6 @@ export default function ProductInfo({ product }) {
           </button>
         </div>
       </div>
-      {/* Features */}
       <div className="border-t border-[#D9D9D9] pt-6 sm:pt-8">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div className="flex flex-col items-center gap-2">

@@ -12,7 +12,7 @@ export default function ProductGallery({ images = [] }) {
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       {/* Main Image */}
-      <div className="flex-1 border-2 border-[#D9D9D9] p-4 sm:p-6 lg:p-10 relative order-1 lg:order-2">
+      <div className="flex-1 border-2 border-[#D9D9D9] bg-[#f7f1e7] p-4 sm:p-6 lg:p-10 relative order-1 lg:order-2">
         <button className="absolute top-4 right-4 cursor-pointer" onClick={() => setWish(!wish)}>
           <FaHeart className={`transition ${wish ? "text-[#CBA61F]" : "text-gray-300"}`} />
         </button>
@@ -20,7 +20,7 @@ export default function ProductGallery({ images = [] }) {
         <img
           src={active ?? PLACEHOLDER}
           alt="Product"
-          className="w-full h-[300px] sm:h-[380px] lg:h-[450px] bg-[#f7f1e7] object-contain"
+          className="w-full h-[300px] sm:h-[380px] lg:h-[450px] object-contain"
         />
       </div>
 
