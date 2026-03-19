@@ -5,10 +5,12 @@ import ProductInfo from "../../../components/shop/productdetails/ProductInfo";
 import ProductTabs from "../../../components/shop/productdetails/ProductTabs";
 import YouMayAlsoLike from "../../../components/shop/YouMayAlsoLike";
 import { useProductDetails } from "../../../hooks/useProductDetails";
+import { useProductSizePricing } from "../../../hooks/useProductSizePricing";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
   const { product, loading, error, loadProduct } = useProductDetails(id);
+  const productSelection = useProductSizePricing(product);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -48,8 +50,11 @@ const ProductDetailPage = () => {
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
-        <ProductGallery images={product.images} />
-        <ProductInfo product={product} />
+        <ProductGallery
+          images={product.images}
+          colorImage={productSelection.activeColorOption?.image ?? null}
+        />
+        <ProductInfo product={product} productSelection={productSelection} />
       </div>
 
       <div className="mt-12 sm:mt-20">

@@ -7,21 +7,37 @@ import { RiLoopLeftFill } from "react-icons/ri";
 import { useAddToCart } from "../../../hooks/useAddToCart";
 import { useProductSizePricing } from "../../../hooks/useProductSizePricing";
 
-export default function ProductInfo({ product }) {
+export default function ProductInfo({ product, productSelection }) {
   const [qty, setQty] = useState(1);
   const navigate = useNavigate();
 
   const { handleAddToCart, loading: cartLoading } = useAddToCart();
+  const fallbackSelection = useProductSizePricing(product);
 
   const {
     selectedSize,
     setSelectedSize,
+    selectedColorId,
+    setSelectedColorId,
+    selectedFrameId,
+    setSelectedFrameId,
+    selectedMaterialId,
+    setSelectedMaterialId,
     sizeOptions,
+    colorOptions,
+    frameOptions,
+    materialOptions,
     hasSizeOptions,
+    hasColorOptions,
+    hasFrameOptions,
+    hasMaterialOptions,
     activeSizeOption,
+    activeColorOption,
+    activeFrameOption,
+    activeMaterialOption,
     displayPrice,
     productForCart,
-  } = useProductSizePricing(product);
+  } = productSelection ?? fallbackSelection;
 
   const parsedStock = Number(product?.stock);
   const maxQty = Number.isFinite(parsedStock) && parsedStock > 0 ? parsedStock : 99;
@@ -94,6 +110,106 @@ export default function ProductInfo({ product }) {
                   }`}
                 >
                   {option.size}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {hasColorOptions && (
+        <div className="space-y-2">
+          <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Color</p>
+
+          <div className="flex flex-wrap gap-2">
+            {colorOptions.map((option) => {
+              const active = option.id === (activeColorOption?.id ?? selectedColorId);
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setSelectedColorId(option.id)}
+                  className={`px-3 py-2 text-xs border transition-colors flex items-center gap-2 ${
+                    active
+                      ? "border-[#CBA61F] bg-[#CBA61F]/10 text-[#3D1613]"
+                      : "border-gray-300 text-gray-700 hover:border-gray-400"
+                  }`}
+                >
+                  {option.image ? (
+                    <img
+                      src={option.image}
+                      alt={option.name}
+                      className="w-8 h-8 object-cover border border-gray-200 bg-white"
+                    />
+                  ) : (
+                    <span className="w-3 h-3 rounded-full bg-gray-300 border border-gray-200" />
+                  )}
+                  {option.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {hasFrameOptions && (
+        <div className="space-y-2">
+          <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Frame</p>
+
+          <div className="flex flex-wrap gap-2">
+            {frameOptions.map((option) => {
+              const active = option.id === (activeFrameOption?.id ?? selectedFrameId);
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setSelectedFrameId(option.id)}
+                  className={`px-3 py-2 text-xs border transition-colors text-left ${
+                    active
+                      ? "border-[#CBA61F] bg-[#CBA61F]/10 text-[#3D1613]"
+                      : "border-gray-300 text-gray-700 hover:border-gray-400"
+                  }`}
+                >
+                  <span className="block">{option.name}</span>
+                  {option._rawExtraPrice > 0 && (
+                    <span className="block text-[11px] text-gray-500">+{option.extraPrice}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {hasMaterialOptions && (
+        <div className="space-y-2">
+          <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Material</p>
+
+          <div className="flex flex-wrap gap-2">
+            {materialOptions.map((option) => {
+              const active = option.id === (activeMaterialOption?.id ?? selectedMaterialId);
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setSelectedMaterialId(option.id)}
+                  className={`px-3 py-2 text-xs border transition-colors text-left max-w-[220px] ${
+                    active
+                      ? "border-[#CBA61F] bg-[#CBA61F]/10 text-[#3D1613]"
+                      : "border-gray-300 text-gray-700 hover:border-gray-400"
+                  }`}
+                >
+                  <span className="block">{option.name}</span>
+                  {option.description && (
+                    <span className="block text-[11px] text-gray-500 mt-0.5 line-clamp-2">
+                      {option.description}
+                    </span>
+                  )}
+                  {option._rawExtraPrice > 0 && (
+                    <span className="block text-[11px] text-gray-500 mt-0.5">
+                      +{option.extraPrice}
+                    </span>
+                  )}
                 </button>
               );
             })}
