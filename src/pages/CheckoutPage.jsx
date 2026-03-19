@@ -328,7 +328,7 @@ export default function CheckoutPage() {
               ) : (
                 cart.map((p) => (
                   <div
-                    key={p.cartKey ?? `${p.id}-${p.selectedSize ?? "default"}`}
+                    key={p.cartItemId ?? p.cartKey ?? `${p.id}-${p.selectedSize ?? "default"}`}
                     className="flex gap-3 pb-4 border-b border-white/10 last:border-0"
                   >
                     <div className="w-12 h-12 bg-white/10 rounded-sm flex items-center justify-center shrink-0">
@@ -341,6 +341,16 @@ export default function CheckoutPage() {
                       {p.selectedSize && (
                         <p className="text-off-white-50 text-[11px] mt-0.5">
                           Size: {p.selectedSize}
+                        </p>
+                      )}
+                      {p.selectedFrame && (
+                        <p className="text-off-white-50 text-[11px] mt-0.5">
+                          Frame: {p.selectedFrame}
+                        </p>
+                      )}
+                      {p.selectedMaterial && (
+                        <p className="text-off-white-50 text-[11px] mt-0.5">
+                          Material: {p.selectedMaterial}
                         </p>
                       )}
                       <p className="text-off-white-50 text-[11px] mt-0.5">Qty: {p.qty}</p>

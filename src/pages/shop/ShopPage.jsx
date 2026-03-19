@@ -13,6 +13,7 @@ import ShopToolbar from "../../components/shop/ShopToolbar";
 import ShopSidebar from "../../components/shop/ShopSidebar";
 
 import { fetchCategoryHisHerSubcategories } from "../../utils/fetchCategoryHisHerSubcategories";
+import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
 
 const PAGE_SIZE = 12;
 const DEFAULT_PRICE_RANGE = [0, 100000];
@@ -162,8 +163,36 @@ const ShopPage = () => {
     setSearchParams(new URLSearchParams());
   };
 
+  const selectedCategory = categories.find((c) => c.id === activeCategory);
+  const selectedCategorySubcategories = useMemo(() => {
+    const categorySubs = selectedCategory?.subcategories ?? [];
+    if (categorySubs.length) return categorySubs;
+    return subcategories;
+  }, [selectedCategory?.subcategories, subcategories]);
+  const selectedSubcategory = selectedCategorySubcategories.find(
+    (subcategory) => subcategory.id === activeSubcategory,
+  );
+
+  const typeSubcategories = useMemo(
+    () => extractHisHerSubcategories(selectedCategorySubcategories),
+    [selectedCategorySubcategories],
+  );
+
   useEffect(() => {
     if (!shouldResolveType) return undefined;
+
+    const localMatch = typeSubcategories.find((subcategory) => subcategory.slug === typeParam);
+    if (localMatch?.id) {
+      updateSearchParamValues(
+        {
+          category: activeCategory,
+          subcategory: localMatch.id,
+          type: null,
+        },
+        { resetPage: true, replace: true },
+      );
+      return undefined;
+    }
 
     let cancelled = false;
 
@@ -200,13 +229,13 @@ const ShopPage = () => {
     return () => {
       cancelled = true;
     };
-  }, [activeCategory, shouldResolveType, typeParam, updateSearchParamValues]);
-
-  const selectedCategory = categories.find((c) => c.id === activeCategory);
-  const selectedCategorySubcategories = selectedCategory?.subcategories ?? [];
-  const selectedSubcategory = selectedCategorySubcategories.find(
-    (subcategory) => subcategory.id === activeSubcategory,
-  );
+  }, [
+    activeCategory,
+    shouldResolveType,
+    typeParam,
+    typeSubcategories,
+    updateSearchParamValues,
+  ]);
 
   const categoryName = selectedCategory?.name ?? null;
   let typeLabel = null;
@@ -305,9 +334,9 @@ const ShopPage = () => {
           )}
 
           {/* Subcategory filter */}
-          {subcategories.length > 0 && (
+          {selectedCategorySubcategories.length > 0 && (
             <SubcategoryFilter
-              subcategories={subcategories}
+              subcategories={selectedCategorySubcategories}
               activeSubcategory={activeSubcategory}
               setActiveSubcategory={(id) => {
                 updateSearchParamValues(

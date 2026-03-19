@@ -14,10 +14,15 @@ const normaliseCartItems = (payload) => {
   const items = Array.isArray(payload?.items) ? payload.items : [];
   return items.map((item) => ({
     id: item.product_id ?? item.id,
+    cartItemId: item.id ?? null,
+    productId: item.product_id ?? item.id,
     name: item.product ?? item.product_name ?? item.name ?? "",
     price: formatMoney(item.price ?? 0),
     _rawPrice: Number(item.price ?? 0),
     images: [item.image].filter(Boolean),
+    selectedSize: item.size ?? null,
+    selectedFrame: item.frame ?? null,
+    selectedMaterial: item.material ?? null,
     qty: Number(item.quantity ?? item.qty ?? 1) || 1,
     lineTotal: Number(item.total ?? 0),
   }));
@@ -60,10 +65,11 @@ export function useCartState() {
       try {
         setLoading(true);
         setError(null);
-
-        for (let i = 0; i < safeQty; i += 1) {
-          await addToCartAPI(product.id, 1);
-        }
+        await addToCartAPI(product.id, safeQty, {
+          sizeId: product.selectedSizeId,
+          frameId: product.selectedFrameId,
+          materialId: product.selectedMaterialId,
+        });
         await fetchCart();
         showToast(product.name ?? "Item");
       } catch (err) {

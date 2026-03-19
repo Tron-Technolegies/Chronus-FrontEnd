@@ -13,9 +13,66 @@ const formatProductDetails = (rawProduct) => {
           const label = String(item?.size ?? "").trim();
           if (!label) return null;
           return {
+            id: item?.id ?? label,
             size: label,
             price: formatMoney(rawPrice),
             _rawPrice: rawPrice,
+          };
+        })
+        .filter(Boolean)
+    : [];
+
+  const colors = Array.isArray(rawProduct.colors)
+    ? rawProduct.colors
+        .map((item) => {
+          const id = item?.id;
+          const name = String(item?.color_name ?? "").trim();
+          if (!id || !name) return null;
+
+          return {
+            id,
+            name,
+            image: item?.image ?? null,
+          };
+        })
+        .filter(Boolean)
+    : [];
+
+  const frames = Array.isArray(rawProduct.frames)
+    ? rawProduct.frames
+        .map((item) => {
+          const id = item?.id;
+          const name = String(item?.name ?? "").trim();
+          if (!id || !name) return null;
+
+          const rawExtraPrice = Number(item?.extra_price ?? 0);
+
+          return {
+            id,
+            name,
+            image: item?.image ?? null,
+            extraPrice: formatMoney(rawExtraPrice),
+            _rawExtraPrice: rawExtraPrice,
+          };
+        })
+        .filter(Boolean)
+    : [];
+
+  const materials = Array.isArray(rawProduct.materials)
+    ? rawProduct.materials
+        .map((item) => {
+          const id = item?.id;
+          const name = String(item?.name ?? "").trim();
+          if (!id || !name) return null;
+
+          const rawExtraPrice = Number(item?.extra_price ?? 0);
+
+          return {
+            id,
+            name,
+            description: item?.description ?? "",
+            extraPrice: formatMoney(rawExtraPrice),
+            _rawExtraPrice: rawExtraPrice,
           };
         })
         .filter(Boolean)
@@ -47,6 +104,9 @@ const formatProductDetails = (rawProduct) => {
         : {},
     stock: rawProduct.stock ?? 0,
     sizes,
+    colors,
+    frames,
+    materials,
     is_featured: rawProduct.is_featured ?? false,
     is_best_seller: rawProduct.is_best_seller ?? false,
     created_at: rawProduct.created_at ?? null,

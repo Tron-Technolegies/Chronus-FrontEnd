@@ -15,9 +15,14 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories = []
 
   if (!his && !her) return null;
 
-  const handleSelect = (type) => {
+  const handleSelect = (subcategory) => {
     onClose();
-    navigate(`/shop?category=${categorySlug}&type=${type}`);
+    if (subcategory?.id) {
+      navigate(`/shop?category=${categorySlug}&subcategory=${subcategory.id}`);
+      return;
+    }
+
+    navigate(`/shop?category=${categorySlug}&type=${subcategory?.slug ?? ""}`);
   };
 
   const handleViewAll = () => {
@@ -25,9 +30,9 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories = []
     navigate(`/shop?category=${categorySlug}`);
   };
 
-  const Card = ({ title, type }) => (
+  const Card = ({ title, subcategory }) => (
     <div
-      onClick={() => handleSelect(type)}
+      onClick={() => handleSelect(subcategory)}
       className="cursor-pointer group transition-all duration-300 hover:-translate-y-1 w-full"
     >
       <div className="p-[2.5px] rounded-sm bg-gradient-to-r from-[#b8964c] via-[#e0c78a] to-[#b8964c] hover:from-[#ffd058] hover:via-[#ffca56] hover:to-[#ffe2a4]">
@@ -79,9 +84,9 @@ const SubcategorySelectModal = ({ categorySlug, categoryName, subcategories = []
 
         {/* Cards */}
         <div className="grid grid-cols-2 gap-4 sm:gap-6 max-w-[500px] mx-auto">
-          {his && <Card title="His Collection" type="his" />}
+          {his && <Card title="His Collection" subcategory={his} />}
 
-          {her && <Card title="Her Collection" type="her" />}
+          {her && <Card title="Her Collection" subcategory={her} />}
         </div>
 
         {/* View All */}

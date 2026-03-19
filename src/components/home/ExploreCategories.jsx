@@ -4,6 +4,7 @@ import { useCategories } from "../../hooks/useCategories";
 import CategoryIntroModal from "./CategoryIntroModal";
 import SubcategorySelectModal from "../shop/SubcategorySelectModal";
 import { fetchCategoryHisHerSubcategories } from "../../utils/fetchCategoryHisHerSubcategories";
+import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
 
 export default function ExploreCategories() {
   const navigate = useNavigate();
@@ -24,7 +25,10 @@ export default function ExploreCategories() {
     setSelectedCategory(null);
 
     try {
-      const subcategories = await fetchCategoryHisHerSubcategories(category.id);
+      const categorySubcategories = extractHisHerSubcategories(category.subcategories ?? []);
+      const subcategories = categorySubcategories.length
+        ? categorySubcategories
+        : await fetchCategoryHisHerSubcategories(category.id);
 
       if (!subcategories?.length) {
         navigate(`/shop?category=${category.id}`);
