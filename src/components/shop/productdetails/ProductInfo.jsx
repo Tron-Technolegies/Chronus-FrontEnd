@@ -90,6 +90,42 @@ export default function ProductInfo({ product, productSelection }) {
         )}
       </div>
       <p className="text-gray-500 leading-6 max-w-md text-sm">{product.shortDesc}</p>
+      {hasMaterialOptions && (
+        <div className="space-y-2">
+          <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Material</p>
+
+          <div className="flex flex-wrap gap-2">
+            {materialOptions.map((option) => {
+              const active = option.id === (activeMaterialOption?.id ?? selectedMaterialId);
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setSelectedMaterialId(option.id)}
+                  className={`px-3 py-2 text-xs border transition-colors text-left max-w-[220px] ${
+                    active
+                      ? "border-[#CBA61F] bg-[#CBA61F]/10 text-[#3D1613]"
+                      : "border-gray-300 text-gray-700 hover:border-gray-400"
+                  }`}
+                >
+                  <span className="block">{option.name}</span>
+                  {option.description && (
+                    <span className="block text-[11px] text-gray-500 mt-0.5 line-clamp-2">
+                      {option.description}
+                    </span>
+                  )}
+                  {option._rawExtraPrice > 0 && (
+                    <span className="block text-[11px] text-gray-500 mt-0.5">
+                      +{option.extraPrice}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
       {hasSizeOptions && (
         <div className="space-y-2">
           <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Size</p>
@@ -180,42 +216,7 @@ export default function ProductInfo({ product, productSelection }) {
           </div>
         </div>
       )}
-      {hasMaterialOptions && (
-        <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Material</p>
 
-          <div className="flex flex-wrap gap-2">
-            {materialOptions.map((option) => {
-              const active = option.id === (activeMaterialOption?.id ?? selectedMaterialId);
-
-              return (
-                <button
-                  key={option.id}
-                  type="button"
-                  onClick={() => setSelectedMaterialId(option.id)}
-                  className={`px-3 py-2 text-xs border transition-colors text-left max-w-[220px] ${
-                    active
-                      ? "border-[#CBA61F] bg-[#CBA61F]/10 text-[#3D1613]"
-                      : "border-gray-300 text-gray-700 hover:border-gray-400"
-                  }`}
-                >
-                  <span className="block">{option.name}</span>
-                  {option.description && (
-                    <span className="block text-[11px] text-gray-500 mt-0.5 line-clamp-2">
-                      {option.description}
-                    </span>
-                  )}
-                  {option._rawExtraPrice > 0 && (
-                    <span className="block text-[11px] text-gray-500 mt-0.5">
-                      +{option.extraPrice}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
         <div className="flex border border-gray-300 w-fit">
           <button type="button" onClick={decrease} className="px-3 sm:px-4 py-2 hover:bg-gray-50">
@@ -263,7 +264,7 @@ export default function ProductInfo({ product, productSelection }) {
           </button>
         </div>
       </div>
-      <div className="border-t border-[#D9D9D9] pt-6 sm:pt-8">
+      {/* <div className="border-t border-[#D9D9D9] pt-6 sm:pt-8">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div className="flex flex-col items-center gap-2">
             <IoShieldOutline className="w-5 h-5" />
@@ -280,7 +281,7 @@ export default function ProductInfo({ product, productSelection }) {
             <p className="text-[9px] sm:text-xs tracking-widest">30-DAY RETURNS</p>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
