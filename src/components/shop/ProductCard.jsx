@@ -73,8 +73,8 @@ export default function ProductCard({ product }) {
 
       <Link to={`/product/${product.id}`}>
         <div className="text-center text-black py-3 px-2">
-          <p className="text-xs sm:text-sm leading-snug line-clamp-2">{product.name}</p>
-          <p className="text-sm sm:text-base font-medium">
+          <p className="text-sm sm:text-base font-medium">{product.name}</p>
+          <p className="text-xs sm:text-sm text-gray-500">
             {product.categoryName === "Fine Art" ? `Starts from ${product.price}` : product.price}
           </p>
         </div>

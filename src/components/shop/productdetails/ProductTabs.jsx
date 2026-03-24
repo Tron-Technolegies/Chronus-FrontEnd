@@ -254,7 +254,7 @@ export default function ProductTabs({ product, onReviewAdded }) {
                     type="text"
                     value={form.name}
                     onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                    placeholder="e.g. Aswin"
+                    placeholder="e.g. John"
                     className="w-full border border-gray-200 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#CBA61F]/40"
                   />
                 </div>
