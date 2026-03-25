@@ -61,7 +61,9 @@ export default function ProductInfo({ product, productSelection }) {
           SALE
         </span>
       )}
-      <h1 className="text-base sm:text-xl tracking-widest font-[Bayon]">{product.name}</h1>
+      <h1 className="text-base sm:text-xl tracking-widest font-semibold font-[inter]">
+        {product.name}
+      </h1>
       <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-400 flex-wrap">
         {product.rating > 0 ? (
           <>
@@ -92,7 +94,7 @@ export default function ProductInfo({ product, productSelection }) {
       <p className="text-gray-500 leading-6 max-w-md text-sm">{product.shortDesc}</p>
       {hasMaterialOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Material</p>
+          <p className="text-xs tracking-[0.15em] text-black  font-semibold uppercase">Material</p>
 
           <div className="flex flex-wrap gap-2">
             {materialOptions.map((option) => {
@@ -105,8 +107,8 @@ export default function ProductInfo({ product, productSelection }) {
                   onClick={() => setSelectedMaterialId(option.id)}
                   className={`px-3 py-2 text-xs border transition-colors text-left max-w-[220px] ${
                     active
-                      ? "border-[#CBA61F] bg-[#CBA61F]/10 text-[#3D1613]"
-                      : "border-gray-300 text-gray-700 hover:border-gray-400"
+                      ? "border-[#000000]  text-black "
+                      : "border-gray-400 text-gray-400 hover:border-black hover:text-black"
                   }`}
                 >
                   <span className="block">{option.name}</span>
@@ -128,7 +130,7 @@ export default function ProductInfo({ product, productSelection }) {
       )}
       {hasSizeOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Size</p>
+          <p className="text-xs tracking-[0.15em] text-black font-medium uppercase">Size</p>
 
           <div className="flex flex-wrap gap-2">
             {sizeOptions.map((option) => {
@@ -141,8 +143,8 @@ export default function ProductInfo({ product, productSelection }) {
                   onClick={() => setSelectedSize(option.size)}
                   className={`px-3 py-1.5 text-xs border transition-colors ${
                     active
-                      ? "border-[#CBA61F] bg-[#CBA61F]/10 text-[#3D1613]"
-                      : "border-gray-300 text-gray-700 hover:border-gray-400"
+                      ? "border-[#000000]  text-black "
+                      : "border-gray-400 text-gray-400 hover:border-black hover:text-black"
                   }`}
                 >
                   {option.size}
@@ -154,7 +156,7 @@ export default function ProductInfo({ product, productSelection }) {
       )}
       {hasColorOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Color</p>
+          <p className="text-xs tracking-[0.15em] text-black font-medium uppercase">Color</p>
 
           <div className="flex flex-wrap gap-2">
             {colorOptions.map((option) => {
@@ -167,8 +169,8 @@ export default function ProductInfo({ product, productSelection }) {
                   onClick={() => setSelectedColorId(option.id)}
                   className={`px-3 py-2 text-xs border transition-colors flex items-center gap-2 ${
                     active
-                      ? "border-[#CBA61F] bg-[#CBA61F]/10 text-[#3D1613]"
-                      : "border-gray-300 text-gray-700 hover:border-gray-400"
+                      ? "border-[#000000]  text-black "
+                      : "border-gray-400 text-gray-400 hover:border-black hover:text-black"
                   }`}
                 >
                   {option.image ? (
@@ -189,7 +191,7 @@ export default function ProductInfo({ product, productSelection }) {
       )}
       {hasFrameOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-gray-500 uppercase">Frame</p>
+          <p className="text-xs tracking-[0.15em] text-black font-medium uppercase">Frame</p>
 
           <div className="flex flex-wrap gap-2">
             {frameOptions.map((option) => {
@@ -202,8 +204,8 @@ export default function ProductInfo({ product, productSelection }) {
                   onClick={() => setSelectedFrameId(option.id)}
                   className={`px-3 py-2 text-xs border transition-colors text-left ${
                     active
-                      ? "border-[#CBA61F] bg-[#CBA61F]/10 text-[#3D1613]"
-                      : "border-gray-300 text-gray-700 hover:border-gray-400"
+                      ? "border-[#000000]  text-black "
+                      : "border-gray-400 text-gray-400 hover:border-black hover:text-black"
                   }`}
                 >
                   <span className="block">{option.name}</span>
