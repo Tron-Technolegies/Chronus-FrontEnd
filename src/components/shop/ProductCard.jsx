@@ -11,7 +11,8 @@ export default function ProductCard({ product }) {
   const { handleAddToCart, loading: cartLoading } = useAddToCart();
   const { handleToggle, isWishlisted } = useWishlistToggle();
 
-  const productImage = product.images?.[0] || product.image || IMAGE_PLACEHOLDER;
+  const productImage =
+    product.images?.[0] || product.image || IMAGE_PLACEHOLDER;
 
   return (
     <div className="bg-white group cursor-pointer">
@@ -31,12 +32,12 @@ export default function ProductCard({ product }) {
         </button>
 
         <Link to={`/product/${product.id}`}>
-          <div className="aspect-[3/4] w-full overflow-hidden flex items-center justify-center">
+          <div className=" w-full overflow-hidden flex items-center justify-center">
             <img
               src={productImage}
               alt={product.name}
               loading="lazy"
-              className="w-full h-full object-cover"
+              className="max-w-[400px] md:h-[400px] h-[200px] object-cover"
               onError={(e) => {
                 e.currentTarget.src = IMAGE_PLACEHOLDER;
               }}
@@ -54,7 +55,9 @@ export default function ProductCard({ product }) {
         "
         >
           <Link to={`/product/${product.id}`} className="w-full">
-            <button className="bg-yellow-400 text-xs md:text-sm p-2 w-full">Buy Now</button>
+            <button className="bg-yellow-400 text-xs md:text-sm p-2 w-full">
+              Buy Now
+            </button>
           </Link>
 
           <button
@@ -75,7 +78,9 @@ export default function ProductCard({ product }) {
         <div className="text-center text-black py-3 px-2">
           <p className="text-sm sm:text-base font-medium">{product.name}</p>
           <p className="text-xs sm:text-sm text-gray-500">
-            {product.categoryName === "Fine Art" ? `Starts from ${product.price}` : product.price}
+            {product.categoryName === "Fine Art"
+              ? `Starts from ${product.price}`
+              : product.price}
           </p>
         </div>
       </Link>
