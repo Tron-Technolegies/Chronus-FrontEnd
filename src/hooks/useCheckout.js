@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { placeOrderAPI } from "../api/checkout";
-import { createPaymentIntentAPI, createZiinaPaymentAPI } from "../api/payment";
+import { createPaymentIntentAPI, createZiinaPaymentAPI, createTabbyPaymentAPI } from "../api/payment";
 
 const COUNTRY_TO_CURRENCY = {
   India: "inr",
@@ -128,10 +128,41 @@ export function useCheckout() {
     }
   }, []);
 
+  const startTabbyPayment = useCallback(async (targetOrderId, customerData = {}) => {
+    setLoading(true);
+    setError(null);
+    setClientSecret(null);
+
+    try {
+      const paymentRes = await createTabbyPaymentAPI(targetOrderId, customerData);
+      const url = paymentRes.data?.payment_url;
+
+      if (!url) throw new Error("Tabby payment setup failed. Please try again.");
+
+      setPaymentGateway("tabby");
+      setPaymentUrl(url);
+
+      return { paymentUrl: url };
+    } catch (err) {
+      const msg =
+        err?.response?.data?.error ??
+        err?.response?.data?.detail ??
+        err?.response?.data?.message ??
+        err?.message ??
+        "Tabby payment setup failed. Please try again.";
+
+      setError(msg);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     submit,
     startStripePayment,
     startZiinaPayment,
+    startTabbyPayment,
     loading,
     error,
     clientSecret,

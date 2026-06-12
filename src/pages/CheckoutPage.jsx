@@ -37,6 +37,11 @@ const PAYMENT_GATEWAYS = [
     label: "Ziina",
     description: "Continue to Ziina to complete your payment.",
   },
+  {
+    id: "tabby",
+    label: "Tabby",
+    description: "Split your purchase into 4 interest-free payments.",
+  },
 ];
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -70,6 +75,7 @@ export default function CheckoutPage() {
     submit,
     startStripePayment,
     startZiinaPayment,
+    startTabbyPayment,
     loading,
     error,
     clientSecret,
@@ -125,6 +131,19 @@ export default function CheckoutPage() {
     if (!orderId) return;
 
     try {
+      if (selectedGateway === "tabby") {
+        const result = await startTabbyPayment(orderId, form);
+        const targetUrl = result?.paymentUrl;
+
+        if (targetUrl) {
+          window.location.replace(targetUrl);
+        } else {
+          console.error("Tabby redirect failed", result);
+        }
+
+        return;
+      }
+
       if (selectedGateway === "ziina") {
         const result = await startZiinaPayment(orderId, "aed"); // 🔥 force AED
 
@@ -285,15 +304,15 @@ export default function CheckoutPage() {
                           PREPARING PAYMENT...
                         </>
                       ) : (
-                        `CONTINUE WITH ${selectedGateway === "ziina" ? "ZIINA" : "STRIPE"}`
+                        `CONTINUE WITH ${selectedGateway === "ziina" ? "ZIINA" : selectedGateway === "tabby" ? "TABBY" : "STRIPE"}`
                       )}
                     </button>
 
-                    {selectedGateway === "ziina" && paymentUrl && (
+                    {(selectedGateway === "ziina" || selectedGateway === "tabby") && paymentUrl && (
                       <p className="text-xs text-gray-500">
                         If you are not redirected automatically,{" "}
                         <a href={paymentUrl} className="underline">
-                          continue to Ziina
+                          continue to {selectedGateway === "ziina" ? "Ziina" : "Tabby"}
                         </a>
                         .
                       </p>

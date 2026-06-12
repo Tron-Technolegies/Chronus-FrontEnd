@@ -94,7 +94,7 @@ export default function ProductInfo({ product, productSelection }) {
       <p className="text-gray-500 leading-6 max-w-md text-sm">{product.shortDesc}</p>
       {hasMaterialOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-black  font-semibold uppercase">Material</p>
+          <p className="text-xs tracking-[0.15em] text-black  font-semibold">Material</p>
 
           <div className="flex flex-wrap gap-2">
             {materialOptions.map((option) => {
@@ -130,7 +130,7 @@ export default function ProductInfo({ product, productSelection }) {
       )}
       {hasSizeOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-black font-medium uppercase">Size</p>
+          <p className="text-xs tracking-[0.15em] text-black font-medium ">Size</p>
 
           <div className="flex flex-wrap gap-2">
             {sizeOptions.map((option) => {
@@ -156,7 +156,7 @@ export default function ProductInfo({ product, productSelection }) {
       )}
       {hasColorOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-black font-medium uppercase">Color</p>
+          <p className="text-xs tracking-[0.15em] text-black font-medium ">Color</p>
 
           <div className="flex flex-wrap gap-2">
             {colorOptions.map((option) => {
@@ -191,7 +191,7 @@ export default function ProductInfo({ product, productSelection }) {
       )}
       {hasFrameOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-black font-medium uppercase">Frame</p>
+          <p className="text-xs tracking-[0.15em] text-black font-medium">Frame</p>
 
           <div className="flex flex-wrap gap-2">
             {frameOptions.map((option) => {
