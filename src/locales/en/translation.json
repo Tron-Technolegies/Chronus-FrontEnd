@@ -1,0 +1,574 @@
+{
+  "header": {
+    "collections": "Collections",
+    "about": "About",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "account": "Account"
+  },
+  "footer": {
+    "description": "Curating the world's finest timepieces, accessories, and art since 1892. Each piece tells a story of uncompromising craftsmanship.",
+    "categories": "Categories",
+    "loading_collections": "Loading collections...",
+    "contact_us": "Contact Us",
+    "address_line1": "Sheikh Zayed Road, Dubai,",
+    "address_line2": "United Arab Emirates",
+    "copyright": "© 2026 CHRONOS. All rights reserved.",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service",
+    "shipping_policy": "Shipping Policy",
+    "legal_notice": "Legal Notice"
+  },
+  "auth": {
+    "login": {
+      "signing_in": "Signing in...",
+      "title": "Welcome Back",
+      "subtitle": "Sign in to access your account",
+      "username": "Username",
+      "email_placeholder": "Email address",
+      "password": "Password",
+      "password_placeholder": "Enter password",
+      "forgot_password": "Forgot password?",
+      "invalid_credentials": "Invalid email or password.",
+      "submit": "Sign in",
+      "no_account": "Don’t have an account? ",
+      "signup_link": "Sign up now"
+    },
+    "signup": {
+      "creating_account": "Creating account...",
+      "title": "Create Account",
+      "subtitle": "Join our exclusive community of collectors",
+      "name": "Name",
+      "name_placeholder": "Full Name",
+      "email": "Email",
+      "email_placeholder": "Email address",
+      "password": "Password",
+      "password_placeholder": "Enter password",
+      "submit": "Sign up",
+      "registration_failed": "Registration failed",
+      "already_have_account": "Already have an account? ",
+      "signin_link": "Sign in now"
+    },
+    "account": {
+      "my_account": "My Account",
+      "my_profile": "My Profile",
+      "my_orders": "My Orders",
+      "saved_address": "Saved Address",
+      "change_password": "Change Password",
+      "logout": "Logout",
+      "profile_description": "Update your personal information",
+      "profile_updated": "Profile updated successfully!",
+      "save_failed": "Failed to save. Please try again.",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email_address": "Email Address",
+      "phone_number": "Phone Number",
+      "saving": "Saving…",
+      "save_changes": "Save Changes"
+    },
+    "passwords_do_not_match": "New passwords do not match.",
+    "password_min_length": "Password must be at least 8 characters.",
+    "change_password_failed": "Failed to change password. Please try again.",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm Password",
+    "change_password_title": "Change Password",
+    "password_changed_success": "Password changed successfully!",
+    "updating": "Updating...",
+    "saved_address": "Saved Address",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add_new_address": "Add New Address",
+    "first_name": "First Name",
+    "ex_first_name": "Ex. John",
+    "last_name": "Last Name",
+    "ex_last_name": "Ex. Doe",
+    "address_label": "Address",
+    "country": "Country",
+    "select_country": "Select Country",
+    "email_label": "Email",
+    "email_address": "Email Address",
+    "mobile": "Mobile",
+    "submit_add_address": "Add Address",
+    "orders": {
+      "status_processing": "In Progress",
+      "status_delivered": "Delivered",
+      "status_cancelled": "Cancelled",
+      "status_all": "All",
+      "load_error": "Could not load orders.",
+      "title": "My Orders",
+      "no_orders": "No orders found.",
+      "order_hash": "Order #",
+      "qty": "Qty:",
+      "no_item_details": "No item details available.",
+      "order_total": "Order Total",
+      "track_shipment": "Track your shipment",
+      "track_order_btn": "Track Order",
+      "tracking_update_msg": "🚚 Tracking link will be updated after shipment."
+    }
+  },
+  "home": {
+    "hero": {
+      "title_line1": "Where Time",
+      "title_line2": "Meets Elegance",
+      "explore_btn": "Explore Collection"
+    },
+    "explore": {
+      "title": "Explore Categories",
+      "no_categories": "No categories available."
+    },
+    "subscription": {
+      "label": "STAY CONNECTED",
+      "title": "Join Our Inner Circle",
+      "description": "Be the first to know about new acquisitions, private sales, and exclusive events.",
+      "email_placeholder": "Enter your email address",
+      "subscribe_btn": "SUBSCRIBE",
+      "error_required": "Email address is required.",
+      "error_invalid": "Please enter a valid email address.",
+      "consent_prefix": "By subscribing, you agree to our",
+      "consent_link": "Privacy Policy",
+      "consent_suffix": "and consent to receive updates."
+    },
+    "about": {
+      "label": "About Chronos",
+      "title_prefix": "Chronos — Where",
+      "title_highlight": "Time",
+      "title_suffix": "Meets Elegance",
+      "description_1": "Chronos is a curated luxury house dedicated to precision, craftsmanship, and timeless design.",
+      "description_2": "We carefully select refined timepieces, premium leather goods, and distinctive art pieces — each chosen for its detail, quality, and presence. At Chronos, luxury is intentional, balanced, and enduring."
+    },
+    "testimonials": [
+      {
+        "quote": "The Royal Chronograph exceeded every expectation. The attention to detail and the personalized service from Chronos made this acquisition truly special. A masterpiece for my collection.",
+        "rating": 5,
+        "name": "Alexander Rothschild",
+        "role": "Private Collector, Geneva"
+      },
+      {
+        "quote": "An extraordinary experience from start to finish. The craftsmanship and exclusivity are unmatched in the world of luxury timepieces.",
+        "rating": 5,
+        "name": "Isabella Laurent",
+        "role": "Art Patron, Paris"
+      },
+      {
+        "quote": "Chronos redefines what luxury means. From the private viewing to the final delivery, every detail was handled with exceptional care and professionalism.",
+        "rating": 5,
+        "name": "Sebastian Müller",
+        "role": "Watch Enthusiast, Zurich"
+      },
+      {
+        "quote": "Owning a piece from Chronos feels like owning a work of art. The exclusivity, craftsmanship, and service are truly world-class.",
+        "rating": 5,
+        "name": "Valentina Russo",
+        "role": "Luxury Consultant, Milan"
+      },
+      {
+        "quote": "The level of trust and transparency Chronos provides is rare in today’s luxury market. Every acquisition feels personal and meaningful.",
+        "rating": 5,
+        "name": "Daniel Whitmore",
+        "role": "Collector & Investor, London"
+      }
+    ]
+  },
+  "faq": {
+    "back_to_home": "Back to Home",
+    "support": "Support",
+    "title": "Frequently Asked Questions",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service",
+    "questions": [
+      {
+        "question": "Do you offer shipping?",
+        "answer": "Yes, we provide shipping within the United Arab Emirates, across the GCC, and internationally worldwide."
+      },
+      {
+        "question": "What are the delivery timelines?",
+        "answer": "Within the UAE: within 24 hours.\nGCC countries: 2–3 business days.\nInternational shipping: approximately 7 business days depending on the destination."
+      },
+      {
+        "question": "Can I request a specific item?",
+        "answer": "Yes. Chronos offers a dedicated special-order service. Whether you are looking for a specific model or a distinctive piece, our team can source it with precision and care."
+      },
+      {
+        "question": "How can I contact Chronos?",
+        "answer": "You may contact us directly via WhatsApp or through the official email listed on our Contact page."
+      }
+    ]
+  },
+  "shop": {
+    "his_collection": "His Collection",
+    "her_collection": "Her Collection",
+    "filters": "Filters",
+    "filters_upper": "FILTERS",
+    "products_found": "products found",
+    "no_products": "No products found.",
+    "prev": "Prev",
+    "next": "Next",
+    "page_info": "Page {{current}} of {{total}}",
+    "header": {
+      "category": "Category",
+      "discover": "Discover",
+      "our_collection": "Our Collection",
+      "subtitle": "Exquisite pieces curated for the discerning collector"
+    },
+    "filters_section": {
+      "title": "FILTERS",
+      "reset": "Reset",
+      "collections": "COLLECTIONS",
+      "all": "All",
+      "best_sellers": "Best Sellers",
+      "new_arrivals": "New Arrivals",
+      "featured": "Featured"
+    },
+    "price_filter": {
+      "title": "Price Range",
+      "min": "Min",
+      "max": "Max",
+      "apply": "Apply Price Filter"
+    },
+    "search": {
+      "placeholder": "Search products...",
+      "button": "Search",
+      "sort_default": "Sort",
+      "sort_price_asc": "Price ↑",
+      "sort_price_desc": "Price ↓",
+      "sort_newest": "Newest"
+    },
+    "shipping": {
+      "title": "SHIPPING & DELIVERY",
+      "auth_title": "AUTHENTICITY GUARANTEED",
+      "auth_desc": "Every piece verified by our experts",
+      "delivery_title": "WHITE GLOVE DELIVERY",
+      "delivery_desc": "Complimentary worldwide shipping",
+      "returns_title": "30-DAY RETURNS",
+      "returns_desc": "No questions asked returns",
+      "warranty_title": "WARRANTY",
+      "warranty_desc": "Coverage on all timepieces"
+    },
+    "product_info": {
+      "sale": "SALE",
+      "review": "review",
+      "reviews": "reviews",
+      "no_reviews": "No reviews yet",
+      "material": "Material",
+      "size": "Size",
+      "color": "Color",
+      "frame": "Frame",
+      "buy_now": "BUY NOW"
+    },
+    "product_tabs": {
+      "description": "DESCRIPTION",
+      "specifications_count": "SPECIFICATIONS ({{count}})",
+      "reviews_count": "REVIEWS ({{count}})",
+      "error_rating": "Please select a star rating.",
+      "error_comment": "Please write a comment.",
+      "guest": "Guest",
+      "success_msg": "Thank you! Your review has been submitted.",
+      "error_submit": "Failed to submit. Please try again.",
+      "no_description": "No description available.",
+      "spec_available_1": "{{count}} specification available",
+      "spec_available_other": "{{count}} specifications available",
+      "category": "Category",
+      "subcategory": "Sub-category",
+      "brand": "Brand",
+      "stock": "Stock",
+      "stock_available": "{{count}} available",
+      "out_of_stock": "Out of stock",
+      "reviews_count_label": "{{count}} Reviews",
+      "no_reviews_yet": "No reviews yet. Be the first to review this product!",
+      "write_review": "Write a Review",
+      "your_name": "Your Name",
+      "optional": "(optional)",
+      "name_placeholder": "e.g. John",
+      "rating_label": "Rating *",
+      "rating_labels": [
+        "",
+        "Poor",
+        "Fair",
+        "Good",
+        "Very Good",
+        "Excellent"
+      ],
+      "review_label": "Review *",
+      "review_placeholder": "Share your experience with this product...",
+      "submitting": "SUBMITTING...",
+      "submit_review": "SUBMIT REVIEW"
+    }
+  },
+  "policies": {
+    "back_to_home": "Back to Home",
+    "legal": "Legal",
+    "last_updated": "Last updated: January 2026",
+    "effective_date": "Effective Date: January 2026",
+    "privacy_title": "Privacy Policy",
+    "terms_title": "Terms of Service",
+    "shipping_title": "Shipping Policy",
+    "legal_notice_title": "Legal Notice",
+    "privacy": {
+      "sections": [
+        {
+          "title": "Introduction",
+          "content": [
+            "Chronos LLC (\"Chronos\", \"we\", \"our\", or \"us\") is committed to protecting your personal information and your right to privacy. This Privacy Policy describes how we collect, use, disclose, and safeguard your information when you visit our website or make a purchase from us.",
+            "Please read this policy carefully. If you disagree with its terms, please discontinue use of our site."
+          ]
+        },
+        {
+          "title": "Information We Collect",
+          "content": [
+            "When you place an order or contact us, we may collect:"
+          ],
+          "list": [
+            "Full name",
+            "Billing and shipping address",
+            "Email address",
+            "Phone number",
+            "Order details",
+            "Payment confirmation (processed securely via third-party payment providers)"
+          ],
+          "post_content": [
+            "We may also automatically collect basic technical data such as IP address, browser type, and usage information to improve our website performance."
+          ]
+        },
+        {
+          "title": "How We Use Your Information",
+          "content": [
+            "We use your information to:"
+          ],
+          "list": [
+            "Process and fulfill your orders",
+            "Arrange shipping and delivery",
+            "Communicate with you regarding purchases",
+            "Provide customer support",
+            "Improve our services and website experience",
+            "Prevent fraudulent activity"
+          ]
+        },
+        {
+          "title": "Sharing of Information",
+          "content": [
+            "We may share necessary information with:"
+          ],
+          "list": [
+            "Payment processors",
+            "Shipping and logistics partners",
+            "Website hosting providers (such as Shopify)"
+          ],
+          "post_content": [
+            "We do not sell or trade your personal information."
+          ]
+        },
+        {
+          "title": "Cookies",
+          "content": [
+            "Our website uses cookies to enhance your browsing experience and analyze website performance. You may disable cookies through your browser settings if preferred."
+          ]
+        },
+        {
+          "title": "Data Security",
+          "content": [
+            "We implement appropriate security measures to protect your personal information. However, no online transmission can be guaranteed as completely secure."
+          ]
+        },
+        {
+          "title": "Contact",
+          "content": [
+            "For any questions regarding this Privacy Policy, please contact us at:"
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "sections": [
+        {
+          "title": "Agreement to Terms",
+          "content": [
+            "By accessing or using the Chronos website (\"Site\") or purchasing any product from us, you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree, please refrain from using our Site or services.",
+            "These Terms are governed by the laws of the United Arab Emirates and the emirate of Dubai. Any disputes shall be subject to the exclusive jurisdiction of the Dubai courts."
+          ]
+        },
+        {
+          "title": "Use of the Site",
+          "content": [
+            "You agree to use the Site only for lawful purposes and in a manner that does not infringe the rights of others. Specifically, you must not:"
+          ],
+          "list": [
+            "Use the Site in any way that violates applicable local, national, or international laws",
+            "Transmit unsolicited or unauthorised advertising or promotional material",
+            "Attempt to gain unauthorised access to any part of the Site or its systems",
+            "Use automated tools to scrape, crawl, or extract data from the Site",
+            "Impersonate any person or misrepresent your identity or affiliation"
+          ]
+        },
+        {
+          "title": "Account Registration",
+          "content": [
+            "To access certain features you may be required to create an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You agree to notify us immediately of any unauthorised use of your account at concierge@chronos.ae."
+          ]
+        },
+        {
+          "title": "Products and Pricing",
+          "content": [
+            "All products displayed on the Site are subject to availability. We reserve the right to discontinue any product at any time without notice.",
+            "Prices are listed in UAE Dirhams (AED) and are inclusive of applicable VAT unless otherwise stated. We reserve the right to modify prices at any time. Price changes will not affect orders that have already been confirmed.",
+            "While we strive to ensure all product descriptions and images are accurate, minor variations may occur. Product images are for illustrative purposes and actual products may vary slightly in colour and appearance."
+          ]
+        },
+        {
+          "title": "Orders and Payment",
+          "content": [
+            "Placing an order constitutes an offer to purchase. We reserve the right to decline or cancel any order at our discretion, including in cases of pricing errors, suspected fraud, or stock unavailability. You will be notified promptly and any payment received will be fully refunded.",
+            "By providing payment details, you confirm that you are authorised to use the payment method and that the information provided is accurate."
+          ]
+        },
+        {
+          "title": "Returns and Refunds",
+          "content": [
+            "We accept returns within 14 days of delivery, provided the item is in its original, unused condition with all packaging and accompanying documentation intact. To initiate a return, please contact our concierge team.",
+            "Bespoke, personalised, or made-to-order pieces are non-returnable unless they arrive damaged or faulty.",
+            "Approved refunds will be processed within 5–10 business days to the original payment method."
+          ]
+        },
+        {
+          "title": "Intellectual Property",
+          "content": [
+            "All content on this Site — including text, images, logos, designs, and software — is the exclusive intellectual property of Chronos LLC or its licensors and is protected by UAE and international copyright laws. Unauthorised reproduction or use of any content is strictly prohibited."
+          ]
+        },
+        {
+          "title": "Limitation of Liability",
+          "content": [
+            "To the fullest extent permitted by law, Chronos shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the Site or any products purchased. Our total liability in connection with any claim shall not exceed the amount paid by you for the relevant product."
+          ]
+        },
+        {
+          "title": "Disclaimers",
+          "content": [
+            "The Site and its content are provided on an \"as is\" and \"as available\" basis without any warranties of any kind, either express or implied. We do not warrant that the Site will be error-free, uninterrupted, or free of viruses or other harmful components."
+          ]
+        },
+        {
+          "title": "Changes to Terms",
+          "content": [
+            "We reserve the right to update or modify these Terms at any time. Changes will take effect upon posting to the Site. Continued use of the Site following any changes constitutes your acceptance of the revised Terms."
+          ]
+        },
+        {
+          "title": "Contact",
+          "content": [
+            "For any questions regarding these Terms, please contact us at concierge@chronos.ae or at our registered office:"
+          ]
+        }
+      ]
+    },
+    "shipping": {
+      "sections": [
+        {
+          "title": "Overview",
+          "content": [
+            "At Chronos, we are committed to delivering your timepiece with the same level of care and precision that went into crafting it. Every order is handled with the utmost discretion and attention to detail, ensuring your purchase arrives in perfect condition."
+          ]
+        },
+        {
+          "title": "Processing Time",
+          "content": [
+            "All orders are processed within 1–3 business days of payment confirmation. Orders placed on weekends or UAE public holidays will be processed on the next available business day.",
+            "For bespoke or made-to-order pieces, a dedicated Chronos concierge will contact you within 24 hours to discuss delivery timelines."
+          ]
+        },
+        {
+          "title": "Domestic Shipping (UAE)",
+          "content": [
+            "We offer the following shipping options within the United Arab Emirates:"
+          ],
+          "list": [
+            "Standard Delivery: 3–5 business days — Complimentary on all orders",
+            "Express Delivery: 1–2 business days — AED 45",
+            "Same-Day Delivery (Dubai): Available for select items — AED 85"
+          ]
+        },
+        {
+          "title": "International Shipping",
+          "content": [
+            "We ship worldwide to over 50 countries. International orders are shipped via fully insured, signature-required courier services."
+          ],
+          "list": [
+            "GCC Countries: 5–8 business days — Complimentary on orders above AED 2,000",
+            "Europe & Americas: 7–12 business days — AED 150 or complimentary on orders above AED 5,000",
+            "Asia Pacific: 6–10 business days — AED 120 or complimentary on orders above AED 4,000"
+          ],
+          "post_content": [
+            "Import duties and taxes applicable in the destination country are the responsibility of the recipient."
+          ]
+        },
+        {
+          "title": "Order Tracking",
+          "content": [
+            "Once your order has been dispatched, you will receive an email confirmation with a tracking number. You can track your order in real time via the carrier's website or through your Chronos account under My Orders."
+          ]
+        },
+        {
+          "title": "Packaging",
+          "content": [
+            "Every Chronos piece is packed in our signature presentation box, wrapped in protective material, and placed inside a discreet outer carton. High-value orders are shipped with an additional layer of tamper-evident security sealing."
+          ]
+        },
+        {
+          "title": "Damaged or Lost Shipments",
+          "content": [
+            "In the unlikely event that your order arrives damaged or is lost in transit, please contact our concierge team within 48 hours of the expected delivery date. We will initiate an investigation and, where applicable, arrange a replacement or full refund at no cost to you."
+          ]
+        },
+        {
+          "title": "Contact",
+          "content": [
+            "For shipping inquiries, please reach our team at concierge@chronos.ae or call +971 4 123 4567."
+          ]
+        }
+      ]
+    },
+    "legal_notice": {
+      "sections": [
+        {
+          "title": "Website Content",
+          "content": [
+            "All content on this website, including text, images, product visuals, and design elements, is presented for informational and commercial purposes.",
+            "Unauthorized copying, reproduction, or distribution of website materials is not permitted."
+          ]
+        },
+        {
+          "title": "Brand References",
+          "content": [
+            "Any brand names or references appearing on this website are used strictly for descriptive purposes. All trademarks remain the property of their respective owners.",
+            "Chronos operates independently and is not affiliated with, sponsored by, or officially connected to any third-party brand unless explicitly stated."
+          ]
+        },
+        {
+          "title": "Disclaimer",
+          "content": [
+            "All products are presented as curated luxury pieces. We strive to provide accurate descriptions and visuals; however, slight variations may occur.",
+            "Chronos shall not be held liable for any indirect or consequential damages resulting from the use of this website."
+          ]
+        },
+        {
+          "title": "Governing Law",
+          "content": [
+            "This website and its use shall be governed in accordance with the laws of the United Arab Emirates."
+          ]
+        },
+        {
+          "title": "Updates",
+          "content": [
+            "Chronos reserves the right to update this Legal Notice at any time without prior notice."
+          ]
+        },
+        {
+          "title": "Contact",
+          "content": [
+            "For inquiries, please contact:"
+          ]
+        }
+      ]
+    }
+  }
+}

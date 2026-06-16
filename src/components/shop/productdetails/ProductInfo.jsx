@@ -6,8 +6,10 @@ import { MdOutlineLocalShipping } from "react-icons/md";
 import { RiLoopLeftFill } from "react-icons/ri";
 import { useAddToCart } from "../../../hooks/useAddToCart";
 import { useProductSizePricing } from "../../../hooks/useProductSizePricing";
+import { useTranslation } from "react-i18next";
 
 export default function ProductInfo({ product, productSelection }) {
+  const { t } = useTranslation();
   const [qty, setQty] = useState(1);
   const navigate = useNavigate();
 
@@ -58,7 +60,7 @@ export default function ProductInfo({ product, productSelection }) {
     <div className="space-y-5 sm:space-y-6">
       {product.originalPrice && (
         <span className="inline-block text-[10px] sm:text-xs bg-red-500 text-white px-3 py-1 tracking-widest">
-          SALE
+          {t("shop.product_info.sale")}
         </span>
       )}
       <h1 className="text-base sm:text-xl tracking-widest font-semibold font-[inter]">
@@ -74,12 +76,11 @@ export default function ProductInfo({ product, productSelection }) {
             </div>
 
             <span>
-              {product.rating.toFixed(1)} ({product.reviewsCount} review
-              {product.reviewsCount !== 1 ? "s" : ""})
+              {product.rating.toFixed(1)} ({product.reviewsCount} {product.reviewsCount !== 1 ? t("shop.product_info.reviews") : t("shop.product_info.review")})
             </span>
           </>
         ) : (
-          <span className="text-gray-300 text-xs">No reviews yet</span>
+          <span className="text-gray-300 text-xs">{t("shop.product_info.no_reviews")}</span>
         )}
       </div>
       <div className="flex items-center gap-3 flex-wrap">
@@ -94,7 +95,7 @@ export default function ProductInfo({ product, productSelection }) {
       <p className="text-gray-500 leading-6 max-w-md text-sm">{product.shortDesc}</p>
       {hasMaterialOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-black  font-semibold">Material</p>
+          <p className="text-xs tracking-[0.15em] text-black  font-semibold">{t("shop.product_info.material")}</p>
 
           <div className="flex flex-wrap gap-2">
             {materialOptions.map((option) => {
@@ -130,7 +131,7 @@ export default function ProductInfo({ product, productSelection }) {
       )}
       {hasSizeOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-black font-medium ">Size</p>
+          <p className="text-xs tracking-[0.15em] text-black font-medium ">{t("shop.product_info.size")}</p>
 
           <div className="flex flex-wrap gap-2">
             {sizeOptions.map((option) => {
@@ -156,7 +157,7 @@ export default function ProductInfo({ product, productSelection }) {
       )}
       {hasColorOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-black font-medium ">Color</p>
+          <p className="text-xs tracking-[0.15em] text-black font-medium ">{t("shop.product_info.color")}</p>
 
           <div className="flex flex-wrap gap-2">
             {colorOptions.map((option) => {
@@ -191,7 +192,7 @@ export default function ProductInfo({ product, productSelection }) {
       )}
       {hasFrameOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-black font-medium">Frame</p>
+          <p className="text-xs tracking-[0.15em] text-black font-medium">{t("shop.product_info.frame")}</p>
 
           <div className="flex flex-wrap gap-2">
             {frameOptions.map((option) => {
@@ -249,7 +250,7 @@ export default function ProductInfo({ product, productSelection }) {
             disabled={cartLoading}
             className="bg-[#F5C518] hover:brightness-95 px-6 sm:px-16 lg:px-24 py-3 text-xs sm:text-sm tracking-wide w-full disabled:opacity-60"
           >
-            BUY NOW
+            {t("shop.product_info.buy_now")}
           </button>
 
           <button

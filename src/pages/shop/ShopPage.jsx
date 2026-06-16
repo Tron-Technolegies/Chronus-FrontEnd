@@ -14,6 +14,7 @@ import ShopSidebar from "../../components/shop/ShopSidebar";
 
 import { fetchCategoryHisHerSubcategories } from "../../utils/fetchCategoryHisHerSubcategories";
 import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
+import { useTranslation } from "react-i18next";
 
 const PAGE_SIZE = 12;
 const DEFAULT_PRICE_RANGE = [0, 100000];
@@ -40,6 +41,8 @@ const ShopPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const { t } = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -240,8 +243,8 @@ const ShopPage = () => {
   const categoryName = selectedCategory?.name ?? null;
   let typeLabel = null;
 
-  if (selectedSubcategory?.slug === "his") typeLabel = "His Collection";
-  if (selectedSubcategory?.slug === "her") typeLabel = "Her Collection";
+  if (selectedSubcategory?.slug === "his") typeLabel = t("shop.his_collection");
+  if (selectedSubcategory?.slug === "her") typeLabel = t("shop.her_collection");
 
   const filteredProducts = useMemo(() => {
     if (collection === "best-seller") {
@@ -270,7 +273,7 @@ const ShopPage = () => {
           onClick={() => setSidebarOpen(true)}
           className="flex items-center gap-2 text-sm border border-gray-300 px-4 py-2 rounded"
         >
-          <FiSliders size={14} /> Filters
+          <FiSliders size={14} /> {t("shop.filters")}
         </button>
       </div>
 
@@ -281,7 +284,7 @@ const ShopPage = () => {
 
           <div className="relative bg-white w-[80vw] max-w-[340px] h-full overflow-y-auto z-10">
             <div className="flex justify-between items-center p-4 border-b border-gray-200">
-              <h3 className="font-semibold text-sm tracking-widest">FILTERS</h3>
+              <h3 className="font-semibold text-sm tracking-widest">{t("shop.filters_upper")}</h3>
               <button onClick={() => setSidebarOpen(false)}>
                 <FiX size={20} />
               </button>
@@ -361,7 +364,7 @@ const ShopPage = () => {
           {!loading && !error && (
             <div className="px-4 sm:px-6 pb-2">
               <p className="text-xs text-gray-400 tracking-wide">
-                {visibleProductCount} products found
+                {visibleProductCount} {t("shop.products_found")}
               </p>
             </div>
           )}
@@ -372,7 +375,7 @@ const ShopPage = () => {
           )}
 
           {!loading && !error && filteredProducts.length === 0 && (
-            <div className="px-6 py-8 text-sm text-gray-500">No products found.</div>
+            <div className="px-6 py-8 text-sm text-gray-500">{t("shop.no_products")}</div>
           )}
 
           {/* Error */}
@@ -392,11 +395,11 @@ const ShopPage = () => {
                 disabled={pagination.currentPage === 1}
                 className="border border-gray-300 px-4 py-2 text-sm"
               >
-                Prev
+                {t("shop.prev")}
               </button>
 
               <span className="text-sm text-gray-500">
-                Page {pagination.currentPage} of {pagination.totalPages}
+                {t("shop.page_info", { current: pagination.currentPage, total: pagination.totalPages })}
               </span>
 
               <button
@@ -408,7 +411,7 @@ const ShopPage = () => {
                 disabled={pagination.currentPage === pagination.totalPages}
                 className="border border-gray-300 px-4 py-2 text-sm"
               >
-                Next
+                {t("shop.next")}
               </button>
             </div>
           )}

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { FiEye, FiEyeOff, FiLoader } from "react-icons/fi";
 import { changePasswordAPI } from "../../api/auth";
+import { useTranslation } from "react-i18next";
 
 const ChangePassword = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -31,11 +33,11 @@ const ChangePassword = () => {
     setSuccess(false);
 
     if (formData.newPassword !== formData.confirmPassword) {
-      setError("New passwords do not match.");
+      setError(t("auth.passwords_do_not_match"));
       return;
     }
     if (formData.newPassword.length < 8) {
-      setError("Password must be at least 8 characters.");
+      setError(t("auth.password_min_length"));
       return;
     }
 
@@ -53,7 +55,7 @@ const ChangePassword = () => {
       setError(
         err?.response?.data?.detail ??
         err?.response?.data?.old_password?.[0] ??
-        "Failed to change password. Please try again."
+        t("auth.change_password_failed")
       );
     } finally {
       setLoading(false);
@@ -61,18 +63,18 @@ const ChangePassword = () => {
   };
 
   const fields = [
-    { key: "current",  name: "currentPassword", label: "Current Password",  vis: showPassword.current },
-    { key: "new",      name: "newPassword",      label: "New Password",      vis: showPassword.new },
-    { key: "confirm",  name: "confirmPassword",  label: "Confirm Password",  vis: showPassword.confirm },
+    { key: "current",  name: "currentPassword", label: t("auth.current_password"),  vis: showPassword.current },
+    { key: "new",      name: "newPassword",      label: t("auth.new_password"),      vis: showPassword.new },
+    { key: "confirm",  name: "confirmPassword",  label: t("auth.confirm_password"),  vis: showPassword.confirm },
   ];
 
   return (
     <div className="max-w-xl">
-      <h2 className="text-xl sm:text-2xl font-semibold mb-6">Change Password</h2>
+      <h2 className="text-xl sm:text-2xl font-semibold mb-6">{t("auth.change_password_title")}</h2>
 
       {success && (
         <p className="mb-4 text-sm text-green-600 bg-green-50 border border-green-200 px-4 py-2 rounded-md">
-          Password changed successfully!
+          {t("auth.password_changed_success")}
         </p>
       )}
       {error && (
@@ -113,7 +115,7 @@ const ChangePassword = () => {
             className="flex items-center gap-2 bg-[#5a0f0f] text-off-white px-8 py-3 rounded-md hover:opacity-90 transition disabled:opacity-60"
           >
             {loading && <FiLoader className="animate-spin" size={15} />}
-            {loading ? "Updating…" : "Change Password"}
+            {loading ? t("auth.updating") : t("auth.change_password_title")}
           </button>
         </div>
       </form>

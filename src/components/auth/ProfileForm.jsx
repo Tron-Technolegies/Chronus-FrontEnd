@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { getProfileAPI, updateProfileAPI } from "../../api/auth";
 import { FiUser, FiSave, FiLoader } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 const ProfileForm = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -57,7 +59,7 @@ const ProfileForm = () => {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      setError(err?.response?.data?.detail ?? "Failed to save. Please try again.");
+      setError(err?.response?.data?.detail ?? t("auth.account.save_failed"));
     } finally {
       setSaving(false);
     }
@@ -79,15 +81,15 @@ const ProfileForm = () => {
           <FiUser size={28} className="text-[#5a0f0f]" />
         </div>
         <div>
-          <h2 className="text-lg sm:text-xl font-semibold">My Profile</h2>
-          <p className="text-gray-500 text-sm">Update your personal information</p>
+          <h2 className="text-lg sm:text-xl font-semibold">{t("auth.account.my_profile")}</h2>
+          <p className="text-gray-500 text-sm">{t("auth.account.profile_description")}</p>
         </div>
       </div>
 
       {/* Alerts */}
       {success && (
         <p className="mb-4 text-sm text-green-600 bg-green-50 border border-green-200 px-4 py-2 rounded-md">
-          Profile updated successfully!
+          {t("auth.account.profile_updated")}
         </p>
       )}
       {error && (
@@ -99,7 +101,7 @@ const ProfileForm = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm mb-2 text-gray-600">First Name</label>
+            <label className="block text-sm mb-2 text-gray-600">{t("auth.account.first_name")}</label>
             <input
               type="text" name="first_name" value={formData.first_name}
               onChange={handleChange}
@@ -107,7 +109,7 @@ const ProfileForm = () => {
             />
           </div>
           <div>
-            <label className="block text-sm mb-2 text-gray-600">Last Name</label>
+            <label className="block text-sm mb-2 text-gray-600">{t("auth.account.last_name")}</label>
             <input
               type="text" name="last_name" value={formData.last_name}
               onChange={handleChange}
@@ -117,7 +119,7 @@ const ProfileForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm mb-2 text-gray-600">Email Address</label>
+          <label className="block text-sm mb-2 text-gray-600">{t("auth.account.email_address")}</label>
           <input
             type="email" name="email" value={formData.email}
             onChange={handleChange}
@@ -126,7 +128,7 @@ const ProfileForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm mb-2 text-gray-600">Phone Number</label>
+          <label className="block text-sm mb-2 text-gray-600">{t("auth.account.phone_number")}</label>
           <input
             type="text" name="phone" value={formData.phone}
             onChange={handleChange}
@@ -142,7 +144,7 @@ const ProfileForm = () => {
             className="flex items-center gap-2 bg-[#5a0f0f] text-off-white px-8 py-3 rounded-md hover:opacity-90 transition disabled:opacity-60"
           >
             {saving ? <FiLoader className="animate-spin" size={15} /> : <FiSave size={15} />}
-            {saving ? "Saving…" : "Save Changes"}
+            {saving ? t("auth.account.saving") : t("auth.account.save_changes")}
           </button>
         </div>
       </form>

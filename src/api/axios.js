@@ -18,6 +18,11 @@ axiosInstance.interceptors.request.use((config) => {
 
   config.headers["X-Guest-ID"] = ensureGuestId();
 
+  if (config.method === "get") {
+    const currency = localStorage.getItem("currency") || "USD";
+    config.params = { ...config.params, currency };
+  }
+
   return config;
 });
 

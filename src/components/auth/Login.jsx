@@ -3,8 +3,10 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { loginAPI } from "../../api/auth";
 import Loader from "../ui/Loader";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(null);
@@ -28,20 +30,23 @@ const Login = () => {
       const response = await loginAPI(formData);
       const data = response.data;
 
-      localStorage.setItem("accessToken",  data.tokens?.access  ?? data.access);
+      localStorage.setItem("accessToken", data.tokens?.access ?? data.access);
       localStorage.setItem("refreshToken", data.tokens?.refresh ?? data.refresh);
       // Save user info (full_name used by ProfileForm)
-      localStorage.setItem("user", JSON.stringify({
-        user_id:   data.user_id,
-        email:     data.email,
-        full_name: data.full_name,
-        first_name: data.full_name?.split(" ")[0] ?? "",
-        last_name:  data.full_name?.split(" ").slice(1).join(" ") ?? "",
-      }));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          user_id: data.user_id,
+          email: data.email,
+          full_name: data.full_name,
+          first_name: data.full_name?.split(" ")[0] ?? "",
+          last_name: data.full_name?.split(" ").slice(1).join(" ") ?? "",
+        }),
+      );
 
       navigate("/my-account");
     } catch (error) {
-      setLoginError(error.response?.data?.error || "Invalid email or password.");
+      setLoginError(error.response?.data?.error || t("auth.login.invalid_credentials"));
     } finally {
       setLoading(false);
     }
@@ -49,33 +54,39 @@ const Login = () => {
 
   return (
     <>
-      {loading && <Loader text="Signing in..." />}
+      {loading && <Loader text={t("auth.login.signing_in")} />}
 
       <section className="min-h-screen flex items-center justify-center bg-white px-4">
         <div className="w-full max-w-md text-center">
-          <h2 className="text-3xl font-normal text-gray-900 mb-2 font-[Bastoni]">Welcome Back</h2>
-          <p className="text-sm text-gray-500 mb-10 inter">Sign in to access your account</p>
+          <h2 className="text-3xl font-normal text-gray-900 mb-2 font-[Bastoni]">
+            {t("auth.login.title")}
+          </h2>
+          <p className="text-sm text-gray-500 mb-10 inter">{t("auth.login.subtitle")}</p>
 
           <form onSubmit={handleSubmit} className="space-y-6 text-left">
             <div>
-              <label className="block text-xs text-gray-500 mb-2 inter">Username</label>
+              <label className="block text-xs text-gray-500 mb-2 inter">
+                {t("auth.login.username")}
+              </label>
               <input
                 type="email"
                 name="email"
-                placeholder="Email address"
+                placeholder={t("auth.login.email_placeholder")}
                 onChange={handleChange}
                 className="w-full px-4 py-3 text-sm bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 inter"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 mb-2 inter">Password</label>
+              <label className="block text-xs text-gray-500 mb-2 inter">
+                {t("auth.login.password")}
+              </label>
 
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="Enter password"
+                  placeholder={t("auth.login.password_placeholder")}
                   onChange={handleChange}
                   className="w-full px-4 py-3 text-sm bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 inter pr-10"
                 />
@@ -91,7 +102,7 @@ const Login = () => {
 
               <div className="text-right mt-2">
                 <button type="button" className="text-xs text-gray-400 hover:text-gray-600 inter">
-                  Forgot password?
+                  {t("auth.login.forgot_password")}
                 </button>
               </div>
             </div>
@@ -107,14 +118,14 @@ const Login = () => {
               disabled={loading}
               className="w-full bg-black text-off-white py-3 rounded-md text-sm font-medium hover:bg-black/90 transition disabled:opacity-60"
             >
-              Sign in
+              {t("auth.login.submit")}
             </button>
           </form>
 
           <p className="text-xs text-gray-500 mt-10 inter">
-            Don’t have an account?{" "}
+            {t("auth.login.no_account")}
             <Link to="/signup" className="text-red-500 hover:underline">
-              Sign up now
+              {t("auth.login.signup_link")}
             </Link>
           </p>
         </div>
@@ -124,4 +135,3 @@ const Login = () => {
 };
 
 export default Login;
-

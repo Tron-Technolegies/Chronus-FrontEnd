@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { FiChevronDown } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const AccountSidebar = ({ activeTab, setActiveTab }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
   const menuItems = [
-    { id: "profile", label: "My Profile" },
-    // { id: "orders", label: "My Orders" },
-    // { id: "address", label: "Saved Address" },
-    // { id: "password", label: "Change Password" },
-    { id: "logout", label: "Logout" },
+    { id: "profile", label: t("auth.account.my_profile") },
+    // { id: "orders", label: t("auth.account.my_orders") },
+    // { id: "address", label: t("auth.account.saved_address") },
+    // { id: "password", label: t("auth.account.change_password") },
+    { id: "logout", label: t("auth.account.logout") },
   ];
 
   const activeLabel = menuItems.find((item) => item.id === activeTab)?.label;

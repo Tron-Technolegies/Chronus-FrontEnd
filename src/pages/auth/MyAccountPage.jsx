@@ -4,8 +4,10 @@ import ProfileForm from "../../components/auth/ProfileForm";
 import OrdersList from "../../components/auth/OrdersList";
 import AddressSection from "../../components/auth/AddressSection";
 import ChangePassword from "../../components/auth/ChangePassword";
+import { useTranslation } from "react-i18next";
 
 const MyAccountPage = () => {
+  const { t } = useTranslation();
   useEffect(() => {
     window.scrollTo(0, 0);
   });
@@ -13,7 +15,7 @@ const MyAccountPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 sm:px-6 inter">
-      <h1 className="text-center text-2xl sm:text-3xl font-semibold py-6 sm:py-8">My Account</h1>
+      <h1 className="text-center text-2xl sm:text-3xl font-semibold py-6 sm:py-8">{t("auth.account.my_account")}</h1>
 
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md relative">
         <div className="flex flex-col lg:flex-row">

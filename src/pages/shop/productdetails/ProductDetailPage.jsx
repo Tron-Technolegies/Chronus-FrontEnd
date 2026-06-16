@@ -6,8 +6,10 @@ import ProductTabs from "../../../components/shop/productdetails/ProductTabs";
 import YouMayAlsoLike from "../../../components/shop/YouMayAlsoLike";
 import { useProductDetails } from "../../../hooks/useProductDetails";
 import { useProductSizePricing } from "../../../hooks/useProductSizePricing";
+import { useTranslation } from "react-i18next";
 
 const ProductDetailPage = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const { product, loading, error, loadProduct } = useProductDetails(id);
   const productSelection = useProductSizePricing(product);
@@ -34,9 +36,9 @@ const ProductDetailPage = () => {
   if (error || !product) {
     return (
       <div className="max-w-[1400px] mx-auto px-4 py-20 text-center text-gray-500 mt-16">
-        <p>{error ?? "Product not found."}</p>
+        <p>{error ?? t("shop.no_products")}</p>
         <Link to="/shop" className="mt-4 inline-block text-sm underline text-[#CBA61F]">
-          Back to Shop
+          {t("faq.back_to_home")}
         </Link>
       </div>
     );

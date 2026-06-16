@@ -4,6 +4,7 @@ import { IoLogoWhatsapp } from "react-icons/io";
 import { IoLocationOutline, IoCallOutline, IoMailOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { useFooterCollections } from "../../hooks/useFooterCollections";
+import { useTranslation } from "react-i18next";
 
 const SOCIALS = [
   { Icon: FaInstagram, href: "https://instagram.com/chronos_ae", label: "Instagram" },
@@ -14,6 +15,7 @@ const SOCIALS = [
 
 const Footer = () => {
   const { collections, loading: collectionsLoading } = useFooterCollections();
+  const { t } = useTranslation();
 
   return (
     <footer
@@ -32,8 +34,7 @@ const Footer = () => {
             />
 
             <p className="text-off-white-70 text-sm leading-relaxed max-w-[280px]">
-              Curating the world's finest timepieces, accessories, and art since 1892. Each piece
-              tells a story of uncompromising craftsmanship.
+              {t("footer.description")}
             </p>
 
             <div className="flex gap-3 flex-wrap">
@@ -53,10 +54,10 @@ const Footer = () => {
           </div>
           {/* Collections */}
           <div className="text-off-white-80 sm:pl-4 lg:pl-10">
-            <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">Categories</h3>
+            <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">{t("footer.categories")}</h3>
 
             <ul className="space-y-3 text-sm">
-              {collectionsLoading && <li className="text-off-white-50">Loading collections...</li>}
+              {collectionsLoading && <li className="text-off-white-50">{t("footer.loading_collections")}</li>}
 
               {!collectionsLoading &&
                 collections.map(({ label, to }) => (
@@ -91,15 +92,15 @@ const Footer = () => {
           </div> */}
           {/* Contact */}
           <div className="text-off-white-80">
-            <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">Contact Us</h3>
+            <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">{t("footer.contact_us")}</h3>
 
             <ul className="space-y-4 text-sm opacity-70">
               <li className="flex items-start gap-3">
                 <IoLocationOutline size={18} className="mt-1 shrink-0" />
                 <span>
-                  Sheikh Zayed Road, Dubai,
+                  {t("footer.address_line1")}
                   <br />
-                  United Arab Emirates
+                  {t("footer.address_line2")}
                 </span>
               </li>
 
@@ -125,23 +126,23 @@ const Footer = () => {
 
         {/* Bottom bar */}
         <div className="pt-6 sm:pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-off-white-50 text-[10px] sm:text-[11px] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-center">
-          <p>© 2026 CHRONOS. All rights reserved.</p>
+          <p>{t("footer.copyright")}</p>
 
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8">
             <Link to="/privacy" className="hover:text-off-white transition-colors duration-200">
-              Privacy Policy
+              {t("footer.privacy_policy")}
             </Link>
 
             <Link to="/terms" className="hover:text-off-white transition-colors duration-200">
-              Terms of Service
+              {t("footer.terms_of_service")}
             </Link>
 
             <Link to="/shipping" className="hover:text-off-white transition-colors duration-200">
-              Shipping Policy
+              {t("footer.shipping_policy")}
             </Link>
 
             <Link to="/legal" className="hover:text-off-white transition-colors duration-200">
-              Legal Notice
+              {t("footer.legal_notice")}
             </Link>
           </div>
         </div>

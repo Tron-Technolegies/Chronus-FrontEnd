@@ -3,15 +3,18 @@ import { FiUser, FiShoppingBag, FiMenu, FiX, FiHeart } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { useWishlist } from "../../context/WishlistContext";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../ui/LanguageSwitcher";
+import CurrencySwitcher from "../ui/CurrencySwitcher";
 
 const HEADER_COLOR = "#3D1613";
 const LOGO = "/header-new-logo.svg";
 
-const navLinks = [
-  { label: "Collections", path: "/shop" },
-  { label: "About", section: "about" },
-  { label: "Contact", section: "contact" },
-  { label: "FAQ", path: "/faq" },
+const getNavLinks = (t) => [
+  { label: t("header.collections"), path: "/shop" },
+  { label: t("header.about"), section: "about" },
+  { label: t("header.contact"), section: "contact" },
+  { label: t("header.faq"), path: "/faq" },
 ];
 
 const Header = () => {
@@ -23,6 +26,8 @@ const Header = () => {
 
   const { setOpen } = useCart();
   const { wishlist } = useWishlist();
+  const { t } = useTranslation();
+  const navLinks = getNavLinks(t);
 
   const isHome = location.pathname === "/";
   const isLoggedIn = !!localStorage.getItem("accessToken");
@@ -108,7 +113,10 @@ const Header = () => {
         />
 
         {/* RIGHT ICONS */}
-        <div className="ml-auto flex items-center gap-5 lg:gap-6">
+        <div className="ms-auto flex items-center gap-5 lg:gap-6">
+          <CurrencySwitcher />
+          <LanguageSwitcher />
+
           {/* Wishlist */}
           <button onClick={() => navigate("/wishlist")} className="relative">
             <FiHeart size={18} className="hover:text-gray-300 transition-colors" />
@@ -146,7 +154,10 @@ const Header = () => {
           onClick={() => navigate("/")}
         />
 
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ms-auto flex items-center gap-3">
+          <CurrencySwitcher />
+          <LanguageSwitcher />
+
           {/* Wishlist */}
           <button onClick={() => navigate("/wishlist")} className="relative p-1">
             <FiHeart size={18} />
@@ -194,7 +205,7 @@ const Header = () => {
               className="text-left py-5 border-b border-white/10 flex items-center gap-3 hover:text-yellow-400 transition-colors"
             >
               <FiUser size={18} />
-              Account
+              {t("header.account")}
             </button>
           </nav>
         </div>

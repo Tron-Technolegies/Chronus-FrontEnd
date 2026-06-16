@@ -3,8 +3,10 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { registerAPI } from "../../api/auth";
 import Loader from "../../components/ui/Loader";
+import { useTranslation } from "react-i18next";
 
 const Signup = () => {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ const Signup = () => {
       navigate("/login");
     } catch (error) {
       console.error(error.response?.data);
-      alert(error.response?.data?.error || "Registration failed");
+      alert(error.response?.data?.error || t("auth.signup.registration_failed"));
     } finally {
       setLoading(false);
     }
@@ -42,26 +44,26 @@ const Signup = () => {
 
   return (
     <>
-      {loading && <Loader text="Creating account..." />}
+      {loading && <Loader text={t("auth.signup.creating_account")} />}
 
       <section className="min-h-screen flex items-center justify-center bg-white px-4">
         <div className="w-full max-w-md text-center">
           <h2 className="text-3xl font-normal text-gray-900 mb-2 font-[Bastoni]">
-            Create Account
+            {t("auth.signup.title")}
           </h2>
           <p className="text-sm text-gray-500 mb-10 inter">
-            Join our exclusive community of collectors
+            {t("auth.signup.subtitle")}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6 text-left">
             <div>
               <label className="block text-xs text-gray-500 mb-2 inter">
-                Name
+                {t("auth.signup.name")}
               </label>
               <input
                 type="text"
                 name="full_name"
-                placeholder="Full Name"
+                placeholder={t("auth.signup.name_placeholder")}
                 onChange={handleChange}
                 className="w-full px-4 py-3 text-sm bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 inter"
               />
@@ -69,12 +71,12 @@ const Signup = () => {
 
             <div>
               <label className="block text-xs text-gray-500 mb-2 inter">
-                Email
+                {t("auth.signup.email")}
               </label>
               <input
                 type="email"
                 name="email"
-                placeholder="Email address"
+                placeholder={t("auth.signup.email_placeholder")}
                 onChange={handleChange}
                 className="w-full px-4 py-3 text-sm bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 inter"
               />
@@ -82,14 +84,14 @@ const Signup = () => {
 
             <div>
               <label className="block text-xs text-gray-500 mb-2 inter">
-                Password
+                {t("auth.signup.password")}
               </label>
 
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="Enter password"
+                  placeholder={t("auth.signup.password_placeholder")}
                   onChange={handleChange}
                   className="w-full px-4 py-3 text-sm bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 inter pr-10"
                 />
@@ -109,14 +111,14 @@ const Signup = () => {
               disabled={loading}
               className="w-full bg-black text-off-white py-3 rounded-md text-sm font-medium hover:bg-black/90 transition disabled:opacity-60"
             >
-              Sign up
+              {t("auth.signup.submit")}
             </button>
           </form>
 
           <p className="text-xs text-gray-500 mt-10 inter">
-            Already have an account?{" "}
+            {t("auth.signup.already_have_account")}
             <Link to="/login" className="text-red-500 hover:underline">
-              Sign in now
+              {t("auth.signup.signin_link")}
             </Link>
           </p>
         </div>
