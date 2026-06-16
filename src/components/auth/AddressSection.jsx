@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const AddressSection = () => {
+  const { t } = useTranslation();
   const [addresses, setAddresses] = useState([]);
 
   const [formData, setFormData] = useState({
@@ -42,7 +44,7 @@ const AddressSection = () => {
 
   return (
     <div>
-      <h2 className="text-xl sm:text-2xl font-semibold mb-6">Saved Address</h2>
+      <h2 className="text-xl sm:text-2xl font-semibold mb-6">{t("auth.saved_address")}</h2>
 
       <div className="space-y-4 mb-10">
         {addresses.map((item) => (
@@ -58,67 +60,67 @@ const AddressSection = () => {
             </div>
 
             <div className="flex gap-4 text-sm">
-              <button className="text-gray-600 hover:underline">Edit</button>
-              <button className="text-red-500 hover:underline">Delete</button>
+              <button className="text-gray-600 hover:underline">{t("auth.edit")}</button>
+              <button className="text-red-500 hover:underline">{t("auth.delete")}</button>
             </div>
           </div>
         ))}
       </div>
 
-      <h3 className="text-lg font-semibold mb-6">Add New Address</h3>
+      <h3 className="text-lg font-semibold mb-6">{t("auth.add_new_address")}</h3>
 
       <form onSubmit={handleAddAddress} className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm mb-2 text-gray-600">
-              First Name
+              {t("auth.first_name")}
             </label>
             <input
               type="text"
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              placeholder="Ex. John"
+              placeholder={t("auth.ex_first_name")}
               className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5a0f0f]"
             />
           </div>
 
           <div>
             <label className="block text-sm mb-2 text-gray-600">
-              Last Name
+              {t("auth.last_name")}
             </label>
             <input
               type="text"
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              placeholder="Ex. Doe"
+              placeholder={t("auth.ex_last_name")}
               className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5a0f0f]"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm mb-2 text-gray-600">Address</label>
+          <label className="block text-sm mb-2 text-gray-600">{t("auth.address_label")}</label>
           <input
             type="text"
             name="address"
             value={formData.address}
             onChange={handleChange}
-            placeholder="Address"
+            placeholder={t("auth.address_label")}
             className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5a0f0f]"
           />
         </div>
 
         <div>
-          <label className="block text-sm mb-2 text-gray-600">Country</label>
+          <label className="block text-sm mb-2 text-gray-600">{t("auth.country")}</label>
           <select
             name="country"
             value={formData.country}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5a0f0f]"
           >
-            <option value="">Select Country</option>
+            <option value="">{t("auth.select_country")}</option>
             <option value="India">India</option>
             <option value="USA">USA</option>
             <option value="UAE">UAE</option>
@@ -126,19 +128,19 @@ const AddressSection = () => {
         </div>
 
         <div>
-          <label className="block text-sm mb-2 text-gray-600">Email</label>
+          <label className="block text-sm mb-2 text-gray-600">{t("auth.email_label")}</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Email Address"
+            placeholder={t("auth.email_address")}
             className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5a0f0f]"
           />
         </div>
 
         <div>
-          <label className="block text-sm mb-2 text-gray-600">Mobile</label>
+          <label className="block text-sm mb-2 text-gray-600">{t("auth.mobile")}</label>
           <input
             type="text"
             name="mobile"
@@ -154,7 +156,7 @@ const AddressSection = () => {
             type="submit"
             className="bg-[#5a0f0f] text-off-white px-8 py-3 rounded-md hover:opacity-90 transition"
           >
-            Add Address
+            {t("auth.submit_add_address")}
           </button>
         </div>
       </form>

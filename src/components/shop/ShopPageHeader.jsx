@@ -1,12 +1,15 @@
 import React from "react";
 
+import { useTranslation } from "react-i18next";
+
 const ShopPageHeader = ({ categoryName, typeLabel }) => {
+  const { t } = useTranslation();
   return (
     <section className="w-full">
       <div className="max-w-6xl mx-auto px-4 py-8 text-center">
         {categoryName ? (
           <>
-            <p className="text-xs tracking-widest text-gray-500 uppercase mb-2">Category</p>
+            <p className="text-xs tracking-widest text-gray-500 uppercase mb-2">{t("shop.header.category")}</p>
 
             <h1 className="text-2xl md:text-3xl font-serif text-black">{categoryName}</h1>
 
@@ -32,12 +35,12 @@ const ShopPageHeader = ({ categoryName, typeLabel }) => {
           </>
         ) : (
           <>
-            <p className="text-xs tracking-widest text-gray-500 uppercase mb-2">Discover</p>
+            <p className="text-xs tracking-widest text-gray-500 uppercase mb-2">{t("shop.header.discover")}</p>
 
-            <h1 className="text-2xl md:text-3xl font-serif text-black">Our Collection</h1>
+            <h1 className="text-2xl md:text-3xl font-serif text-black">{t("shop.header.our_collection")}</h1>
 
             <p className="text-sm text-gray-500 max-w-xl mx-auto mt-2">
-              Exquisite pieces curated for the discerning collector
+              {t("shop.header.subtitle")}
             </p>
           </>
         )}

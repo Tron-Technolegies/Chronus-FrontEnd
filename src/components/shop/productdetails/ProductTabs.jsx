@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { addReviewAPI } from "../../../api/product";
+import { useTranslation } from "react-i18next";
 
 export default function ProductTabs({ product, onReviewAdded }) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState("description");
   const [reviews, setReviews] = useState(product.reviews ?? []);
   const [reviewsCount, setReviewsCount] = useState(product.reviewsCount ?? 0);
@@ -41,19 +43,19 @@ export default function ProductTabs({ product, onReviewAdded }) {
   }, [product.specification]);
 
   const tabs = [
-    { id: "description", label: "DESCRIPTION" },
-    { id: "specs", label: `SPECIFICATIONS (${specificationEntries.length})` },
-    { id: "reviews", label: `REVIEWS (${reviewsCount})` },
+    { id: "description", label: t("shop.product_tabs.description") },
+    { id: "specs", label: t("shop.product_tabs.specifications_count", { count: specificationEntries.length }) },
+    { id: "reviews", label: t("shop.product_tabs.reviews_count", { count: reviewsCount }) },
   ];
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (!form.rating) {
-      setSubmitMsg({ type: "error", text: "Please select a star rating." });
+      setSubmitMsg({ type: "error", text: t("shop.product_tabs.error_rating") });
       return;
     }
     if (!form.comment.trim()) {
-      setSubmitMsg({ type: "error", text: "Please write a comment." });
+      setSubmitMsg({ type: "error", text: t("shop.product_tabs.error_comment") });
       return;
     }
     setSubmitting(true);
@@ -62,14 +64,14 @@ export default function ProductTabs({ product, onReviewAdded }) {
       await addReviewAPI({
         product: product.id,
         product_id: product.id,
-        name: form.name.trim() || "Guest",
+        name: form.name.trim() || t("shop.product_tabs.guest"),
         rating: form.rating,
         comment: form.comment.trim(),
         review: form.comment.trim(),
       });
       const newReview = {
         id: Date.now(),
-        name: form.name.trim() || "Guest",
+        name: form.name.trim() || t("shop.product_tabs.guest"),
         rating: form.rating,
         comment: form.comment.trim(),
         date: new Date().toLocaleDateString("en-US", {
@@ -85,13 +87,13 @@ export default function ProductTabs({ product, onReviewAdded }) {
       }
       setForm({ name: "", rating: 0, comment: "" });
       setHoverStar(0);
-      setSubmitMsg({ type: "success", text: "Thank you! Your review has been submitted." });
+      setSubmitMsg({ type: "success", text: t("shop.product_tabs.success_msg") });
     } catch (err) {
       const apiMessage =
         err?.response?.data?.detail ?? err?.response?.data?.error ?? err?.response?.data?.message;
       setSubmitMsg({
         type: "error",
-        text: apiMessage ?? "Failed to submit. Please try again.",
+        text: apiMessage ?? t("shop.product_tabs.error_submit"),
       });
     } finally {
       setSubmitting(false);
@@ -125,7 +127,7 @@ export default function ProductTabs({ product, onReviewAdded }) {
                 {product.description}
               </p>
             ) : (
-              <p className="text-gray-400 text-sm italic">No description available.</p>
+              <p className="text-gray-400 text-sm italic">{t("shop.product_tabs.no_description")}</p>
             )}
           </div>
         )}
@@ -135,8 +137,9 @@ export default function ProductTabs({ product, onReviewAdded }) {
             {specificationEntries.length > 0 ? (
               <table className="w-full text-sm">
                 <caption className="text-left text-xs text-gray-400 mb-2">
-                  {specificationEntries.length} specification
-                  {specificationEntries.length !== 1 ? "s" : ""} available
+                  {specificationEntries.length === 1 
+                    ? t("shop.product_tabs.spec_available_1", { count: 1 })
+                    : t("shop.product_tabs.spec_available_other", { count: specificationEntries.length })}
                 </caption>
                 <tbody>
                   {specificationEntries.map(([key, value], i) => (
@@ -150,22 +153,22 @@ export default function ProductTabs({ product, onReviewAdded }) {
             ) : (
               <div className="space-y-3 text-sm">
                 <div className="grid grid-cols-[160px_1fr] gap-2 border-b border-gray-100 pb-2">
-                  <span className="font-medium text-gray-700">Category</span>
+                  <span className="font-medium text-gray-700">{t("shop.product_tabs.category")}</span>
                   <span>{product.categoryName ?? "-"}</span>
                 </div>
                 {product.subcategoryName && (
                   <div className="grid grid-cols-[160px_1fr] gap-2 border-b border-gray-100 pb-2">
-                    <span className="font-medium text-gray-700">Sub-category</span>
+                    <span className="font-medium text-gray-700">{t("shop.product_tabs.subcategory")}</span>
                     <span>{product.subcategoryName}</span>
                   </div>
                 )}
                 <div className="grid grid-cols-[160px_1fr] gap-2 border-b border-gray-100 pb-2">
-                  <span className="font-medium text-gray-700">Brand</span>
+                  <span className="font-medium text-gray-700">{t("shop.product_tabs.brand")}</span>
                   <span>{product.brand || "-"}</span>
                 </div>
                 <div className="grid grid-cols-[160px_1fr] gap-2 border-b border-gray-100 pb-2">
-                  <span className="font-medium text-gray-700">Stock</span>
-                  <span>{product.stock > 0 ? `${product.stock} available` : "Out of stock"}</span>
+                  <span className="font-medium text-gray-700">{t("shop.product_tabs.stock")}</span>
+                  <span>{product.stock > 0 ? t("shop.product_tabs.stock_available", { count: product.stock }) : t("shop.product_tabs.out_of_stock")}</span>
                 </div>
               </div>
             )}
@@ -184,7 +187,7 @@ export default function ProductTabs({ product, onReviewAdded }) {
                     <span key={i}>{i <= Math.round(averageRating) ? "\u2605" : "\u2606"}</span>
                   ))}
                 </div>
-                <p className="text-sm text-gray-400 mt-2">{reviewsCount} Reviews</p>
+                <p className="text-sm text-gray-400 mt-2">{t("shop.product_tabs.reviews_count_label", { count: reviewsCount })}</p>
                 <div className="mt-6 space-y-3 text-xs">
                   {[5, 4, 3, 2, 1].map((star) => {
                     const count = reviews.filter((r) => Math.round(r.rating) === star).length;
@@ -222,7 +225,7 @@ export default function ProductTabs({ product, onReviewAdded }) {
                   ))
                 ) : (
                   <p className="text-gray-400 text-sm italic">
-                    No reviews yet. Be the first to review this product!
+                    {t("shop.product_tabs.no_reviews_yet")}
                   </p>
                 )}
               </div>
@@ -230,7 +233,7 @@ export default function ProductTabs({ product, onReviewAdded }) {
 
             <div className="border-t border-[#D9D9D9] pt-8">
               <h3 className="text-base font-semibold text-gray-900 mb-5 tracking-wide">
-                Write a Review
+                {t("shop.product_tabs.write_review")}
               </h3>
 
               {submitMsg && (
@@ -248,19 +251,19 @@ export default function ProductTabs({ product, onReviewAdded }) {
               <form onSubmit={handleReviewSubmit} className="space-y-5 max-w-xl">
                 <div>
                   <label className="block text-xs text-gray-500 mb-1.5">
-                    Your Name <span className="text-gray-400">(optional)</span>
+                    {t("shop.product_tabs.your_name")} <span className="text-gray-400">{t("shop.product_tabs.optional")}</span>
                   </label>
                   <input
                     type="text"
                     value={form.name}
                     onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                    placeholder="e.g. John"
+                    placeholder={t("shop.product_tabs.name_placeholder")}
                     className="w-full border border-gray-200 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#CBA61F]/40"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs text-gray-500 mb-2">Rating *</label>
+                  <label className="block text-xs text-gray-500 mb-2">{t("shop.product_tabs.rating_label")}</label>
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
@@ -279,19 +282,19 @@ export default function ProductTabs({ product, onReviewAdded }) {
                     ))}
                     {form.rating > 0 && (
                       <span className="ml-2 text-xs text-gray-400 self-center">
-                        {["", "Poor", "Fair", "Good", "Very Good", "Excellent"][form.rating]}
+                        {t("shop.product_tabs.rating_labels", { returnObjects: true })[form.rating] || ["", "Poor", "Fair", "Good", "Very Good", "Excellent"][form.rating]}
                       </span>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1.5">Review *</label>
+                  <label className="block text-xs text-gray-500 mb-1.5">{t("shop.product_tabs.review_label")}</label>
                   <textarea
                     rows={4}
                     value={form.comment}
                     onChange={(e) => setForm((p) => ({ ...p, comment: e.target.value }))}
-                    placeholder="Share your experience with this product..."
+                    placeholder={t("shop.product_tabs.review_placeholder")}
                     className="w-full border border-gray-200 rounded-md px-4 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#CBA61F]/40"
                   />
                 </div>
@@ -301,7 +304,7 @@ export default function ProductTabs({ product, onReviewAdded }) {
                   disabled={submitting}
                   className="bg-[#3D1613] text-off-white text-xs tracking-widest px-8 py-3 rounded-md hover:bg-[#5a2019] transition disabled:opacity-60"
                 >
-                  {submitting ? "SUBMITTING..." : "SUBMIT REVIEW"}
+                  {submitting ? t("shop.product_tabs.submitting") : t("shop.product_tabs.submit_review")}
                 </button>
               </form>
             </div>

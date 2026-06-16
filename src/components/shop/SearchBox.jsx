@@ -1,7 +1,9 @@
 import React from "react";
 import { FiSearch } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 const SearchBox = ({ search, setSearch, onSearch, sort, setSort }) => {
+  const { t } = useTranslation();
   const handleSearch = () => {
     onSearch?.();
   };
@@ -19,7 +21,7 @@ const SearchBox = ({ search, setSearch, onSearch, sort, setSort }) => {
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSearch();
             }}
-            placeholder="Search products..."
+            placeholder={t("shop.search.placeholder")}
             className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-md"
           />
         </div>
@@ -29,7 +31,7 @@ const SearchBox = ({ search, setSearch, onSearch, sort, setSort }) => {
             onClick={handleSearch}
             className="px-4 py-2 text-xs tracking-wider bg-[#FFCA0A] text-black rounded-md"
           >
-            Search
+            {t("shop.search.button")}
           </button>
 
           <select
@@ -37,10 +39,10 @@ const SearchBox = ({ search, setSearch, onSearch, sort, setSort }) => {
             onChange={(e) => setSort(e.target.value)}
             className="px-3 py-2 text-sm border border-gray-300 rounded-md"
           >
-            <option value="default">Sort</option>
-            <option value="price-asc">Price ↑</option>
-            <option value="price-desc">Price ↓</option>
-            <option value="newest">Newest</option>
+            <option value="default">{t("shop.search.sort_default")}</option>
+            <option value="price-asc">{t("shop.search.sort_price_asc")}</option>
+            <option value="price-desc">{t("shop.search.sort_price_desc")}</option>
+            <option value="newest">{t("shop.search.sort_newest")}</option>
           </select>
         </div>
       </div>

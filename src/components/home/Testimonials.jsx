@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import testimonials from "../../utils/testimonials";
+import fallbackTestimonials from "../../utils/testimonials";
+import { useTranslation } from "react-i18next";
 
 const Testimonials = () => {
+  const { t } = useTranslation();
+  const testimonials = t("home.testimonials", { returnObjects: true }) || fallbackTestimonials;
   const [current, setCurrent] = useState(0);
   const testimonial = testimonials[current];
 

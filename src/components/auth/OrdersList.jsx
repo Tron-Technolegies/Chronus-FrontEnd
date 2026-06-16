@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FiPackage, FiChevronRight, FiLoader, FiExternalLink } from "react-icons/fi";
 import { fetchOrdersAPI } from "../../api/orders";
+import { useTranslation } from "react-i18next";
 
 const STATUS_FILTERS = ["All", "processing", "delivered", "cancelled"];
 
-const statusLabel = (s) => {
-  if (s === "processing") return "In Progress";
-  if (s === "delivered")  return "Delivered";
-  if (s === "cancelled")  return "Cancelled";
+const statusLabel = (s, t) => {
+  if (s === "processing") return t("auth.orders.status_processing");
+  if (s === "delivered")  return t("auth.orders.status_delivered");
+  if (s === "cancelled")  return t("auth.orders.status_cancelled");
+  if (s === "All") return t("auth.orders.status_all");
   return s;
 };
 
@@ -19,6 +20,7 @@ const statusStyle = (s) => {
 };
 
 const OrdersList = () => {
+  const { t } = useTranslation();
   const [orders, setOrders]   = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(null);
@@ -30,7 +32,7 @@ const OrdersList = () => {
         const res = await fetchOrdersAPI();
         setOrders(res.data?.results ?? res.data ?? []);
       } catch (err) {
-        setError(err?.response?.data?.detail ?? "Could not load orders.");
+        setError(err?.response?.data?.detail ?? t("auth.orders.load_error"));
       } finally {
         setLoading(false);
       }
@@ -43,7 +45,7 @@ const OrdersList = () => {
 
   return (
     <div>
-      <h2 className="text-xl sm:text-2xl font-semibold mb-6">My Orders</h2>
+      <h2 className="text-xl sm:text-2xl font-semibold mb-6">{t("auth.orders.title")}</h2>
 
       {/* Filter pills */}
       <div className="flex flex-wrap gap-3 mb-6">
@@ -57,7 +59,7 @@ const OrdersList = () => {
                 : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
               }`}
           >
-            {f === "All" ? "All" : statusLabel(f)}
+            {statusLabel(f, t)}
           </button>
         ))}
       </div>
@@ -80,7 +82,7 @@ const OrdersList = () => {
       {!loading && !error && filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
           <FiPackage size={44} className="text-gray-200" />
-          <p className="text-gray-400 text-sm">No orders found.</p>
+          <p className="text-gray-400 text-sm">{t("auth.orders.no_orders")}</p>
         </div>
       )}
 
@@ -108,11 +110,11 @@ const OrdersList = () => {
                 <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                   <div className="flex items-center gap-3">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusStyle(status)}`}>
-                      ● {statusLabel(status)}
+                      ● {statusLabel(status, t)}
                     </span>
                     {date && <span className="text-xs text-gray-400">{date}</span>}
                   </div>
-                  <span className="text-xs text-gray-400 font-medium">Order #{orderId}</span>
+                  <span className="text-xs text-gray-400 font-medium">{t("auth.orders.order_hash")}{orderId}</span>
                 </div>
 
                 {/* Items list */}
@@ -133,7 +135,7 @@ const OrdersList = () => {
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-800 truncate">{name}</p>
-                          <p className="text-xs text-gray-400 mt-0.5">Qty: {qty}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">{t("auth.orders.qty")} {qty}</p>
                         </div>
                         {price != null && (
                           <p className="text-sm font-semibold text-gray-900 shrink-0">
@@ -143,14 +145,14 @@ const OrdersList = () => {
                       </div>
                     );
                   }) : (
-                    <p className="text-sm text-gray-400 italic">No item details available.</p>
+                    <p className="text-sm text-gray-400 italic">{t("auth.orders.no_item_details")}</p>
                   )}
                 </div>
 
                 {/* Order total */}
                 {total != null && (
                   <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Order Total</span>
+                    <span className="text-xs text-gray-500">{t("auth.orders.order_total")}</span>
                     <span className="text-sm font-bold text-gray-900">${Number(total).toLocaleString()}</span>
                   </div>
                 )}
@@ -159,19 +161,19 @@ const OrdersList = () => {
                 <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
                   {trackingUrl ? (
                     <>
-                      <span className="text-xs text-gray-400">Track your shipment</span>
+                      <span className="text-xs text-gray-400">{t("auth.orders.track_shipment")}</span>
                       <a
                         href={trackingUrl}
                         target="_blank"
                         rel="noreferrer"
                         className="flex items-center gap-1.5 text-xs font-semibold text-[#3D1613] hover:underline"
                       >
-                        Track Order <FiExternalLink size={12} />
+                        {t("auth.orders.track_order_btn")} <FiExternalLink size={12} />
                       </a>
                     </>
                   ) : (
                     <p className="text-xs text-gray-400 italic">
-                      🚚 Tracking link will be updated after shipment.
+                      {t("auth.orders.tracking_update_msg")}
                     </p>
                   )}
                 </div>

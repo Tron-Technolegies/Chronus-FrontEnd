@@ -1,4 +1,5 @@
 import { useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 const STEP = 500;
 
@@ -9,6 +10,7 @@ const ProductPriceFilter = ({
   min = 0,
   max = 100000,
 }) => {
+  const { t } = useTranslation();
   const dragRef = useRef(null);
 
   const clamp = useCallback((value, lower, upper) => Math.min(Math.max(value, lower), upper), []);
@@ -84,7 +86,7 @@ const ProductPriceFilter = ({
   return (
     <div className="w-full px-4 md:px-5 py-5 border-b border-gray-200 lg:sticky lg:top-24">
       <div className="flex justify-between items-center mb-4">
-        <span className="text-sm font-semibold text-gray-900">Price Range</span>
+        <span className="text-sm font-semibold text-gray-900">{t("shop.price_filter.title")}</span>
         <span className="text-xs text-gray-400">{formatPrice(max)}</span>
       </div>
 
@@ -124,7 +126,7 @@ const ProductPriceFilter = ({
 
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] items-center gap-2">
         <label className="text-[11px] text-gray-500 uppercase tracking-wide flex flex-col gap-1">
-          Min
+          {t("shop.price_filter.min")}
           <input
             type="number"
             min={min}
@@ -140,7 +142,7 @@ const ProductPriceFilter = ({
         <span className="hidden sm:inline text-xs text-gray-400">-</span>
 
         <label className="text-[11px] text-gray-500 uppercase tracking-wide flex flex-col gap-1">
-          Max
+          {t("shop.price_filter.max")}
           <input
             type="number"
             min={minVal + STEP}
@@ -160,7 +162,7 @@ const ProductPriceFilter = ({
           onClick={onApply}
           className="mt-4 w-full py-2.5 text-xs tracking-widest font-semibold bg-[#FFCA0A] text-black rounded-md"
         >
-          Apply Price Filter
+          {t("shop.price_filter.apply")}
         </button>
       )}
 

@@ -5,8 +5,10 @@ import CategoryIntroModal from "./CategoryIntroModal";
 import SubcategorySelectModal from "../shop/SubcategorySelectModal";
 import { fetchCategoryHisHerSubcategories } from "../../utils/fetchCategoryHisHerSubcategories";
 import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
+import { useTranslation } from "react-i18next";
 
 export default function ExploreCategories() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { categories = [], loading } = useCategories();
 
@@ -49,13 +51,13 @@ export default function ExploreCategories() {
     <>
       <section className="py-20 px-6 md:px-[6%]">
         <div className="text-center mb-14">
-          <h2 className="text-4xl tracking-wide font-[Bastoni]">Explore Categories</h2>
+          <h2 className="text-4xl tracking-wide font-[Bastoni]">{t("home.explore.title")}</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
           {!loading && sortedCategories.length === 0 && (
             <p className="text-sm text-off-white col-span-full text-center">
-              No categories available.
+              {t("home.explore.no_categories")}
             </p>
           )}
 

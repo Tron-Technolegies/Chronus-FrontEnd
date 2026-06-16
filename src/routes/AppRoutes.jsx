@@ -18,6 +18,7 @@ import PrivacyPage from "../pages/PrivacyPage";
 import TermsPage from "../pages/TermsPage";
 import LegalNoticePage from "../pages/LegalNoticePage";
 import FAQPage from "../pages/FAQPage";
+import PaymentStatusPage from "../pages/PaymentStatusPage";
 
 const AppRoutes = () => {
   const router = createBrowserRouter([
@@ -74,6 +75,18 @@ const AppRoutes = () => {
         {
           path: "/shipping",
           element: <ShippingPage />,
+        },
+        {
+          path: "/payment-success",
+          element: <PaymentStatusPage status="success" />,
+        },
+        {
+          path: "/payment-cancel",
+          element: <PaymentStatusPage status="cancel" />,
+        },
+        {
+          path: "/payment-failure",
+          element: <PaymentStatusPage status="failure" />,
         },
         {
           path: "/privacy",
