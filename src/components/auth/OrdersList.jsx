@@ -2,14 +2,15 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { fetchOrdersAPI } from "../../api/orders";
 import { useTranslation } from "react-i18next";
+import { formatMoney } from "../../utils/currency";
+import { FiLoader,FiPackage  } from "react-icons/fi";
 
-const STATUS_FILTERS = ["All", "processing", "delivered", "cancelled"];
 
 const statusLabel = (s, t) => {
   if (s === "processing") return t("auth.orders.status_processing");
   if (s === "delivered")  return t("auth.orders.status_delivered");
   if (s === "cancelled")  return t("auth.orders.status_cancelled");
-  if (s === "All") return t("auth.orders.status_all");
+
   return s;
 };
 
@@ -24,13 +25,14 @@ const OrdersList = () => {
   const [orders, setOrders]   = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(null);
-  const [filter, setFilter]   = useState("All");
+
 
   useEffect(() => {
     const load = async () => {
       try {
         const res = await fetchOrdersAPI();
-        setOrders(res.data?.results ?? res.data ?? []);
+        const fetchedOrders = res.data?.orders || res.data?.results || res.data || [];
+        setOrders(Array.isArray(fetchedOrders) ? fetchedOrders : []);
       } catch (err) {
         setError(err?.response?.data?.detail ?? t("auth.orders.load_error"));
       } finally {
@@ -40,29 +42,12 @@ const OrdersList = () => {
     load();
   }, []);
 
-  const filtered =
-    filter === "All" ? orders : orders.filter((o) => o.status === filter);
+
 
   return (
     <div>
       <h2 className="text-xl sm:text-2xl font-semibold mb-6">{t("auth.orders.title")}</h2>
 
-      {/* Filter pills */}
-      <div className="flex flex-wrap gap-3 mb-6">
-        {STATUS_FILTERS.map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-sm border transition
-              ${filter === f
-                ? "bg-[#3D1613] text-off-white border-[#3D1613]"
-                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
-              }`}
-          >
-            {statusLabel(f, t)}
-          </button>
-        ))}
-      </div>
 
       {/* Loading */}
       {loading && (
@@ -79,7 +64,7 @@ const OrdersList = () => {
       )}
 
       {/* Empty */}
-      {!loading && !error && filtered.length === 0 && (
+      {!loading && !error && orders.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
           <FiPackage size={44} className="text-gray-200" />
           <p className="text-gray-400 text-sm">{t("auth.orders.no_orders")}</p>
@@ -87,9 +72,9 @@ const OrdersList = () => {
       )}
 
       {/* Orders */}
-      {!loading && filtered.length > 0 && (
+      {!loading && orders.length > 0 && (
         <div className="space-y-4">
-          {filtered.map((order) => {
+          {orders.map((order) => {
             const orderId  = order.id ?? order.order_id;
             const status   = order.status ?? "processing";
             const date     = order.created_at
@@ -139,7 +124,7 @@ const OrdersList = () => {
                         </div>
                         {price != null && (
                           <p className="text-sm font-semibold text-gray-900 shrink-0">
-                            ${Number(price).toLocaleString()}
+                            {formatMoney(price, order.currency)}
                           </p>
                         )}
                       </div>
@@ -153,7 +138,7 @@ const OrdersList = () => {
                 {total != null && (
                   <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
                     <span className="text-xs text-gray-500">{t("auth.orders.order_total")}</span>
-                    <span className="text-sm font-bold text-gray-900">${Number(total).toLocaleString()}</span>
+                    <span className="text-sm font-bold text-gray-900">{formatMoney(total, order.currency)}</span>
                   </div>
                 )}
 

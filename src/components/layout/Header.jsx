@@ -78,6 +78,7 @@ const Header = () => {
   };
 
   const handleUserClick = () => {
+    setMenuOpen(false);
     navigate(isLoggedIn ? "/my-account" : "/login");
   };
 
@@ -155,8 +156,7 @@ const Header = () => {
         />
 
         <div className="ms-auto flex items-center gap-3">
-          <CurrencySwitcher />
-          <LanguageSwitcher />
+          {/* Switchers moved to mobile menu for clean UI */}
 
           {/* Wishlist */}
           <button onClick={() => navigate("/wishlist")} className="relative p-1">
@@ -199,6 +199,11 @@ const Header = () => {
                 {link.label}
               </button>
             ))}
+
+            <div className="flex items-center gap-4 py-5 border-b border-white/10 text-base">
+              <CurrencySwitcher />
+              <LanguageSwitcher />
+            </div>
 
             <button
               onClick={handleUserClick}

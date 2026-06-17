@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { addToCartAPI, fetchCartAPI, removeCartItemAPI } from "../api/cart";
 import { useGuestId } from "./useGuestId";
-
-const formatMoney = (value) => `$${Number(value ?? 0).toLocaleString()}`;
+import { formatMoney } from "../utils/currency";
 
 const parsePrice = (price) => {
   if (typeof price === "number") return price;
@@ -11,21 +10,28 @@ const parsePrice = (price) => {
 };
 
 const normaliseCartItems = (payload) => {
-  const items = Array.isArray(payload?.items) ? payload.items : [];
-  return items.map((item) => ({
-    id: item.product_id ?? item.id,
-    cartItemId: item.id ?? null,
-    productId: item.product_id ?? item.id,
-    name: item.product ?? item.product_name ?? item.name ?? "",
-    price: formatMoney(item.price ?? 0),
+  const items = Array.isArray(payload?.items) ? payload.items : (Array.isArray(payload) ? payload : []);
+  return items.map((item) => {
+    const prodId = item.product?.id ?? item.product_id ?? item.id;
+    return {
+      id: prodId,
+      cartItemId: item.id ?? null,
+      productId: prodId,
+      name: item.product?.name ?? item.product_name ?? item.name ?? "",
+      price: formatMoney(item.price ?? 0, item.currency),
     _rawPrice: Number(item.price ?? 0),
-    images: [item.image].filter(Boolean),
-    selectedSize: item.size ?? null,
-    selectedFrame: item.frame ?? null,
-    selectedMaterial: item.material ?? null,
-    qty: Number(item.quantity ?? item.qty ?? 1) || 1,
-    lineTotal: Number(item.total ?? 0),
-  }));
+    currency: item.currency || null,
+      images: [item.product?.image ?? item.image].filter(Boolean),
+      selectedSize: item.size ?? null,
+      selectedFrame: item.frame ?? null,
+      selectedMaterial: item.material ?? null,
+      sizeId: item.size_id ?? null,
+      frameId: item.frame_id ?? null,
+      materialId: item.material_id ?? null,
+      qty: Number(item.quantity ?? item.qty ?? 1) || 1,
+      lineTotal: Number(item.total ?? 0),
+    };
+  });
 };
 
 export function useCartState() {
@@ -82,11 +88,11 @@ export function useCartState() {
   );
 
   const removeItem = useCallback(
-    async (productId) => {
+    async (cartItemId) => {
       try {
         setLoading(true);
         setError(null);
-        await removeCartItemAPI(productId);
+        await removeCartItemAPI(cartItemId);
         await fetchCart();
       } catch (err) {
         setError(err?.response?.data?.error ?? err?.message ?? "Failed to remove item.");
@@ -109,11 +115,15 @@ export function useCartState() {
         setError(null);
 
         if (type === "inc") {
-          await addToCartAPI(productId, 1);
+          await addToCartAPI(productId, 1, {
+            sizeId: current.sizeId,
+            frameId: current.frameId,
+            materialId: current.materialId,
+          });
         } else {
           // Prefer a single remove call for decrement. If backend remove endpoint
           // deletes only one unit, this is sufficient and avoids an add request.
-          await removeCartItemAPI(productId);
+          await removeCartItemAPI(current.cartItemId);
 
           if (nextQty > 0) {
             const refreshed = await fetchCartAPI();
@@ -126,7 +136,11 @@ export function useCartState() {
             if (!decrementedByOne) {
               // Fallback for backends where remove deletes the whole line item.
               for (let i = 0; i < nextQty; i += 1) {
-                await addToCartAPI(productId, 1);
+                await addToCartAPI(productId, 1, {
+                  sizeId: current.sizeId,
+                  frameId: current.frameId,
+                  materialId: current.materialId,
+                });
               }
             }
           }
@@ -147,7 +161,7 @@ export function useCartState() {
     try {
       setLoading(true);
       setError(null);
-      await Promise.all(cart.map((item) => removeCartItemAPI(item.id)));
+      await Promise.all(cart.map((item) => removeCartItemAPI(item.cartItemId)));
       await fetchCart();
     } catch (err) {
       setError(err?.response?.data?.error ?? err?.message ?? "Failed to clear cart.");
@@ -161,7 +175,7 @@ export function useCartState() {
   }, [fetchCart]);
 
   const subtotal = useMemo(
-    () => cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0),
+    () => cart.reduce((sum, item) => sum + (item._rawPrice || 0) * item.qty, 0),
     [cart],
   );
   const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.qty, 0), [cart]);

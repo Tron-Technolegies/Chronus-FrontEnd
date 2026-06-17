@@ -10,8 +10,8 @@ const AccountSidebar = ({ activeTab, setActiveTab }) => {
 
   const menuItems = [
     { id: "profile", label: t("auth.account.my_profile") },
-    // { id: "orders", label: t("auth.account.my_orders") },
-    // { id: "address", label: t("auth.account.saved_address") },
+    { id: "orders", label: t("auth.account.my_orders") },
+    { id: "address", label: t("auth.account.saved_address") },
     // { id: "password", label: t("auth.account.change_password") },
     { id: "logout", label: t("auth.account.logout") },
   ];
@@ -33,7 +33,7 @@ const AccountSidebar = ({ activeTab, setActiveTab }) => {
   };
   return (
     <div className="lg:w-72 border-b lg:border-b-0 lg:border-r border-gray-200 bg-white p-4 sm:p-6 relative">
-      <div className="lg:hidden mb-4 relative z-50">
+      <div className="lg:hidden mb-4 relative z-10">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="w-full bg-[#5a0f0f] text-off-white py-3 px-4 rounded-md flex items-center justify-between"
@@ -47,7 +47,7 @@ const AccountSidebar = ({ activeTab, setActiveTab }) => {
         </button>
 
         {isOpen && (
-          <div className="absolute left-0 right-0 mt-2 bg-white border rounded-md shadow-xl z-50">
+          <div className="mt-2 bg-white border border-gray-100 rounded-md shadow-sm overflow-hidden z-50">
             {menuItems.map((item) => (
               <button
                 key={item.id}

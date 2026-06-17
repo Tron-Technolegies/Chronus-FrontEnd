@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiPackage, FiArrowRight, FiClock, FiAlertCircle } from "react-icons/fi";
 import { fetchOrdersAPI } from "../api/orders";
+import { formatMoney } from "../utils/currency";
 
 export default function OrdersPage() {
   const isLoggedIn = !!localStorage.getItem("accessToken");
@@ -157,7 +158,7 @@ function OrderCard({ order }) {
 
       {total != null && (
         <p className="text-base font-bold text-[#3D1613] shrink-0">
-          ${Number(total).toLocaleString()}
+          {formatMoney(total, order.currency)}
         </p>
       )}
 

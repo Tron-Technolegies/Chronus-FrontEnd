@@ -15,7 +15,9 @@ const MyAccountPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 sm:px-6 inter">
-      <h1 className="text-center text-2xl sm:text-3xl font-semibold py-6 sm:py-8">{t("auth.account.my_account")}</h1>
+      <h1 className="text-center text-2xl sm:text-3xl font-semibold py-6 sm:py-8">
+        {t("auth.account.my_account")}
+      </h1>
 
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md relative">
         <div className="flex flex-col lg:flex-row">
@@ -23,9 +25,9 @@ const MyAccountPage = () => {
 
           <div className="flex-1 p-6 sm:p-8">
             {activeTab === "profile" && <ProfileForm />}
-            {/* {activeTab === "orders" && <OrdersList/>} */}
-            {/* {activeTab === "address" && <AddressSection/>}
-            {activeTab === "password" && <ChangePassword/>} */}
+            {activeTab === "orders" && <OrdersList />}
+            {activeTab === "address" && <AddressSection />}
+            {activeTab === "password" && <ChangePassword />}
           </div>
         </div>
       </div>

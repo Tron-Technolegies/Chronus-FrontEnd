@@ -15,13 +15,9 @@ const normalizeCurrency = (value) => {
   return /^[a-z]{3}$/.test(normalized) ? normalized : null;
 };
 
-const resolveCurrency = (formData) => {
-  const fromForm = normalizeCurrency(formData?.currency);
-  if (fromForm) return fromForm;
-
-  const fromCountry = normalizeCurrency(COUNTRY_TO_CURRENCY[formData?.country]);
-  if (fromCountry) return fromCountry;
-
+const resolveCurrency = () => {
+  const fromStorage = localStorage.getItem("currency");
+  if (fromStorage) return normalizeCurrency(fromStorage);
   return "usd";
 };
 
@@ -41,7 +37,8 @@ export function useCheckout() {
     setPaymentGateway(null);
 
     try {
-      const orderRes = await placeOrderAPI(formData);
+      const payload = { ...formData, currency: resolveCurrency() };
+      const orderRes = await placeOrderAPI(payload);
       const id = orderRes.data?.order_id ?? orderRes.data?.id;
 
       if (!id) throw new Error("No order ID returned from server.");
@@ -50,7 +47,7 @@ export function useCheckout() {
       setOrderId(id);
       sessionStorage.removeItem("payment_client_secret");
 
-      return { orderId: id, currency: resolveCurrency(formData) };
+      return { orderId: id, currency: resolveCurrency() };
     } catch (err) {
       const msg =
         err?.response?.data?.detail ??

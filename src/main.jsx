@@ -6,15 +6,19 @@ import App from "./App.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import { WishlistProvider } from "./context/WishlistContext.jsx";
 import DirectionManager from "./components/layout/DirectionManager.jsx";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./lib/queryClient.js";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <CartProvider>
-      <WishlistProvider>
-        <DirectionManager>
-          <App />
-        </DirectionManager>
-      </WishlistProvider>
-    </CartProvider>
+    <QueryClientProvider client={queryClient}>
+      <CartProvider>
+        <WishlistProvider>
+          <DirectionManager>
+            <App />
+          </DirectionManager>
+        </WishlistProvider>
+      </CartProvider>
+    </QueryClientProvider>
   </StrictMode>,
 );
