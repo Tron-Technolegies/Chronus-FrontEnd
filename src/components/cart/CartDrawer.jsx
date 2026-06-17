@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
+import { formatMoney } from "../../utils/currency";
 
 export default function CartDrawer() {
   const { cart, open, setOpen, subtotal, updateQty, removeItem } = useCart();
@@ -72,7 +73,7 @@ export default function CartDrawer() {
                 </div>
 
                 <button
-                  onClick={() => removeItem(p.id)}
+                  onClick={() => removeItem(p.cartItemId ?? p.id)}
                   className="cursor-pointer text-gray-400 hover:text-black"
                 >
                   x
@@ -85,7 +86,7 @@ export default function CartDrawer() {
         <div className="p-6 border-t border-gray-200 space-y-4">
           <div className="flex justify-between text-sm">
             <span>Subtotal</span>
-            <span className="font-medium  ">${subtotal.toLocaleString()}</span>
+            <span className="font-medium  ">{formatMoney(subtotal)}</span>
           </div>
 
           <Link to="/checkout" onClick={() => setOpen(false)}>

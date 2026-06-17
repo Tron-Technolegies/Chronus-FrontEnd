@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchProductByIdAPI } from "../api/product";
-
-const formatMoney = (value) => `$${Number(value ?? 0).toLocaleString()}`;
+import { formatMoney } from "../utils/currency";
 
 const formatProductDetails = (rawProduct) => {
   if (!rawProduct) return null;
@@ -15,7 +14,7 @@ const formatProductDetails = (rawProduct) => {
           return {
             id: item?.id ?? label,
             size: label,
-            price: formatMoney(rawPrice),
+            price: formatMoney(rawPrice, rawProduct.currency),
             _rawPrice: rawPrice,
           };
         })
@@ -51,7 +50,7 @@ const formatProductDetails = (rawProduct) => {
             id,
             name,
             image: item?.image ?? null,
-            extraPrice: formatMoney(rawExtraPrice),
+            extraPrice: formatMoney(rawExtraPrice, rawProduct.currency),
             _rawExtraPrice: rawExtraPrice,
           };
         })
@@ -71,7 +70,7 @@ const formatProductDetails = (rawProduct) => {
             id,
             name,
             description: item?.description ?? "",
-            extraPrice: formatMoney(rawExtraPrice),
+            extraPrice: formatMoney(rawExtraPrice, rawProduct.currency),
             _rawExtraPrice: rawExtraPrice,
           };
         })
@@ -83,8 +82,9 @@ const formatProductDetails = (rawProduct) => {
   return {
     id: rawProduct.id,
     name: rawProduct.name ?? "",
-    price: formatMoney(baseRawPrice),
+    price: formatMoney(baseRawPrice, rawProduct.currency),
     _rawPrice: baseRawPrice,
+    currency: rawProduct.currency || null,
     originalPrice: null,
     image: rawProduct.image ?? null,
     images: [rawProduct.image, ...(rawProduct.gallery ?? [])].filter(Boolean),
@@ -129,38 +129,25 @@ const formatProductDetails = (rawProduct) => {
 };
 
 export function useProductDetails(productId) {
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const loadProduct = useCallback(
-    async (showLoader = true) => {
-      if (!productId) return;
-
-      if (showLoader) setLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetchProductByIdAPI(productId);
-        const rawProduct = response.data;
-        setProduct(formatProductDetails(rawProduct));
-      } catch (err) {
-        setError(err?.response?.status === 404 ? "Product not found." : "Failed to load product.");
-      } finally {
-        if (showLoader) setLoading(false);
-      }
+  const { data: product = null, isLoading, error, refetch } = useQuery({
+    queryKey: ["product", productId],
+    queryFn: async () => {
+      const response = await fetchProductByIdAPI(productId);
+      return formatProductDetails(response.data);
     },
-    [productId],
-  );
-
-  useEffect(() => {
-    loadProduct();
-  }, [loadProduct]);
+    enabled: !!productId,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000,    // 30 minutes
+  });
 
   return {
     product,
-    loading,
-    error,
-    loadProduct,
+    loading: isLoading,
+    error: error
+      ? error?.response?.status === 404
+        ? "Product not found."
+        : "Failed to load product."
+      : null,
+    loadProduct: refetch,
   };
 }

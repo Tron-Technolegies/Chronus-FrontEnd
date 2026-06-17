@@ -101,9 +101,9 @@ const Login = () => {
               </div>
 
               <div className="text-right mt-2">
-                <button type="button" className="text-xs text-gray-400 hover:text-gray-600 inter">
+                <Link to="/forgot-password" className="text-xs text-gray-400 hover:text-gray-600 inter">
                   {t("auth.login.forgot_password")}
-                </button>
+                </Link>
               </div>
             </div>
 

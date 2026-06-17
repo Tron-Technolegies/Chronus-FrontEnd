@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { formatMoney } from "../utils/currency";
 
 export function useProductSizePricing(product) {
   const safeProduct = product ?? {};
@@ -62,7 +63,7 @@ export function useProductSizePricing(product) {
   const frameExtra = activeFrameOption?._rawExtraPrice ?? 0;
   const materialExtra = activeMaterialOption?._rawExtraPrice ?? 0;
   const totalRawPrice = baseRawPrice + frameExtra + materialExtra;
-  const displayPrice = `$${Number(totalRawPrice).toLocaleString()}`;
+  const displayPrice = formatMoney(totalRawPrice, safeProduct?.currency);
 
   const productForCart = useMemo(() => {
     const size = activeSizeOption?.size ?? null;

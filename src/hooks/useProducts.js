@@ -1,12 +1,16 @@
-import { useEffect, useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchProductsAPI } from "../api/product";
+import { formatMoney } from "../utils/currency";
 
 const normalise = (p) => ({
   id: p.id,
   name: p.name,
 
-  price: `$${Number(p.price).toLocaleString()}`,
+  name: p.name,
+
+  price: formatMoney(p.price, p.currency),
   _rawPrice: Number(p.price),
+  currency: p.currency || null,
 
   image: p.image ?? null,
   images: [p.image, ...(p.gallery ?? [])].filter(Boolean),
@@ -39,25 +43,9 @@ export function useProducts({
   pageSize = 12,
   enabled = true,
 } = {}) {
-  const [products, setProducts] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
-
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalProducts: 0,
-  });
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const load = useCallback(async () => {
-    if (!enabled) return;
-
-    try {
-      setLoading(true);
-      setError(null);
-
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["products", { category, subcategory, search, minPrice, maxPrice, page, pageSize }],
+    queryFn: async () => {
       const params = {
         page,
         limit: pageSize,
@@ -76,14 +64,6 @@ export function useProducts({
 
       const normalized = payload.products.map(normalise);
 
-      setProducts(normalized);
-
-      setPagination({
-        currentPage: payload.page,
-        totalPages: payload.total_pages,
-        totalProducts: payload.total_products,
-      });
-
       const subs = [];
       normalized.forEach((p) => {
         if (p.subcategoryId && !subs.find((s) => s.id === p.subcategoryId)) {
@@ -94,38 +74,34 @@ export function useProducts({
         }
       });
 
-      setSubcategories(subs);
-    } catch (err) {
-      setError(err?.message ?? "Failed to load products.");
-    } finally {
-      setLoading(false);
-    }
-  }, [category, subcategory, search, minPrice, maxPrice, page, pageSize, enabled]);
+      return {
+        products: normalized,
+        subcategories: subs,
+        pagination: {
+          currentPage: payload.page,
+          totalPages: payload.total_pages,
+          totalProducts: payload.total_products,
+        },
+      };
+    },
+    enabled,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000,   // 10 minutes
+  });
 
-  useEffect(() => {
-    if (!enabled) {
-      setProducts([]);
-      setSubcategories([]);
-      setPagination({
-        currentPage: 1,
-        totalPages: 1,
-        totalProducts: 0,
-      });
-      setLoading(true);
-      setError(null);
-      return;
-    }
-
-    load();
-  }, [enabled, load]);
+  const emptyPagination = {
+    currentPage: 1,
+    totalPages: 1,
+    totalProducts: 0,
+  };
 
   return {
-    products,
-    loading,
-    error,
-    pagination,
-    totalCount: pagination.totalProducts,
-    subcategories,
-    refetch: load,
+    products: data?.products ?? [],
+    subcategories: data?.subcategories ?? [],
+    pagination: data?.pagination ?? emptyPagination,
+    totalCount: data?.pagination?.totalProducts ?? 0,
+    loading: isLoading,
+    error: error?.message ?? null,
+    refetch,
   };
 }

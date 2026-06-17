@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../hooks/useCart";
 import { useCheckout } from "../hooks/useCheckout";
+import { formatMoney } from "../utils/currency";
 import { FiPackage, FiCreditCard, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 import ShippingForm from "../components/checkout/ShippingForm";
 import OrderReview from "../components/checkout/OrderReview";
@@ -16,6 +17,7 @@ const STEPS = [
 ];
 
 const INITIAL_FORM = {
+  address_id: "",
   first_name: "",
   last_name: "",
   email: "",
@@ -49,10 +51,15 @@ const PHONE_RE = /^[+\d][\d\s\-().]{6,19}$/;
 
 function validateShipping(form) {
   const errs = {};
-  if (!form.first_name.trim()) errs.first_name = "First name is required";
-  if (!form.last_name.trim()) errs.last_name = "Last name is required";
   if (!form.email.trim()) errs.email = "Email is required";
   else if (!EMAIL_RE.test(form.email)) errs.email = "Enter a valid email address";
+
+  if (form.address_id) {
+    return errs;
+  }
+
+  if (!form.first_name.trim()) errs.first_name = "First name is required";
+  if (!form.last_name.trim()) errs.last_name = "Last name is required";
   if (!form.address.trim()) errs.address = "Street address is required";
   if (!form.city.trim()) errs.city = "City is required";
   if (!form.postal_code.trim()) errs.postal_code = "Postal code is required";
@@ -89,6 +96,13 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        setForm(f => ({ ...f, email: user.email || "" }));
+      } catch (e) {}
+    }
   }, []);
 
   const handleChange = (e) => {
@@ -222,6 +236,7 @@ export default function CheckoutPage() {
             {step === 1 && (
               <ShippingForm
                 form={form}
+                setForm={setForm}
                 touched={touched}
                 fieldErrors={fieldErrors}
                 handleChange={handleChange}
@@ -384,7 +399,7 @@ export default function CheckoutPage() {
             <div className="px-6 py-5 border-t border-white/10 space-y-3">
               <div className="flex justify-between text-off-white-70 text-xs">
                 <span>Subtotal</span>
-                <span className="text-off-white">${subtotal.toLocaleString()}</span>
+                <span className="text-off-white">{formatMoney(subtotal)}</span>
               </div>
               <div className="flex justify-between text-off-white-70 text-xs">
                 <span>Shipping</span>
@@ -392,7 +407,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between pt-2 border-t border-white/10">
                 <span className="text-off-white text-sm font-semibold tracking-wide">Total</span>
-                <span className="text-[#FFCA0A] text-base font-bold">${total.toFixed(0)}</span>
+                <span className="text-[#FFCA0A] text-base font-bold">{formatMoney(total)}</span>
               </div>
             </div>
           </div>

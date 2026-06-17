@@ -19,7 +19,8 @@ import TermsPage from "../pages/TermsPage";
 import LegalNoticePage from "../pages/LegalNoticePage";
 import FAQPage from "../pages/FAQPage";
 import PaymentStatusPage from "../pages/PaymentStatusPage";
-
+import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
 const AppRoutes = () => {
   const router = createBrowserRouter([
     {
@@ -39,6 +40,14 @@ const AppRoutes = () => {
         {
           path: "/signup",
           element: <SignupPage />,
+        },
+        {
+          path: "/forgot-password",
+          element: <ForgotPasswordPage />,
+        },
+        {
+          path: "/reset-password/:uid/:token",
+          element: <ResetPasswordPage />,
         },
         {
           path: "/my-account",

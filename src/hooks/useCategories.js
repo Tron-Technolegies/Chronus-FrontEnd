@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getCategories } from "../api/product";
 
 const toCategoryOption = (category) => ({
@@ -25,46 +25,30 @@ const toCategoryOption = (category) => ({
 });
 
 export function useCategories() {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const loadCategories = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
+  const { data: categories = [], isLoading, error, refetch } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
       const response = await getCategories();
-
       const raw = response?.data?.categories ?? response?.data ?? [];
-
       const normalized = Array.isArray(raw) ? raw.map(toCategoryOption) : [];
-
+      
       normalized.sort((a, b) => {
         if (a.priority !== b.priority) {
           return a.priority - b.priority;
         }
         return a.name.localeCompare(b.name);
       });
-
-      setCategories(normalized);
-    } catch (err) {
-      setError(err?.response?.data?.detail ?? err?.message ?? "Failed to load categories.");
-
-      setCategories([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadCategories();
-  }, [loadCategories]);
+      
+      return normalized;
+    },
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    gcTime: 60 * 60 * 1000,    // 60 minutes
+  });
 
   return {
     categories,
-    loading,
-    error,
-    refetch: loadCategories,
+    loading: isLoading,
+    error: error?.response?.data?.detail ?? error?.message ?? null,
+    refetch,
   };
 }
