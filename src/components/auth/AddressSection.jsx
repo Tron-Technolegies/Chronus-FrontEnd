@@ -239,6 +239,7 @@ const AddressSection = () => {
             type="text"
             name="address_line_1"
             required
+            maxLength={45}
             value={formData.address_line_1}
             onChange={handleChange}
             placeholder="Street address, P.O. box, etc."
@@ -308,12 +309,12 @@ const AddressSection = () => {
               className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5a0f0f]"
             >
               <option value="">Select Country</option>
-              <option value="India">India</option>
-              <option value="USA">USA</option>
-              <option value="UAE">UAE</option>
-              <option value="UK">UK</option>
-              <option value="Canada">Canada</option>
-              <option value="Australia">Australia</option>
+              <option value="IN">India</option>
+              <option value="US">USA</option>
+              <option value="AE">UAE</option>
+              <option value="GB">UK</option>
+              <option value="CA">Canada</option>
+              <option value="AU">Australia</option>
             </select>
           </div>
         </div>

@@ -37,7 +37,21 @@ export function useCheckout() {
     setPaymentGateway(null);
 
     try {
-      const payload = { ...formData, currency: resolveCurrency() };
+      let payload;
+      if (formData.address_id) {
+        payload = {
+          address_id: formData.address_id,
+          email: formData.email,
+          currency: resolveCurrency(),
+        };
+      } else {
+        const { address_id, ...manualData } = formData;
+        payload = {
+          ...manualData,
+          currency: resolveCurrency(),
+        };
+      }
+      
       const orderRes = await placeOrderAPI(payload);
       const id = orderRes.data?.order_id ?? orderRes.data?.id;
 

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { fetchOrdersAPI } from "../../api/orders";
 import { useTranslation } from "react-i18next";
 import { formatMoney } from "../../utils/currency";
-import { FiLoader,FiPackage  } from "react-icons/fi";
+import { FiLoader,FiPackage,FiExternalLink  } from "react-icons/fi";
 
 
 const statusLabel = (s, t) => {
@@ -73,8 +73,9 @@ const OrdersList = () => {
 
       {/* Orders */}
       {!loading && orders.length > 0 && (
-        <div className="space-y-4">
-          {orders.map((order) => {
+        <>
+          <div className="space-y-4">
+            {orders.slice(0, 3).map((order) => {
             const orderId  = order.id ?? order.order_id;
             const status   = order.status ?? "processing";
             const date     = order.created_at
@@ -84,7 +85,9 @@ const OrdersList = () => {
               : null;
             const total       = order.total_amount ?? order.total;
             const items       = order.items ?? [];
-            const trackingUrl = order.tracking_url ?? null;
+            const trackingUrl = order.tracking_link ?? order.tracking_url ?? null;
+            const carrier     = order.carrier;
+            const trackNumber = order.tracking_number;
 
             return (
               <div
@@ -105,7 +108,7 @@ const OrdersList = () => {
                 {/* Items list */}
                 <div className="space-y-3">
                   {items.length > 0 ? items.map((item, idx) => {
-                    const img  = item.image ?? item.product?.image ?? null;
+                    const img  = item.product_image ?? item.image ?? item.product?.image ?? null;
                     const name = item.product_name ?? item.name ?? "—";
                     const qty  = item.quantity ?? item.qty ?? 1;
                     const price= item.price ?? item.unit_price ?? null;
@@ -153,7 +156,7 @@ const OrdersList = () => {
                         rel="noreferrer"
                         className="flex items-center gap-1.5 text-xs font-semibold text-[#3D1613] hover:underline"
                       >
-                        {t("auth.orders.track_order_btn")} <FiExternalLink size={12} />
+                        {carrier ? `Track with ${carrier}` : t("auth.orders.track_order_btn")} {trackNumber && `(#${trackNumber})`} <FiExternalLink size={12} />
                       </a>
                     </>
                   ) : (
@@ -166,6 +169,16 @@ const OrdersList = () => {
             );
           })}
         </div>
+        
+        <div className="mt-8 flex justify-center">
+          <Link
+            to="/orders"
+            className="bg-white border border-[#3D1613] text-[#3D1613] px-8 py-2.5 rounded-md text-sm font-medium hover:bg-[#3D1613] hover:text-white transition-colors"
+          >
+            View All Orders
+          </Link>
+        </div>
+      </>
       )}
     </div>
   );

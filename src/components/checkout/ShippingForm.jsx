@@ -146,24 +146,46 @@ export default function ShippingForm({
             </Field>
           </div>
 
-          <Field error={touched.address && fieldErrors.address}>
+          <Field error={touched.address_line_1 && fieldErrors.address_line_1}>
             <input
-              className={ic("address")}
-              name="address"
-              placeholder="Street Address *"
-              value={form.address}
+              className={ic("address_line_1")}
+              name="address_line_1"
+              placeholder="Street Address 1 *"
+              maxLength={45}
+              value={form.address_line_1}
               onChange={handleChange}
               onBlur={handleBlur}
             />
           </Field>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Field error={touched.address_line_2 && fieldErrors.address_line_2}>
+            <input
+              className={ic("address_line_2")}
+              name="address_line_2"
+              placeholder="Street Address 2 (Optional)"
+              value={form.address_line_2}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+          </Field>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Field error={touched.city && fieldErrors.city}>
               <input
                 className={ic("city")}
                 name="city"
                 placeholder="City *"
                 value={form.city}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            </Field>
+            <Field error={touched.state && fieldErrors.state}>
+              <input
+                className={ic("state")}
+                name="state"
+                placeholder="State *"
+                value={form.state}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
@@ -187,10 +209,10 @@ export default function ShippingForm({
                 onBlur={handleBlur}
               >
                 <option value="">Country *</option>
-                <option value="India">India</option>
-                <option value="UAE">UAE</option>
-                <option value="USA">USA</option>
-                <option value="UK">UK</option>
+                <option value="IN">India</option>
+                <option value="AE">UAE</option>
+                <option value="US">USA</option>
+                <option value="GB">UK</option>
               </select>
             </Field>
           </div>
