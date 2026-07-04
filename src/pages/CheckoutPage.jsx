@@ -21,8 +21,10 @@ const INITIAL_FORM = {
   first_name: "",
   last_name: "",
   email: "",
-  address: "",
+  address_line_1: "",
+  address_line_2: "",
   city: "",
+  state: "",
   postal_code: "",
   country: "",
   phone: "",
@@ -60,8 +62,10 @@ function validateShipping(form) {
 
   if (!form.first_name.trim()) errs.first_name = "First name is required";
   if (!form.last_name.trim()) errs.last_name = "Last name is required";
-  if (!form.address.trim()) errs.address = "Street address is required";
+  if (!form.address_line_1.trim()) errs.address_line_1 = "Street address is required";
+  else if (form.address_line_1.trim().length > 45) errs.address_line_1 = "Address must be 45 characters or less";
   if (!form.city.trim()) errs.city = "City is required";
+  if (!form.state.trim()) errs.state = "State/Province is required";
   if (!form.postal_code.trim()) errs.postal_code = "Postal code is required";
   if (!form.country) errs.country = "Please select a country";
   if (!form.phone.trim()) errs.phone = "Phone number is required";
