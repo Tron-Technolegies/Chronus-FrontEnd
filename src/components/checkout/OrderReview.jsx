@@ -11,17 +11,40 @@ export default function OrderReview({ form, cart, loading, onBack, onPlaceOrder 
       <hr className="border-gray-100" />
 
       {/* Address summary */}
-      <div className="bg-gray-50 rounded-sm p-4 text-sm space-y-1">
+      <div className="bg-gray-50 rounded-sm p-4 text-sm space-y-1 mb-6">
+        <h3 className="font-semibold text-gray-800 mb-2 border-b pb-1">Shipping Address</h3>
         <p className="font-medium text-gray-700">{form.first_name} {form.last_name}</p>
         <p className="text-gray-500">{form.email}</p>
-        {form.address && <p className="text-gray-500">{form.address}</p>}
+        {form.address_line_1 && <p className="text-gray-500">{form.address_line_1}</p>}
+        {form.address_line_2 && <p className="text-gray-500">{form.address_line_2}</p>}
         <p className="text-gray-500">
           {form.city}{form.postal_code ? `, ${form.postal_code}` : ""}{form.country ? `, ${form.country}` : ""}
         </p>
         {form.phone && <p className="text-gray-500">{form.phone}</p>}
       </div>
 
-      <p className="text-sm text-gray-500 leading-relaxed">
+      {/* Items summary */}
+      <div className="bg-gray-50 rounded-sm p-4 text-sm space-y-3 mb-6">
+        <h3 className="font-semibold text-gray-800 mb-2 border-b pb-1">Order Items</h3>
+        {cart.map((p) => (
+          <div key={p.cartItemId ?? p.cartKey ?? `${p.id}-${p.selectedSize ?? "default"}`} className="flex justify-between items-start border-b border-gray-200 pb-2 last:border-0 last:pb-0">
+            <div>
+              <p className="font-medium text-gray-700 leading-tight">{p.product || p.name}</p>
+              <div className="flex flex-wrap gap-x-3 mt-1 text-xs text-gray-500">
+                {(p.color || p.selectedColor) && <span>Color: {p.color || p.selectedColor}</span>}
+                {(p.size || p.selectedSize) && <span>Size: {p.size || p.selectedSize}</span>}
+                {(p.frame || p.selectedFrame) && <span>Frame: {p.frame || p.selectedFrame}</span>}
+                {(p.material || p.selectedMaterial) && <span>Material: {p.material || p.selectedMaterial}</span>}
+              </div>
+            </div>
+            <div className="text-right ml-4">
+              <p className="font-medium text-gray-700">{p.quantity || p.qty} × {p.price}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-sm text-gray-500 leading-relaxed mb-6">
         Please review your order details before confirming. By placing the order you agree to our terms and conditions.
       </p>
 

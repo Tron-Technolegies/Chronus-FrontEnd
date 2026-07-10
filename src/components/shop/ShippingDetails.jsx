@@ -25,13 +25,13 @@ const ShippingDetails = () => {
           </div>
         </div>
 
-        <div className="flex items-start gap-5">
+        {/* <div className="flex items-start gap-5">
           <FiRefreshCw className="text-lg text-black mt-1 shrink-0" />
           <div>
             <p className="text-xs font-semibold tracking-wide">{t("shop.shipping.returns_title")}</p>
             <p className="text-xs text-gray-500 mt-2">{t("shop.shipping.returns_desc")}</p>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex items-start gap-5">
           <FiAward className="text-lg text-black mt-1 shrink-0" />

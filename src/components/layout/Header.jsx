@@ -182,7 +182,15 @@ const Header = () => {
           style={{ backgroundColor: HEADER_COLOR }}
         >
           <div className="flex items-center justify-between px-5 h-16 border-b border-white/10">
-            <img src={LOGO} alt="Chronos" className="h-4" />
+            <img 
+              src={LOGO} 
+              alt="Chronos" 
+              className="h-4 cursor-pointer" 
+              onClick={() => {
+                setMenuOpen(false);
+                navigate("/");
+              }}
+            />
 
             <button onClick={() => setMenuOpen(false)}>
               <FiX size={22} />
