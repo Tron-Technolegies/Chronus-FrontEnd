@@ -27,11 +27,13 @@ const Footer = () => {
           {" "}
           {/* Brand */}
           <div className="space-y-5">
-            <img
-              src="/chronus-logo.png"
-              alt="Chronos"
-              className="h-6 sm:h-7 w-auto object-contain"
-            />
+            <Link to="/">
+              <img
+                src="/chronus-logo.png"
+                alt="Chronos"
+                className="h-6 sm:h-7 w-auto object-contain"
+              />
+            </Link>
 
             <p className="text-off-white-70 text-sm leading-relaxed max-w-[280px]">
               {t("footer.description")}

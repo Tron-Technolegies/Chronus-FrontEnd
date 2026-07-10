@@ -37,19 +37,20 @@ export default function CartDrawer() {
                 className="flex gap-4 border-b border-[#D9D9D9] pb-4"
               >
                 <img
-                  src={p.images?.[0]}
+                  src={p.image || p.images?.[0]}
                   className="w-16 h-16 object-contain border border-[#D9D9D9] p-1"
-                  alt={p.name}
+                  alt={p.product || p.name}
                 />
 
                 <div className="flex-1 space-y-2">
-                  <p className="text-sm font-[BAYON]">{p.name}</p>
-                  {p.selectedSize && <p className="text-[11px] text-gray-500">Size: {p.selectedSize}</p>}
-                  {p.selectedFrame && (
-                    <p className="text-[11px] text-gray-500">Frame: {p.selectedFrame}</p>
+                  <p className="text-sm font-[BAYON]">{p.product || p.name}</p>
+                  {(p.color || p.selectedColor) && <p className="text-[11px] text-gray-500">Color: {p.color || p.selectedColor}</p>}
+                  {(p.size || p.selectedSize) && <p className="text-[11px] text-gray-500">Size: {p.size || p.selectedSize}</p>}
+                  {(p.frame || p.selectedFrame) && (
+                    <p className="text-[11px] text-gray-500">Frame: {p.frame || p.selectedFrame}</p>
                   )}
-                  {p.selectedMaterial && (
-                    <p className="text-[11px] text-gray-500">Material: {p.selectedMaterial}</p>
+                  {(p.material || p.selectedMaterial) && (
+                    <p className="text-[11px] text-gray-500">Material: {p.material || p.selectedMaterial}</p>
                   )}
                   <p className="text-xs font-semibold text-[#000000] ">{p.price}</p>
 
@@ -61,7 +62,7 @@ export default function CartDrawer() {
                       -
                     </button>
 
-                    <span className="min-w-[20px] text-center">{p.qty}</span>
+                    <span className="min-w-[20px] text-center">{p.quantity || p.qty}</span>
 
                     <button
                       onClick={() => updateQty(p.id, "inc")}

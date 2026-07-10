@@ -370,28 +370,33 @@ export default function CheckoutPage() {
                     className="flex gap-3 pb-4 border-b border-white/10 last:border-0"
                   >
                     <div className="w-12 h-12 bg-white/10 rounded-sm flex items-center justify-center shrink-0">
-                      <img src={p.images?.[0]} className="w-10 h-10 object-contain" alt={p.name} />
+                      <img src={p.image || p.images?.[0]} className="w-10 h-10 object-contain" alt={p.product || p.name} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-off-white text-xs font-medium tracking-wide leading-snug line-clamp-2">
-                        {p.name}
+                        {p.product || p.name}
                       </p>
-                      {p.selectedSize && (
+                      {(p.color || p.selectedColor) && (
                         <p className="text-off-white-50 text-[11px] mt-0.5">
-                          Size: {p.selectedSize}
+                          Color: {p.color || p.selectedColor}
                         </p>
                       )}
-                      {p.selectedFrame && (
+                      {(p.size || p.selectedSize) && (
                         <p className="text-off-white-50 text-[11px] mt-0.5">
-                          Frame: {p.selectedFrame}
+                          Size: {p.size || p.selectedSize}
                         </p>
                       )}
-                      {p.selectedMaterial && (
+                      {(p.frame || p.selectedFrame) && (
                         <p className="text-off-white-50 text-[11px] mt-0.5">
-                          Material: {p.selectedMaterial}
+                          Frame: {p.frame || p.selectedFrame}
                         </p>
                       )}
-                      <p className="text-off-white-50 text-[11px] mt-0.5">Qty: {p.qty}</p>
+                      {(p.material || p.selectedMaterial) && (
+                        <p className="text-off-white-50 text-[11px] mt-0.5">
+                          Material: {p.material || p.selectedMaterial}
+                        </p>
+                      )}
+                      <p className="text-off-white-50 text-[11px] mt-0.5">Qty: {p.quantity || p.qty}</p>
                       <p className="text-[#FFCA0A] text-sm font-semibold mt-0.5">{p.price}</p>
                     </div>
                   </div>

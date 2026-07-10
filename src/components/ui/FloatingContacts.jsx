@@ -1,13 +1,21 @@
 import { useState, useEffect } from "react";
 import { FaInstagram } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
+import { useLocation } from "react-router-dom";
+import { useCart } from "../../hooks/useCart";
 
 export default function FloatingContacts() {
   const [isMobile, setIsMobile] = useState(false);
+  const location = useLocation();
+  const { open } = useCart();
+
   const WA_NUMBER = "971569778080";
   const WA_MESSAGE = encodeURIComponent(
     "Hello,\n\nI would like to know more about Chronos Gallery products and services.\n\nThank you.",
   );
+  
+  const isHidden = open || location.pathname.startsWith("/checkout") || location.pathname.startsWith("/order");
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -47,6 +55,8 @@ export default function FloatingContacts() {
     color: "white",
     boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
   };
+
+  if (isHidden) return null;
 
   return (
     <div style={containerStyle}>
