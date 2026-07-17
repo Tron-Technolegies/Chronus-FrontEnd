@@ -396,6 +396,11 @@ export default function CheckoutPage() {
                           Material: {p.material || p.selectedMaterial}
                         </p>
                       )}
+                      {p.variant?.options?.map((opt, i) => (
+                        <p key={i} className="text-off-white-50 text-[11px] mt-0.5">
+                          {opt.option_name}: {opt.option_value}
+                        </p>
+                      ))}
                       <p className="text-off-white-50 text-[11px] mt-0.5">Qty: {p.quantity || p.qty}</p>
                       <p className="text-[#FFCA0A] text-sm font-semibold mt-0.5">{p.price}</p>
                     </div>
