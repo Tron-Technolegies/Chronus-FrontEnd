@@ -35,6 +35,11 @@ export default function OrderReview({ form, cart, loading, onBack, onPlaceOrder 
                 {(p.size || p.selectedSize) && <span>Size: {p.size || p.selectedSize}</span>}
                 {(p.frame || p.selectedFrame) && <span>Frame: {p.frame || p.selectedFrame}</span>}
                 {(p.material || p.selectedMaterial) && <span>Material: {p.material || p.selectedMaterial}</span>}
+                {p.variant?.options?.map((opt, i) => (
+                  <span key={i}>
+                    {opt.option_name}: {opt.option_value}
+                  </span>
+                ))}
               </div>
             </div>
             <div className="text-right ml-4">

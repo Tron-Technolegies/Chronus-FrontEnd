@@ -33,10 +33,15 @@ export default function ProductInfo({ product, productSelection }) {
     hasColorOptions,
     hasFrameOptions,
     hasMaterialOptions,
+    hasVariantOptions,
     activeSizeOption,
     activeColorOption,
     activeFrameOption,
     activeMaterialOption,
+    activeVariantOption,
+    selectedVariantId,
+    setSelectedVariantId,
+    variantOptions,
     displayPrice,
     productForCart,
   } = productSelection ?? fallbackSelection;
@@ -213,6 +218,40 @@ export default function ProductInfo({ product, productSelection }) {
                   {option._rawExtraPrice > 0 && (
                     <span className="block text-[11px] text-gray-500">+{option.extraPrice}</span>
                   )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {hasVariantOptions && (
+        <div className="space-y-2">
+          <p className="text-xs tracking-[0.15em] text-black font-medium">{t("shop.product_info.variant") || "VARIANT"}</p>
+
+          <div className="flex flex-wrap gap-2">
+            {variantOptions.map((option) => {
+              const active = option.id === (activeVariantOption?.id ?? selectedVariantId);
+              const label = option.options.map((o) => o.option_value).join(" - ") || option.sku;
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setSelectedVariantId(option.id)}
+                  className={`px-3 py-2 text-xs border transition-colors flex items-center gap-2 ${
+                    active
+                      ? "border-[#000000] text-black"
+                      : "border-gray-400 text-gray-400 hover:border-black hover:text-black"
+                  }`}
+                >
+                  {option.images && option.images[0] && (
+                    <img
+                      src={option.images[0]}
+                      alt={label}
+                      className="w-8 h-8 object-cover border border-gray-200 bg-white"
+                    />
+                  )}
+                  {label}
                 </button>
               );
             })}

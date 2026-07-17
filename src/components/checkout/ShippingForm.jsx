@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FiTruck } from "react-icons/fi";
 import { getAddressesAPI } from "../../api/auth";
+import { COUNTRIES } from "../../utils/countries";
 
 const inputBase =
   "w-full border rounded-sm px-4 py-3 text-sm outline-none transition-all placeholder:text-gray-400 bg-white";
@@ -209,10 +210,11 @@ export default function ShippingForm({
                 onBlur={handleBlur}
               >
                 <option value="">Country *</option>
-                <option value="IN">India</option>
-                <option value="AE">UAE</option>
-                <option value="US">USA</option>
-                <option value="GB">UK</option>
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
               </select>
             </Field>
           </div>

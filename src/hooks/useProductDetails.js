@@ -107,6 +107,16 @@ const formatProductDetails = (rawProduct) => {
     colors,
     frames,
     materials,
+    variants: Array.isArray(rawProduct.variants)
+      ? rawProduct.variants.map((v) => ({
+          id: v.id,
+          sku: v.sku ?? "",
+          stock: v.stock ?? 0,
+          isActive: v.is_active ?? true,
+          options: v.options ?? [],
+          images: v.images ?? [],
+        }))
+      : [],
     is_featured: rawProduct.is_featured ?? false,
     is_best_seller: rawProduct.is_best_seller ?? false,
     created_at: rawProduct.created_at ?? null,

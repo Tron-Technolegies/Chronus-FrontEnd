@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getAddressesAPI, addAddressAPI, updateAddressAPI, deleteAddressAPI } from "../../api/auth";
 import { FiLoader, FiTrash2, FiEdit2, FiX } from "react-icons/fi";
+import { COUNTRIES } from "../../utils/countries";
 
 const AddressSection = () => {
   const { t } = useTranslation();
@@ -309,12 +310,11 @@ const AddressSection = () => {
               className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5a0f0f]"
             >
               <option value="">Select Country</option>
-              <option value="IN">India</option>
-              <option value="US">USA</option>
-              <option value="AE">UAE</option>
-              <option value="GB">UK</option>
-              <option value="CA">Canada</option>
-              <option value="AU">Australia</option>
+              {COUNTRIES.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>

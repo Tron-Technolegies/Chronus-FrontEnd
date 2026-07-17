@@ -7,11 +7,13 @@ export function useProductSizePricing(product) {
   const [selectedColorId, setSelectedColorId] = useState(null);
   const [selectedFrameId, setSelectedFrameId] = useState(null);
   const [selectedMaterialId, setSelectedMaterialId] = useState(null);
+  const [selectedVariantId, setSelectedVariantId] = useState(null);
 
   const productSizes = product?.sizes;
   const productColors = product?.colors;
   const productFrames = product?.frames;
   const productMaterials = product?.materials;
+  const productVariants = product?.variants;
 
   const sizeOptions = useMemo(() => (Array.isArray(productSizes) ? productSizes : []), [productSizes]);
   const colorOptions = useMemo(
@@ -26,17 +28,23 @@ export function useProductSizePricing(product) {
     () => (Array.isArray(productMaterials) ? productMaterials : []),
     [productMaterials],
   );
+  const variantOptions = useMemo(
+    () => (Array.isArray(productVariants) ? productVariants : []),
+    [productVariants],
+  );
 
   const hasSizeOptions = sizeOptions.length > 0;
   const hasColorOptions = colorOptions.length > 0;
   const hasFrameOptions = frameOptions.length > 0;
   const hasMaterialOptions = materialOptions.length > 0;
+  const hasVariantOptions = variantOptions.length > 0;
 
   useEffect(() => {
     setSelectedSize("");
     setSelectedColorId(null);
     setSelectedFrameId(null);
     setSelectedMaterialId(null);
+    setSelectedVariantId(null);
   }, [product?.id]);
 
   const activeSizeOption = useMemo(() => {
@@ -59,6 +67,11 @@ export function useProductSizePricing(product) {
     return materialOptions.find((item) => item.id === selectedMaterialId) ?? materialOptions[0];
   }, [hasMaterialOptions, materialOptions, selectedMaterialId]);
 
+  const activeVariantOption = useMemo(() => {
+    if (!hasVariantOptions) return null;
+    return variantOptions.find((item) => item.id === selectedVariantId) ?? variantOptions[0];
+  }, [variantOptions, hasVariantOptions, selectedVariantId]);
+
   const baseRawPrice = activeSizeOption?._rawPrice ?? safeProduct?._rawPrice ?? 0;
   const frameExtra = activeFrameOption?._rawExtraPrice ?? 0;
   const materialExtra = activeMaterialOption?._rawExtraPrice ?? 0;
@@ -70,7 +83,8 @@ export function useProductSizePricing(product) {
     const color = activeColorOption?.name ?? null;
     const frame = activeFrameOption?.name ?? null;
     const material = activeMaterialOption?.name ?? null;
-    const cartKeyParts = [safeProduct.id, size, color, frame, material].filter(Boolean);
+    const variantId = activeVariantOption?.id ?? null;
+    const cartKeyParts = [safeProduct.id, size, color, frame, material, variantId].filter(Boolean);
 
     return {
       ...safeProduct,
@@ -84,6 +98,7 @@ export function useProductSizePricing(product) {
       selectedFrameId: activeFrameOption?.id ?? null,
       selectedMaterial: material,
       selectedMaterialId: activeMaterialOption?.id ?? null,
+      selectedVariantId: variantId,
       cartKey: cartKeyParts.join("::") || String(safeProduct.id ?? ""),
     };
   }, [
@@ -109,18 +124,23 @@ export function useProductSizePricing(product) {
     setSelectedFrameId,
     selectedMaterialId,
     setSelectedMaterialId,
+    selectedVariantId,
+    setSelectedVariantId,
     sizeOptions,
     colorOptions,
     frameOptions,
     materialOptions,
+    variantOptions,
     hasSizeOptions,
     hasColorOptions,
     hasFrameOptions,
     hasMaterialOptions,
+    hasVariantOptions,
     activeSizeOption,
     activeColorOption,
     activeFrameOption,
     activeMaterialOption,
+    activeVariantOption,
     displayPrice,
     productForCart,
   };

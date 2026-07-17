@@ -21,7 +21,9 @@ const normaliseCartItems = (payload) => {
       price: formatMoney(item.price ?? 0, item.currency),
       _rawPrice: Number(item.price ?? 0),
       currency: item.currency || null,
-      images: [item.product?.image ?? item.image].filter(Boolean),
+      images: [item.image ?? item.product?.image].filter(Boolean),
+      image: item.image ?? item.product?.image ?? null,
+      productType: item.product_type ?? "standard",
       selectedSize: item.size ?? null,
       selectedColor: item.color ?? null,
       selectedFrame: item.frame ?? null,
@@ -30,6 +32,8 @@ const normaliseCartItems = (payload) => {
       colorId: item.color_id ?? null,
       frameId: item.frame_id ?? null,
       materialId: item.material_id ?? null,
+      variantId: item.variant?.id ?? null,
+      variant: item.variant ?? null,
       qty: Number(item.quantity ?? item.qty ?? 1) || 1,
       lineTotal: Number(item.total ?? 0),
     };
@@ -77,6 +81,7 @@ export function useCartState() {
           sizeId: product.selectedSizeId,
           frameId: product.selectedFrameId,
           materialId: product.selectedMaterialId,
+          variantId: product.selectedVariantId ?? product.variantId ?? product.variant?.id ?? null,
         });
         await fetchCart();
         showToast(product.name ?? "Item");
@@ -121,6 +126,7 @@ export function useCartState() {
             sizeId: current.sizeId,
             frameId: current.frameId,
             materialId: current.materialId,
+            variantId: current.variantId,
           });
         } else {
           // Prefer a single remove call for decrement. If backend remove endpoint
@@ -142,6 +148,7 @@ export function useCartState() {
                   sizeId: current.sizeId,
                   frameId: current.frameId,
                   materialId: current.materialId,
+                  variantId: current.variantId,
                 });
               }
             }

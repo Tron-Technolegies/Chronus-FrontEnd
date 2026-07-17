@@ -35,7 +35,7 @@ const Footer = () => {
               />
             </Link>
 
-            <p className="text-off-white-70 text-sm leading-relaxed max-w-[280px]">
+            <p className="text-off-white-70 text-sm pt-4 leading-relaxed max-w-[280px]">
               {t("footer.description")}
             </p>
 
@@ -47,7 +47,7 @@ const Footer = () => {
                   target={social.href.startsWith("http") ? "_blank" : undefined}
                   rel="noreferrer"
                   aria-label={social.label}
-                  className="w-9 h-9 rounded-full bg-[#1a0806] flex items-center justify-center text-off-white-80 hover:bg-[#F7F1E7] hover:text-[#1a0806] transition-all duration-200"
+                  className="w-9 h-9 rounded-full bg-[#1a0806] flex items-center justify-center text-off-white-80 hover:bg-[#f7f1e711] hover:text-[#1a0806] transition-all duration-200"
                 >
                   <social.Icon size={15} />
                 </a>
@@ -56,10 +56,14 @@ const Footer = () => {
           </div>
           {/* Collections */}
           <div className="text-off-white-80 sm:pl-4 lg:pl-10">
-            <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">{t("footer.categories")}</h3>
+            <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">
+              {t("footer.categories")}
+            </h3>
 
             <ul className="space-y-3 text-sm">
-              {collectionsLoading && <li className="text-off-white-50">{t("footer.loading_collections")}</li>}
+              {collectionsLoading && (
+                <li className="text-off-white-50">{t("footer.loading_collections")}</li>
+              )}
 
               {!collectionsLoading &&
                 collections.map(({ label, to }) => (
@@ -94,7 +98,9 @@ const Footer = () => {
           </div> */}
           {/* Contact */}
           <div className="text-off-white-80">
-            <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">{t("footer.contact_us")}</h3>
+            <h3 className="font-semibold mb-5 uppercase tracking-wider text-sm">
+              {t("footer.contact_us")}
+            </h3>
 
             <ul className="space-y-4 text-sm opacity-70">
               <li className="flex items-start gap-3">

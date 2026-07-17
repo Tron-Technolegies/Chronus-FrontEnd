@@ -52,6 +52,11 @@ export default function CartDrawer() {
                   {(p.material || p.selectedMaterial) && (
                     <p className="text-[11px] text-gray-500">Material: {p.material || p.selectedMaterial}</p>
                   )}
+                  {p.variant?.options?.map((opt, i) => (
+                    <p key={i} className="text-[11px] text-gray-500">
+                      {opt.option_name}: {opt.option_value}
+                    </p>
+                  ))}
                   <p className="text-xs font-semibold text-[#000000] ">{p.price}</p>
 
                   <div className="flex items-center gap-3 mt-2">
