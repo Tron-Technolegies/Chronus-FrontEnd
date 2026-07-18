@@ -226,7 +226,7 @@ export default function ProductInfo({ product, productSelection }) {
       )}
       {hasVariantOptions && (
         <div className="space-y-2">
-          <p className="text-xs tracking-[0.15em] text-black font-medium">{t("shop.product_info.variant") || "VARIANT"}</p>
+          <p className="text-xs tracking-[0.15em] text-black font-medium">{t("shop.product_info.variant", "OPTIONS")}</p>
 
           <div className="flex flex-wrap gap-2">
             {variantOptions.map((option) => {

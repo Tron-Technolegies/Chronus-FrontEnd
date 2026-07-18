@@ -166,12 +166,40 @@ const ShopPage = () => {
     setSearchParams(new URLSearchParams());
   };
 
+  const [cachedSubcategories, setCachedSubcategories] = useState([]);
+
+  useEffect(() => {
+    if (!activeSubcategory && subcategories.length > 0) {
+      setCachedSubcategories(subcategories);
+    }
+  }, [activeSubcategory, subcategories]);
+
+  useEffect(() => {
+    setCachedSubcategories([]);
+  }, [activeCategory]);
+
   const selectedCategory = categories.find((c) => c.id === activeCategory);
   const selectedCategorySubcategories = useMemo(() => {
-    const categorySubs = selectedCategory?.subcategories ?? [];
-    if (categorySubs.length) return categorySubs;
-    return subcategories;
-  }, [selectedCategory?.subcategories, subcategories]);
+    const dynamicSubs = cachedSubcategories.length > 0 ? cachedSubcategories : subcategories;
+
+    if (activeCategory) {
+      const categorySubs = selectedCategory?.subcategories ?? [];
+      if (categorySubs.length) return categorySubs;
+      return dynamicSubs;
+    }
+
+    const allSubs = [];
+    categories.forEach((c) => {
+      c.subcategories?.forEach((sub) => {
+        if (!allSubs.find((s) => s.id === sub.id)) {
+          allSubs.push(sub);
+        }
+      });
+    });
+
+    if (allSubs.length > 0) return allSubs;
+    return dynamicSubs;
+  }, [activeCategory, selectedCategory?.subcategories, subcategories, categories, cachedSubcategories]);
   const selectedSubcategory = selectedCategorySubcategories.find(
     (subcategory) => subcategory.id === activeSubcategory,
   );

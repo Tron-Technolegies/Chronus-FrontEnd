@@ -44,6 +44,11 @@ const ProductDetailPage = () => {
     );
   }
 
+  const displayImages =
+    productSelection.activeVariantOption?.images?.length > 0
+      ? productSelection.activeVariantOption.images
+      : product.images;
+
   return (
     <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 pb-10">
       <nav className="text-xs sm:text-sm text-gray-500 mt-16 sm:mt-18 mb-8 sm:mb-10">
@@ -53,7 +58,7 @@ const ProductDetailPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
         <ProductGallery
-          images={product.images}
+          images={displayImages}
           colorImage={productSelection.activeColorOption?.image ?? null}
         />
         <ProductInfo product={product} productSelection={productSelection} />

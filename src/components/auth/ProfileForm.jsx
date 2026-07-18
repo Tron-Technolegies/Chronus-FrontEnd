@@ -55,7 +55,9 @@ const ProfileForm = () => {
     setError(null);
     setSuccess(false);
     try {
-      await updateProfileAPI(formData);
+      const payload = { ...formData, phone_number: formData.phone };
+      delete payload.phone;
+      await updateProfileAPI(payload);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
@@ -127,7 +129,7 @@ const ProfileForm = () => {
           />
         </div>
 
-        <div>
+        {/* <div>
           <label className="block text-sm mb-2 text-gray-600">{t("auth.account.phone_number")}</label>
           <input
             type="text" name="phone" value={formData.phone}
@@ -135,7 +137,7 @@ const ProfileForm = () => {
             placeholder="+91 9876543210"
             className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5a0f0f]"
           />
-        </div>
+        </div> */}
 
         <div className="pt-2">
           <button
