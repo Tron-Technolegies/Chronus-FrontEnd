@@ -21,12 +21,12 @@ export default function ProductCard({ product }) {
             e.preventDefault();
             handleToggle(product);
           }}
-          className={`absolute top-2 right-2 flex items-center justify-center w-9 h-9 rounded-full bg-white shadow transition
-            ${isWishlisted(product.id) ? "border-[#CBA61F]" : ""}`}
+          className={`absolute top-2 right-2 flex items-center justify-center w-11 h-11 rounded-full bg-white shadow transition
+            ${isWishlisted(product.id) ? "border border-[#CBA61F]" : ""}`}
         >
           <FaHeart
-            size={16}
-            className={`${isWishlisted(product.id) ? "text-[#CBA61F]" : "text-gray-300"}`}
+            size={22}
+            className={`${isWishlisted(product.id) ? "text-[#CBA61F]" : "text-gray-300 hover:text-gray-400"}`}
           />
         </button>
 
