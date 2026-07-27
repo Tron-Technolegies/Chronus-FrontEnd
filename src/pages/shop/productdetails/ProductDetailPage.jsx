@@ -58,6 +58,7 @@ const ProductDetailPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
         <ProductGallery
+          product={product}
           images={displayImages}
           colorImage={productSelection.activeColorOption?.image ?? null}
         />
