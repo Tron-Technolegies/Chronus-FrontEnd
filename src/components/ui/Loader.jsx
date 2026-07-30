@@ -19,10 +19,15 @@ export default function Loader({ size = "md", fullScreen = true, text }) {
       </div>
 
       {text && (
-        <p className="text-[11px] tracking-[0.2em] text-off-white-50 uppercase animate-pulse select-none">
+        <p className="text-[11px] tracking-[0.2em] text-[#CBA61F] uppercase animate-pulse select-none">
           {text}
         </p>
       )}
+
+      <style>{`
+        @keyframes spin  { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+      `}</style>
     </div>
   );
 
@@ -31,10 +36,6 @@ export default function Loader({ size = "md", fullScreen = true, text }) {
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center bg-[#0e0404]/80 backdrop-blur-sm">
       {spinner}
-      <style>{`
-        @keyframes spin  { to { transform: rotate(360deg); } }
-        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
-      `}</style>
     </div>
   );
 }

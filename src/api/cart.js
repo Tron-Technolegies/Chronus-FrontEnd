@@ -17,6 +17,7 @@ export const addToCartAPI = async (productId, quantity = 1, options = {}) => {
   const payload = {
     product_id: productId,
     quantity,
+    qty: quantity,
     ...(sizeId ? { size_id: sizeId } : {}),
     ...(frameId ? { frame_id: frameId } : {}),
     ...(materialId ? { material_id: materialId } : {}),

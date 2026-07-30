@@ -4,12 +4,14 @@ import { LuShoppingBag } from "react-icons/lu";
 import { Link } from "react-router-dom";
 import { useWishlistToggle } from "../../hooks/useWishlistToggle";
 import { useAddToCart } from "../../hooks/useAddToCart";
+import { useProductSizePricing } from "../../hooks/useProductSizePricing";
 
 const IMAGE_PLACEHOLDER = "https://via.placeholder.com/400x500?text=Product";
 
 export default function ProductCard({ product }) {
   const { handleAddToCart, loading: cartLoading } = useAddToCart();
   const { handleToggle, isWishlisted } = useWishlistToggle();
+  const { productForCart } = useProductSizePricing(product);
 
   const productImage =
     product.images?.[0] || product.image || IMAGE_PLACEHOLDER;
@@ -48,10 +50,9 @@ export default function ProductCard({ product }) {
         <div
           className="
           flex gap-2 items-center justify-center w-full mt-3
-          md:absolute md:bottom-0 md:left-0 md:px-3 md:py-4
-          md:translate-y-full md:opacity-0
-          md:group-hover:translate-y-0 md:group-hover:opacity-100
+          md:absolute md:bottom-0 md:left-0 md:px-3 md:py-4 z-10
           md:transition-all md:duration-300
+          md:translate-y-full md:opacity-0 group-hover:translate-y-0 group-hover:opacity-100
         "
         >
           <Link to={`/product/${product.id}`} className="w-full">
@@ -61,7 +62,11 @@ export default function ProductCard({ product }) {
           </Link>
 
           <button
-            onClick={() => handleAddToCart(product)}
+            onClick={async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              await handleAddToCart(productForCart);
+            }}
             disabled={cartLoading}
             className="bg-gray-50 p-2 shrink-0 disabled:opacity-50"
           >

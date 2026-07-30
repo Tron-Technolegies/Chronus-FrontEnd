@@ -11,6 +11,7 @@ import SubcategoryFilter from "../../components/shop/SubcategoryFilter";
 import ShopPageHeader from "../../components/shop/ShopPageHeader";
 import ShopToolbar from "../../components/shop/ShopToolbar";
 import ShopSidebar from "../../components/shop/ShopSidebar";
+import Loader from "../../components/ui/Loader";
 
 import { fetchCategoryHisHerSubcategories } from "../../utils/fetchCategoryHisHerSubcategories";
 import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
@@ -345,24 +346,22 @@ const ShopPage = () => {
 
         <main className="flex-1">
           {/* Category tabs */}
-          {!activeCategory && (
-            <div className="border-b border-t border-gray-200 px-4 sm:px-6 py-5 overflow-x-auto">
-              <CategoryTabs
-                categories={categories}
-                activeCategory={activeCategory}
-                setActiveCategory={(id) => {
-                  updateSearchParamValues(
-                    {
-                      category: id,
-                      subcategory: null,
-                      type: null,
-                    },
-                    { resetPage: true },
-                  );
-                }}
-              />
-            </div>
-          )}
+          <div className="border-b border-t border-gray-200 px-4 sm:px-6 py-5 overflow-x-auto">
+            <CategoryTabs
+              categories={categories}
+              activeCategory={activeCategory}
+              setActiveCategory={(id) => {
+                updateSearchParamValues(
+                  {
+                    category: id,
+                    subcategory: null,
+                    type: null,
+                  },
+                  { resetPage: true },
+                );
+              }}
+            />
+          </div>
 
           {/* Subcategory filter */}
           {selectedCategorySubcategories.length > 0 && (
@@ -394,6 +393,13 @@ const ShopPage = () => {
               <p className="text-xs text-gray-400 tracking-wide">
                 {visibleProductCount} {t("shop.products_found")}
               </p>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {loading && (
+            <div className="py-20">
+              <Loader fullScreen={false} text={t("shop.loading", "Loading...")} size="md" />
             </div>
           )}
 

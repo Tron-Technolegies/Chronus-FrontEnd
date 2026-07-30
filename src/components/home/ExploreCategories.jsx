@@ -6,6 +6,7 @@ import SubcategorySelectModal from "../shop/SubcategorySelectModal";
 import { fetchCategoryHisHerSubcategories } from "../../utils/fetchCategoryHisHerSubcategories";
 import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
 import { useTranslation } from "react-i18next";
+import Loader from "../ui/Loader";
 
 export default function ExploreCategories() {
   const { t } = useTranslation();
@@ -14,6 +15,7 @@ export default function ExploreCategories() {
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [subcategoryModal, setSubcategoryModal] = useState(null);
+  const [loadingSubcategories, setLoadingSubcategories] = useState(false);
 
   const sortedCategories = [...categories].sort(
     (a, b) => (a.priority ?? 999) - (b.priority ?? 999),
@@ -25,6 +27,7 @@ export default function ExploreCategories() {
 
   const handleExploreCategory = async (category) => {
     setSelectedCategory(null);
+    setLoadingSubcategories(true);
 
     try {
       const categorySubcategories = extractHisHerSubcategories(category.subcategories ?? []);
@@ -44,6 +47,8 @@ export default function ExploreCategories() {
       });
     } catch {
       navigate(`/shop?category=${category.id}`);
+    } finally {
+      setLoadingSubcategories(false);
     }
   };
 
@@ -98,6 +103,10 @@ export default function ExploreCategories() {
           subcategories={subcategoryModal.subcategories}
           onClose={() => setSubcategoryModal(null)}
         />
+      )}
+
+      {loadingSubcategories && (
+        <Loader fullScreen={true} text={t("home.explore.loading", "Loading...")} />
       )}
     </>
   );
