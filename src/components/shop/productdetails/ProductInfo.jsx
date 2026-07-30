@@ -7,6 +7,7 @@ import { RiLoopLeftFill } from "react-icons/ri";
 import { useAddToCart } from "../../../hooks/useAddToCart";
 import { useProductSizePricing } from "../../../hooks/useProductSizePricing";
 import { useTranslation } from "react-i18next";
+import { formatMoney } from "../../../utils/currency";
 
 export default function ProductInfo({ product, productSelection }) {
   const { t } = useTranslation();
@@ -89,11 +90,13 @@ export default function ProductInfo({ product, productSelection }) {
         )}
       </div>
       <div className="flex items-center gap-3 flex-wrap">
-        <span className="text-xl sm:text-3xl font-semibold">{displayPrice}</span>
+        <span className="text-xl sm:text-3xl font-semibold">
+          {formatMoney(productForCart._rawPrice * qty, product.currency)}
+        </span>
 
         {product.originalPrice && (
           <span className="line-through text-gray-400 text-sm sm:text-lg">
-            {product.originalPrice}
+            {formatMoney(Number.parseFloat(String(product.originalPrice).replace(/[^0-9.]/g, "")) * qty, product.currency)}
           </span>
         )}
       </div>

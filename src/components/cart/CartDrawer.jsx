@@ -3,7 +3,7 @@ import { useCart } from "../../hooks/useCart";
 import { formatMoney } from "../../utils/currency";
 
 export default function CartDrawer() {
-  const { cart, open, setOpen, subtotal, updateQty, removeItem } = useCart();
+  const { cart, open, setOpen, subtotal, updateQty, removeItem, loading } = useCart();
 
   return (
     <>
@@ -25,7 +25,13 @@ export default function CartDrawer() {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 relative">
+          {loading && (
+            <div className="absolute inset-0 bg-white/50 z-10 flex items-center justify-center pointer-events-none">
+              <div className="w-8 h-8 border-2 border-[#F5C518] border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
+
           {cart.length === 0 && (
             <p className="text-gray-400 text-center mt-20">Your cart is empty</p>
           )}
@@ -62,7 +68,8 @@ export default function CartDrawer() {
                   <div className="flex items-center gap-3 mt-2">
                     <button
                       onClick={() => updateQty(p.id, "dec")}
-                      className="px-3 py-1 border border-gray-300 hover:bg-gray-100 rounded"
+                      disabled={loading}
+                      className="px-3 py-1 border border-gray-300 hover:bg-gray-100 rounded disabled:opacity-50"
                     >
                       -
                     </button>
@@ -71,7 +78,8 @@ export default function CartDrawer() {
 
                     <button
                       onClick={() => updateQty(p.id, "inc")}
-                      className="px-3 py-1 border border-gray-300 hover:bg-gray-100 rounded"
+                      disabled={loading}
+                      className="px-3 py-1 border border-gray-300 hover:bg-gray-100 rounded disabled:opacity-50"
                     >
                       +
                     </button>
@@ -80,7 +88,8 @@ export default function CartDrawer() {
 
                 <button
                   onClick={() => removeItem(p.cartItemId ?? p.id)}
-                  className="cursor-pointer text-gray-400 hover:text-black"
+                  disabled={loading}
+                  className="cursor-pointer text-gray-400 hover:text-black disabled:opacity-50"
                 >
                   x
                 </button>
@@ -95,8 +104,8 @@ export default function CartDrawer() {
             <span className="font-medium  ">{formatMoney(subtotal)}</span>
           </div>
 
-          <Link to="/checkout" onClick={() => setOpen(false)}>
-            <button className="bg-[#F5C518] w-full py-3 text-sm tracking-wide">Checkout</button>
+          <Link to={loading ? "#" : "/checkout"} onClick={(e) => { if (loading) e.preventDefault(); else setOpen(false); }}>
+            <button disabled={loading} className="bg-[#F5C518] w-full py-3 text-sm tracking-wide disabled:opacity-50">Checkout</button>
           </Link>
         </div>
       </div>

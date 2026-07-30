@@ -74,19 +74,46 @@ export function useCartState() {
   const addToCart = useCallback(
     async (product, qty = 1) => {
       const safeQty = Math.max(1, Number.parseInt(qty, 10) || 1);
+      
+      const payloadOptions = {
+        sizeId: product.selectedSizeId,
+        frameId: product.selectedFrameId,
+        materialId: product.selectedMaterialId,
+        variantId: product.selectedVariantId ?? product.variantId ?? product.variant?.id ?? null,
+      };
+
       try {
         setLoading(true);
         setError(null);
-        await addToCartAPI(product.id, safeQty, {
-          sizeId: product.selectedSizeId,
-          frameId: product.selectedFrameId,
-          materialId: product.selectedMaterialId,
-          variantId: product.selectedVariantId ?? product.variantId ?? product.variant?.id ?? null,
-        });
+        await addToCartAPI(product.id, safeQty, payloadOptions);
         await fetchCart();
         showToast(product.name ?? "Item");
+        return true;
       } catch (err) {
-        setError(err?.response?.data?.error ?? err?.message ?? "Failed to add item.");
+        if (err?.response?.status === 400 && payloadOptions.variantId === null) {
+          try {
+            // Backend might require a variant_id. Since the grid doesn't return variants,
+            // fetch the full product details and try adding the first variant.
+            const { fetchProductByIdAPI } = await import("../api/product");
+            const res = await fetchProductByIdAPI(product.id);
+            const fullProduct = res.data;
+            const fallbackVariantId = fullProduct.variants?.[0]?.id ?? null;
+
+            if (fallbackVariantId) {
+              await addToCartAPI(product.id, safeQty, { ...payloadOptions, variantId: fallbackVariantId });
+              await fetchCart();
+              showToast(fullProduct.name ?? product.name ?? "Item");
+              return true;
+            }
+          } catch (retryErr) {
+            // Ignore retry error and fall through to throw original error
+          }
+        }
+
+        const errorMsg = err?.response?.data?.error ?? err?.message ?? "Failed to add item.";
+        setError(errorMsg);
+        showToast(`Error: ${errorMsg}`);
+        return false;
       } finally {
         setLoading(false);
       }
