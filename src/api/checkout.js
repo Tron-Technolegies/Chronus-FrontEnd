@@ -7,3 +7,4 @@ export const placeOrderAPI = (payload) => {
 export const applyCouponAPI = (order_id, coupon_code) =>
   axiosInstance.post("/coupon/apply/", { order_id, coupon_code });
 
+export const getShippingQuoteAPI = () => axiosInstance.get("/shipping-quote/");
