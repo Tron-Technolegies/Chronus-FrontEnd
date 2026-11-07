@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ensureGuestId } from "../hooks/useGuestId";
+import { getActiveCurrency } from "../utils/currency";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -19,9 +20,13 @@ axiosInstance.interceptors.request.use((config) => {
   config.headers["X-Guest-ID"] = ensureGuestId();
 
   if (config.method === "get") {
-    const currency = localStorage.getItem("currency") || "USD";
+    const currency = getActiveCurrency();
     config.params = { ...config.params, currency };
   }
+  // if (config.method === "get") {
+  //   const currency = localStorage.getItem("currency") || "USD";
+  //   config.params = { ...config.params, currency };
+  // }
 
   return config;
 });

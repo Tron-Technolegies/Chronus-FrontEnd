@@ -33,7 +33,7 @@ const INITIAL_FORM = {
 const PAYMENT_GATEWAYS = [
   {
     id: "stripe",
-    label: "Stripe",
+    label: "Stripe/Card Payment",
     description: "Pay by card with Stripe's secure checkout form.",
   },
   {
