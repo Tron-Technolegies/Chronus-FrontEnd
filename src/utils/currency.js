@@ -30,3 +30,9 @@ export const formatMoney = (value, currencyCode = null) => {
     currency: activeCurrency,
   }).format(Number(value ?? 0));
 };
+
+export const parseAmount = (value) => {
+  if (value === null || value === undefined || value === "") return null;
+  const n = Number(String(value).replace(/[^0-9.-]/g, ""));
+  return Number.isFinite(n) ? n : null;
+};

@@ -54,13 +54,14 @@ export function useCheckout() {
         payload = {
           address_id: formData.address_id,
           email: formData.email,
+          shipping_partner_id: formData.shipping_partner_id,
           currency: resolveCurrency(),
         };
       } else {
         const { address_id, ...manualData } = formData;
 
         payload = {
-          ...manualData,
+          ...manualData, // includes shipping_partner_id
           currency: resolveCurrency(),
         };
       }
@@ -82,8 +83,6 @@ export function useCheckout() {
 
       const currency =
         normalizeCurrency(data.currency) ?? resolveCurrency();
-
-      console.log("CHECKOUT RESPONSE:", data);
 
       if (
         subtotal !== null &&
