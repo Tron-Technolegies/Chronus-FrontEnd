@@ -392,7 +392,7 @@ export default function ShippingForm({
 
       {/* Shipping method */}
       <div className="mt-6 space-y-3">
-        <p className="text-sm font-medium text-gray-700">Shipping Method</p>
+        <p className="text-sm font-medium text-gray-700">Shipping Partners</p>
 
         {partnersLoading ? (
           <p className="text-xs text-gray-400">Loading shipping options…</p>
