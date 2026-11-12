@@ -123,7 +123,7 @@ export default function CheckoutPage() {
 
   const shippingText =
     shippingAmount === null
-      ? "Select a method"
+      ? "Select a partner"
       : shippingAmount > 0
         ? formatMoney(shippingAmount, displayCurrency)
         : "Free";
