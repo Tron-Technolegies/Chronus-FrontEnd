@@ -2,6 +2,10 @@ import { Link } from "react-router-dom";
 import { FiCheckCircle } from "react-icons/fi";
 
 export default function OrderReview({ form, cart, loading, onBack, onPlaceOrder }) {
+  const fullName =
+    form.full_name ||
+    `${form.first_name || ""} ${form.last_name || ""}`.trim();
+
   return (
     <>
       <div className="flex items-center gap-3 mb-2">
@@ -13,13 +17,18 @@ export default function OrderReview({ form, cart, loading, onBack, onPlaceOrder 
       {/* Address summary */}
       <div className="bg-gray-50 rounded-sm p-4 text-sm space-y-1 mb-6">
         <h3 className="font-semibold text-gray-800 mb-2 border-b pb-1">Shipping Address</h3>
-        <p className="font-medium text-gray-700">{form.first_name} {form.last_name}</p>
-        <p className="text-gray-500">{form.email}</p>
+        {fullName && <p className="font-medium text-gray-700">{fullName}</p>}
+        {form.email && <p className="text-gray-500">{form.email}</p>}
         {form.address_line_1 && <p className="text-gray-500">{form.address_line_1}</p>}
         {form.address_line_2 && <p className="text-gray-500">{form.address_line_2}</p>}
-        <p className="text-gray-500">
-          {form.city}{form.postal_code ? `, ${form.postal_code}` : ""}{form.country ? `, ${form.country}` : ""}
-        </p>
+        {(form.city || form.state || form.postal_code || form.country) && (
+          <p className="text-gray-500">
+            {form.city}
+            {form.state ? `, ${form.state}` : ""}
+            {form.postal_code ? `, ${form.postal_code}` : ""}
+            {form.country ? `, ${form.country}` : ""}
+          </p>
+        )}
         {form.phone && <p className="text-gray-500">{form.phone}</p>}
       </div>
 
@@ -54,7 +63,7 @@ export default function OrderReview({ form, cart, loading, onBack, onPlaceOrder 
       </p>
 
       {cart.length === 0 && (
-        <p className="text-yellow-600 text-xs">
+        <p className="text-yellow-600 text-xs mb-4">
           Your cart is empty.{" "}
           <Link to="/shop" className="underline">
             Continue shopping
@@ -64,12 +73,15 @@ export default function OrderReview({ form, cart, loading, onBack, onPlaceOrder 
 
       <div className="flex gap-4">
         <button
+          type="button"
           onClick={onBack}
-          className="flex-1 border border-gray-200 py-3.5 text-xs tracking-widest hover:bg-gray-50 transition-colors"
+          disabled={loading}
+          className="flex-1 border border-gray-200 py-3.5 text-xs tracking-widest hover:bg-gray-50 transition-colors disabled:opacity-50"
         >
           BACK
         </button>
         <button
+          type="button"
           onClick={onPlaceOrder}
           disabled={loading || cart.length === 0}
           className="flex-1 bg-[#3D1613] text-off-white py-3.5 text-xs tracking-[0.2em] font-semibold hover:bg-[#5a2019] transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
@@ -87,4 +99,3 @@ export default function OrderReview({ form, cart, loading, onBack, onPlaceOrder 
     </>
   );
 }
-

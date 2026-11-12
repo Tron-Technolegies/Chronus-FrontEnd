@@ -12,7 +12,7 @@ export const getProfileAPI = () => axiosInstance.get("/profile/");
 
 export const updateProfileAPI = (data) => axiosInstance.put("/profile/update/", data);
 
-export const changePasswordAPI = (data) => axiosInstance.post("/reset-password/", data);
+export const changePasswordAPI = (data) => axiosInstance.post("/change-password/", data);
 
 export const forgotPasswordAPI = (data) => axiosInstance.post("/forgot-password/", data);
 

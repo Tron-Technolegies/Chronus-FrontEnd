@@ -3,6 +3,7 @@ import { FiTruck, FiEdit2 } from "react-icons/fi";
 import { getAddressesAPI } from "../../api/auth";
 import { COUNTRIES } from "../../utils/countries";
 import { formatMoney, parseAmount } from "../../utils/currency";
+import { extractErrorMessage } from "../../utils/errorHandler";
 
 const inputBase =
   "w-full border rounded-sm px-4 py-3 text-sm outline-none transition-all placeholder:text-gray-400 bg-white";
@@ -57,9 +58,32 @@ export default function ShippingForm({
   const [editingId, setEditingId] = useState(null);
   const isLoggedIn = !!localStorage.getItem("accessToken");
 
+  const selectAddress = useCallback(
+    (addr) => {
+      if (!addr) return;
+      const [first = "", ...rest] = (addr.full_name || "").trim().split(" ");
+      setForm((prev) => ({
+        ...prev,
+        address_id: addr.id,
+        first_name: first,
+        last_name: rest.join(" "),
+        address_line_1: addr.address_line_1 || "",
+        address_line_2: addr.address_line_2 || "",
+        city: addr.city || "",
+        state: addr.state || "",
+        postal_code: addr.postal_code || "",
+        country: addr.country || "",
+        phone: addr.phone || "",
+      }));
+    },
+    [setForm]
+  );
+
   const loadAddresses = useCallback(async () => {
     const res = await getAddressesAPI();
-    const list = Array.isArray(res.data) ? res.data : [];
+    const list = Array.isArray(res.data)
+      ? res.data
+      : (res.data?.results || res.data?.addresses || res.data?.data || []);
     setAddresses(list);
     return list;
   }, []);
@@ -71,12 +95,17 @@ export default function ShippingForm({
       .then((list) => {
         if (list.length > 0 && !form.address_id) {
           const defaultAddr = list.find((a) => a.is_default) || list[0];
-          setForm((prev) => ({ ...prev, address_id: defaultAddr.id }));
+          selectAddress(defaultAddr);
+        } else if (form.address_id && list.length > 0) {
+          const current = list.find((a) => a.id === form.address_id);
+          if (current && !form.first_name && !form.address_line_1) {
+            selectAddress(current);
+          }
         }
       })
       .catch(console.error)
       .finally(() => setLoadingAddrs(false));
-  }, [isLoggedIn, setForm, loadAddresses]);
+  }, [isLoggedIn, form.address_id, form.first_name, form.address_line_1, loadAddresses, selectAddress]);
 
   const clearMessages = () => {
     setSaveMsg("");
@@ -107,6 +136,13 @@ export default function ShippingForm({
     const id = editingId;
     clearMessages();
     setEditingId(null);
+    if (id) {
+      const original = addresses.find((a) => a.id === id);
+      if (original) {
+        selectAddress(original);
+        return;
+      }
+    }
     setForm((prev) => ({ ...prev, ...EMPTY_ADDRESS_FIELDS, address_id: id ?? "" }));
   };
 
@@ -118,7 +154,6 @@ export default function ShippingForm({
       const saved = await onSaveAddress(editingId, current?.is_default ?? false);
       const list = await loadAddresses();
 
-      // Select the saved address (the edited one, or the newly created one)
       const newId =
         editingId ??
         saved?.id ??
@@ -127,16 +162,15 @@ export default function ShippingForm({
         (list.length ? Math.max(...list.map((a) => a.id)) : "");
 
       setEditingId(null);
-      setForm((prev) => ({ ...prev, ...EMPTY_ADDRESS_FIELDS, address_id: newId }));
+      const savedObj = list.find((a) => a.id === newId);
+      if (savedObj) {
+        selectAddress(savedObj);
+      } else {
+        setForm((prev) => ({ ...prev, ...EMPTY_ADDRESS_FIELDS, address_id: newId }));
+      }
       setSaveMsg(editingId ? "Address updated." : "Address saved.");
     } catch (err) {
-      setSaveErr(
-        err?.response?.data?.detail ??
-          err?.response?.data?.error ??
-          err?.response?.data?.message ??
-          err?.message ??
-          "Could not save the address."
-      );
+      setSaveErr(extractErrorMessage(err, "Could not save the address."));
     } finally {
       setSaving(false);
     }
@@ -167,10 +201,10 @@ export default function ShippingForm({
                   name="address_id"
                   value={addr.id}
                   checked={form.address_id === addr.id}
-                  onChange={(e) => {
+                  onChange={() => {
                     clearMessages();
                     setEditingId(null);
-                    setForm((f) => ({ ...f, address_id: parseInt(e.target.value) }));
+                    selectAddress(addr);
                   }}
                   className="mt-1 text-[#CBA61F] focus:ring-[#CBA61F]"
                 />
@@ -401,43 +435,54 @@ export default function ShippingForm({
             No shipping options are available right now. Please try again later.
           </p>
         ) : (
-          partners.map((p) => (
-            <label
-              key={p.id}
-              className={`flex items-center justify-between gap-4 border rounded-md p-4 cursor-pointer transition ${
-                selectedPartnerId === p.id
-                  ? "border-[#CBA61F] bg-[#fff9e8]"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <input
-                  type="radio"
-                  name="shipping_partner"
-                  checked={selectedPartnerId === p.id}
-                  onChange={() => onSelectPartner(p.id)}
-                  className="text-[#CBA61F] focus:ring-[#CBA61F]"
-                />
-                <div>
-                  <p className="font-medium text-sm text-gray-800">{p.name}</p>
-                  {p.estimated_delivery && (
-                    <p className="text-xs text-gray-500 mt-0.5">{p.estimated_delivery}</p>
-                  )}
+          partners.map((p) => {
+            const deliveryEstimate =
+              p.estimated_delivery ||
+              p.delivery_time ||
+              p.estimated_days ||
+              (p.min_delivery_days && p.max_delivery_days
+                ? `${p.min_delivery_days} - ${p.max_delivery_days} days`
+                : null);
+
+            return (
+              <label
+                key={p.id}
+                className={`flex items-center justify-between gap-4 border rounded-md p-4 cursor-pointer transition ${
+                  selectedPartnerId === p.id
+                    ? "border-[#CBA61F] bg-[#fff9e8]"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="shipping_partner"
+                    checked={selectedPartnerId === p.id}
+                    onChange={() => onSelectPartner(p.id)}
+                    className="text-[#CBA61F] focus:ring-[#CBA61F]"
+                  />
+                  <div>
+                    <p className="font-medium text-sm text-gray-800">{p.name}</p>
+                    {deliveryEstimate && (
+                      <p className="text-xs text-gray-500 mt-0.5">{deliveryEstimate}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <span className="text-sm font-medium text-gray-800">
-                {(parseAmount(p.shipping_charge) ?? 0) > 0
-                  ? formatMoney(parseAmount(p.shipping_charge), currency)
-                  : "Free"}
-              </span>
-            </label>
-          ))
+                <span className="text-sm font-medium text-gray-800">
+                  {(parseAmount(p.shipping_charge) ?? 0) > 0
+                    ? formatMoney(parseAmount(p.shipping_charge), p.currency || currency)
+                    : "Free"}
+                </span>
+              </label>
+            );
+          })
         )}
 
         {partnerError && <p className="text-xs text-red-500">{partnerError}</p>}
       </div>
 
       <button
+        type="button"
         onClick={onContinue}
         className="bg-[#FFCA0A] w-full mt-6 py-3.5 text-xs sm:text-sm tracking-[0.2em] font-semibold hover:bg-[#e6b600] transition-colors"
       >

@@ -6,26 +6,25 @@ import {
   createTabbyPaymentAPI,
 } from "../api/payment";
 import { getActiveCurrency } from "../utils/currency";
+import { extractErrorMessage } from "../utils/errorHandler";
 
 const normalizeCurrency = (value) => {
   if (!value) return null;
-
-  const normalized = String(value).trim().toLowerCase();
-
-  return /^[a-z]{3}$/.test(normalized) ? normalized : null;
+  const normalized = String(value).trim().toUpperCase();
+  return /^[A-Z]{3}$/.test(normalized) ? normalized : null;
 };
 
-const resolveCurrency = () =>
-  normalizeCurrency(getActiveCurrency()) ?? "aed";
+const resolveCurrency = () => {
+  const current = getActiveCurrency();
+  return normalizeCurrency(current) ?? "AED";
+};
 
 // Accepts 25, "25.00" or "AED 25.00"
 const toNum = (value) => {
   if (value === null || value === undefined || value === "") {
     return null;
   }
-
   const n = Number(String(value).replace(/[^0-9.-]/g, ""));
-
   return Number.isFinite(n) ? n : null;
 };
 
@@ -48,47 +47,57 @@ export function useCheckout() {
     setOrderTotals(null);
 
     try {
+      const token = localStorage.getItem("accessToken");
+      const guestId = localStorage.getItem("guest_id");
+      const guestPayload = (!token && guestId) ? { guest_id: guestId } : {};
+
+      const partnerId = formData.shipping_partner_id
+        ? Number(formData.shipping_partner_id) || formData.shipping_partner_id
+        : null;
+
       let payload;
 
       if (formData.address_id) {
         payload = {
           address_id: formData.address_id,
+          shipping_address_id: formData.address_id,
           email: formData.email,
-          shipping_partner_id: formData.shipping_partner_id,
+          shipping_partner_id: partnerId,
+          shipping_partner: partnerId,
           currency: resolveCurrency(),
+          ...guestPayload,
         };
       } else {
         const { address_id, ...manualData } = formData;
+        const fullName =
+          manualData.full_name ||
+          `${manualData.first_name || ""} ${manualData.last_name || ""}`.trim();
 
         payload = {
-          ...manualData, // includes shipping_partner_id
+          ...manualData,
+          full_name: fullName,
+          shipping_partner_id: partnerId,
+          shipping_partner: partnerId,
           currency: resolveCurrency(),
+          ...guestPayload,
         };
       }
 
       const orderRes = await placeOrderAPI(payload);
-
       const data = orderRes.data ?? {};
-
       const id = data.order_id ?? data.id;
 
       if (!id) {
         throw new Error("No order ID returned from server.");
       }
 
-      // Read amounts calculated by the backend
+      // Read authoritative amounts calculated by the backend
       const subtotal = toNum(data.subtotal);
       const shippingCharge = toNum(data.shipping_charge);
-      const amount = toNum(data.amount);
+      const amount = toNum(data.amount ?? data.total_amount ?? data.total);
+      const currency = normalizeCurrency(data.currency) ?? resolveCurrency();
 
-      const currency =
-        normalizeCurrency(data.currency) ?? resolveCurrency();
-
-      if (
-        subtotal !== null &&
-        shippingCharge !== null &&
-        amount !== null
-      ) {
+      if (subtotal !== null && shippingCharge !== null && amount !== null) {
         setOrderTotals({
           subtotal,
           shippingCharge,
@@ -98,25 +107,22 @@ export function useCheckout() {
       }
 
       localStorage.setItem("last_order_id", String(id));
-
       setOrderId(id);
-
       sessionStorage.removeItem("payment_client_secret");
 
       return {
         orderId: id,
         currency,
+        orderTotals: {
+          subtotal,
+          shippingCharge,
+          amount,
+          currency,
+        },
       };
     } catch (err) {
-      const msg =
-        err?.response?.data?.detail ??
-        err?.response?.data?.message ??
-        err?.response?.data?.error ??
-        err?.message ??
-        "Checkout failed. Please try again.";
-
+      const msg = extractErrorMessage(err, "Checkout failed. Please try again.");
       setError(msg);
-
       throw err;
     } finally {
       setLoading(false);
@@ -133,30 +139,22 @@ export function useCheckout() {
       try {
         const paymentRes = await createPaymentIntentAPI(
           targetOrderId,
-          currency
+          currency ? currency.toLowerCase() : null
         );
 
         const secret = paymentRes.data?.client_secret;
-
         if (!secret) {
           throw new Error("Payment setup failed. Please try again.");
         }
 
         setClientSecret(secret);
         setPaymentGateway("stripe");
-
         sessionStorage.setItem("payment_client_secret", secret);
 
         return { clientSecret: secret };
       } catch (err) {
-        const msg =
-          err?.response?.data?.detail ??
-          err?.response?.data?.message ??
-          err?.message ??
-          "Stripe payment setup failed. Please try again.";
-
+        const msg = extractErrorMessage(err, "Stripe payment setup failed. Please try again.");
         setError(msg);
-
         throw err;
       } finally {
         setLoading(false);
@@ -175,7 +173,7 @@ export function useCheckout() {
       try {
         const paymentRes = await createZiinaPaymentAPI(
           targetOrderId,
-          currency
+          currency ? currency.toLowerCase() : "aed"
         );
 
         const url =
@@ -193,14 +191,8 @@ export function useCheckout() {
 
         return { paymentUrl: url };
       } catch (err) {
-        const msg =
-          err?.response?.data?.detail ??
-          err?.response?.data?.message ??
-          err?.message ??
-          "Ziina payment setup failed. Please try again.";
-
+        const msg = extractErrorMessage(err, "Ziina payment setup failed. Please try again.");
         setError(msg);
-
         throw err;
       } finally {
         setLoading(false);
@@ -222,7 +214,12 @@ export function useCheckout() {
           customerData
         );
 
-        const url = paymentRes.data?.payment_url;
+        const url =
+          paymentRes.data?.payment_url ??
+          paymentRes.data?.checkout_url ??
+          paymentRes.data?.redirect_url ??
+          paymentRes.data?.url ??
+          paymentRes.data?.web_url;
 
         if (!url) {
           throw new Error("Tabby payment setup failed. Please try again.");
@@ -233,15 +230,8 @@ export function useCheckout() {
 
         return { paymentUrl: url };
       } catch (err) {
-        const msg =
-          err?.response?.data?.error ??
-          err?.response?.data?.detail ??
-          err?.response?.data?.message ??
-          err?.message ??
-          "Tabby payment setup failed. Please try again.";
-
+        const msg = extractErrorMessage(err, "Tabby payment setup failed. Please try again.");
         setError(msg);
-
         throw err;
       } finally {
         setLoading(false);

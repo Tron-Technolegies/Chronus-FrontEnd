@@ -12,10 +12,18 @@ export const createZiinaPaymentAPI = (orderId, currency = null) =>
     ...(currency ? { currency } : {}),
   });
 
-export const createTabbyPaymentAPI = (orderId, customerData = {}) =>
-  axiosInstance.post("/payments/tabby/", {
+export const createTabbyPaymentAPI = (orderId, customerData = {}) => {
+  const fullName =
+    customerData.full_name ||
+    customerData.name ||
+    `${customerData.first_name || ""} ${customerData.last_name || ""}`.trim();
+
+  return axiosInstance.post("/payments/tabby/", {
     order_id: orderId,
-    name: customerData.name || "",
+    name: fullName,
+    email: customerData.email || "",
+    phone: customerData.phone || "",
     city: customerData.city || "",
     country: customerData.country || "",
   });
+};

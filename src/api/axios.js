@@ -4,7 +4,7 @@ import { getActiveCurrency } from "../utils/currency";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  timeout: 10000,
+  timeout: 15000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -23,10 +23,6 @@ axiosInstance.interceptors.request.use((config) => {
     const currency = getActiveCurrency();
     config.params = { ...config.params, currency };
   }
-  // if (config.method === "get") {
-  //   const currency = localStorage.getItem("currency") || "USD";
-  //   config.params = { ...config.params, currency };
-  // }
 
   return config;
 });
@@ -35,7 +31,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.log("Unauthorized - maybe redirect to login");
+      localStorage.removeItem("accessToken");
     }
     return Promise.reject(error);
   },

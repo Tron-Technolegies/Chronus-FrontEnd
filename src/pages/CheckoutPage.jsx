@@ -5,6 +5,7 @@ import { useCheckout } from "../hooks/useCheckout";
 import { getShippingPartnersAPI } from "../api/checkout";
 import { addAddressAPI, updateAddressAPI } from "../api/auth";
 import { formatMoney, getActiveCurrency, parseAmount } from "../utils/currency";
+import { extractErrorMessage } from "../utils/errorHandler";
 import { FiPackage, FiCreditCard, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 import ShippingForm from "../components/checkout/ShippingForm";
 import OrderReview from "../components/checkout/OrderReview";
@@ -55,22 +56,22 @@ const PHONE_RE = /^[+\d][\d\s\-().]{6,19}$/;
 
 function validateShipping(form) {
   const errs = {};
-  if (!form.email.trim()) errs.email = "Email is required";
+  if (!form.email?.trim()) errs.email = "Email is required";
   else if (!EMAIL_RE.test(form.email)) errs.email = "Enter a valid email address";
 
   if (form.address_id) {
     return errs;
   }
 
-  if (!form.first_name.trim()) errs.first_name = "First name is required";
-  if (!form.last_name.trim()) errs.last_name = "Last name is required";
-  if (!form.address_line_1.trim()) errs.address_line_1 = "Street address is required";
+  if (!form.first_name?.trim()) errs.first_name = "First name is required";
+  if (!form.last_name?.trim()) errs.last_name = "Last name is required";
+  if (!form.address_line_1?.trim()) errs.address_line_1 = "Street address is required";
   else if (form.address_line_1.trim().length > 45) errs.address_line_1 = "Address must be 45 characters or less";
-  if (!form.city.trim()) errs.city = "City is required";
-  if (!form.state.trim()) errs.state = "State/Province is required";
-  if (!form.postal_code.trim()) errs.postal_code = "Postal code is required";
+  if (!form.city?.trim()) errs.city = "City is required";
+  if (!form.state?.trim()) errs.state = "State/Province is required";
+  if (!form.postal_code?.trim()) errs.postal_code = "Postal code is required";
   if (!form.country) errs.country = "Please select a country";
-  if (!form.phone.trim()) errs.phone = "Phone number is required";
+  if (!form.phone?.trim()) errs.phone = "Phone number is required";
   else if (!PHONE_RE.test(form.phone)) errs.phone = "Enter a valid phone number";
   return errs;
 }
@@ -83,7 +84,8 @@ export default function CheckoutPage() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [selectedGateway, setSelectedGateway] = useState("stripe");
-  const [paymentCurrency, setPaymentCurrency] = useState("aed");
+  const [paymentCurrency, setPaymentCurrency] = useState("AED");
+  const [activeCurrency, setActiveCurrency] = useState(getActiveCurrency());
 
   // Shipping partners (managed in the admin dashboard)
   const [partners, setPartners] = useState([]);
@@ -105,7 +107,6 @@ export default function CheckoutPage() {
   } = useCheckout();
 
   const subtotalNum = Number(subtotal);
-  const activeCurrency = getActiveCurrency();
 
   // Before the order exists use the active currency; after it, the backend's currency.
   const displayCurrency = (orderTotals?.currency ?? activeCurrency ?? "AED")
@@ -118,12 +119,12 @@ export default function CheckoutPage() {
     : null;
 
   // Before the order exists, show the selected partner's charge.
-  // After it, use the backend's figures.
+  // After it, use the backend's authoritative figures.
   const shippingAmount = orderTotals ? orderTotals.shippingCharge : previewShipping;
 
   const shippingText =
     shippingAmount === null
-      ? "Select a method"
+      ? "Select a partner"
       : shippingAmount > 0
         ? formatMoney(shippingAmount, displayCurrency)
         : "Free";
@@ -153,17 +154,52 @@ export default function CheckoutPage() {
     }
   }, []);
 
-  // Load available shipping partners (refetch when the currency changes)
+  // Sync activeCurrency when changed in other tabs or components
+  useEffect(() => {
+    const handleCurrencyChange = () => {
+      setActiveCurrency(getActiveCurrency());
+    };
+    window.addEventListener("currencyChange", handleCurrencyChange);
+    window.addEventListener("storage", handleCurrencyChange);
+    return () => {
+      window.removeEventListener("currencyChange", handleCurrencyChange);
+      window.removeEventListener("storage", handleCurrencyChange);
+    };
+  }, []);
+
+  // Load available shipping partners (refetch when activeCurrency changes)
   useEffect(() => {
     setPartnersLoading(true);
     setPartnerError("");
     getShippingPartnersAPI(activeCurrency)
       .then((res) => {
-        const list = Array.isArray(res.data) ? res.data : [];
-        setPartners(list);
-        if (list.length === 1) setSelectedPartnerId(list[0].id);
+        const rawList = Array.isArray(res.data)
+          ? res.data
+          : (res.data?.results || res.data?.shipping_partners || res.data?.data || []);
+
+        // Filter only available shipping partners
+        const availablePartners = rawList.filter((p) => {
+          if (p.is_active === false || p.is_available === false || p.available === false) {
+            return false;
+          }
+          if (typeof p.status === "string" && p.status.toLowerCase() === "inactive") {
+            return false;
+          }
+          return true;
+        });
+
+        setPartners(availablePartners);
+
+        // Auto-select if only 1 partner, or ensure selectedPartnerId is still in list
+        if (availablePartners.length === 1) {
+          setSelectedPartnerId(availablePartners[0].id);
+        } else if (selectedPartnerId && !availablePartners.some((p) => p.id === selectedPartnerId)) {
+          setSelectedPartnerId(null);
+        }
       })
-      .catch(() => setPartnerError("Could not load shipping options."))
+      .catch((err) => {
+        setPartnerError(extractErrorMessage(err, "Could not load shipping options."));
+      })
       .finally(() => setPartnersLoading(false));
   }, [activeCurrency]);
 
@@ -193,7 +229,7 @@ export default function CheckoutPage() {
     }
 
     const payload = {
-      full_name: `${form.first_name} ${form.last_name}`.trim(),
+      full_name: `${form.first_name || ""} ${form.last_name || ""}`.trim(),
       address_line_1: form.address_line_1,
       address_line_2: form.address_line_2,
       city: form.city,
@@ -204,11 +240,15 @@ export default function CheckoutPage() {
       is_default: isDefault,
     };
 
-    const res = editingId
-      ? await updateAddressAPI(editingId, payload)
-      : await addAddressAPI(payload);
+    try {
+      const res = editingId
+        ? await updateAddressAPI(editingId, payload)
+        : await addAddressAPI(payload);
 
-    return res.data;
+      return res.data;
+    } catch (err) {
+      throw new Error(extractErrorMessage(err, "Could not save address."));
+    }
   };
 
   // Step 1 → 2
@@ -217,7 +257,7 @@ export default function CheckoutPage() {
     setTouched(Object.keys(INITIAL_FORM).reduce((acc, k) => ({ ...acc, [k]: true }), {}));
     setFieldErrors(errs);
 
-    if (!selectedPartnerId) {
+    if (!selectedPartnerId || !partners.some((p) => p.id === selectedPartnerId)) {
       setPartnerError("Please select a shipping method");
       return;
     }
@@ -225,15 +265,15 @@ export default function CheckoutPage() {
     if (Object.keys(errs).length === 0) setStep(2);
   };
 
-  // Step 2 → 3
+  // Step 2 → 3: Place Order with backend validation
   const handlePlaceOrder = async () => {
-    if (cart.length === 0) return;
+    if (loading || cart.length === 0) return;
     try {
       const result = await submit({
         ...form,
         shipping_partner_id: selectedPartnerId,
       });
-      setPaymentCurrency(result?.currency ?? "aed");
+      setPaymentCurrency(result?.currency ?? activeCurrency ?? "AED");
       setStep(3);
     } catch {
       // error shown in hook
@@ -241,7 +281,7 @@ export default function CheckoutPage() {
   };
 
   const handleGatewayContinue = async () => {
-    if (!orderId) return;
+    if (!orderId || loading) return;
 
     try {
       if (selectedGateway === "tabby") {
@@ -253,13 +293,11 @@ export default function CheckoutPage() {
         } else {
           console.error("Tabby redirect failed", result);
         }
-
         return;
       }
 
       if (selectedGateway === "ziina") {
-        const result = await startZiinaPayment(orderId, "aed"); // force AED
-
+        const result = await startZiinaPayment(orderId, "AED"); // Ziina processes in AED
         const targetUrl = result?.paymentUrl;
 
         if (targetUrl) {
@@ -267,7 +305,6 @@ export default function CheckoutPage() {
         } else {
           console.error("Ziina redirect failed", result);
         }
-
         return;
       }
 

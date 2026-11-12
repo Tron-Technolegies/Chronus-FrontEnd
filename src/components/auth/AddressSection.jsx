@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getAddressesAPI, addAddressAPI, updateAddressAPI, deleteAddressAPI } from "../../api/auth";
-import { FiLoader, FiTrash2, FiEdit2, FiX } from "react-icons/fi";
+import { FiLoader, FiTrash2, FiEdit2, FiX, FiAlertCircle, FiCheckCircle } from "react-icons/fi";
 import { COUNTRIES } from "../../utils/countries";
+import { extractErrorMessage } from "../../utils/errorHandler";
 
 const AddressSection = () => {
   const { t } = useTranslation();
@@ -12,6 +13,8 @@ const AddressSection = () => {
   const [editingId, setEditingId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   const defaultForm = {
     full_name: "",
@@ -31,9 +34,13 @@ const AddressSection = () => {
     try {
       setLoading(true);
       const res = await getAddressesAPI();
-      setAddresses(res.data || []);
+      const list = Array.isArray(res.data)
+        ? res.data
+        : (res.data?.results || res.data?.addresses || res.data?.data || []);
+      setAddresses(list);
     } catch (err) {
       console.error("Failed to fetch addresses", err);
+      setErrorMsg(extractErrorMessage(err, "Failed to load addresses."));
     } finally {
       setLoading(false);
     }
@@ -52,6 +59,8 @@ const AddressSection = () => {
   };
 
   const handleEdit = (address) => {
+    setErrorMsg("");
+    setSuccessMsg("");
     setEditingId(address.id);
     setFormData({
       full_name: address.full_name || "",
@@ -70,12 +79,16 @@ const AddressSection = () => {
   const handleDelete = async () => {
     if (!confirmDeleteId) return;
     setIsDeleting(true);
+    setErrorMsg("");
+    setSuccessMsg("");
     try {
       await deleteAddressAPI(confirmDeleteId);
       setAddresses(addresses.filter(a => a.id !== confirmDeleteId));
+      setSuccessMsg("Address deleted successfully.");
+      setTimeout(() => setSuccessMsg(""), 3000);
     } catch (err) {
       console.error("Failed to delete address", err);
-      alert("Failed to delete address");
+      setErrorMsg(extractErrorMessage(err, "Failed to delete address."));
     } finally {
       setIsDeleting(false);
       setConfirmDeleteId(null);
@@ -85,19 +98,24 @@ const AddressSection = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    setErrorMsg("");
+    setSuccessMsg("");
 
     try {
       if (editingId) {
         await updateAddressAPI(editingId, formData);
+        setSuccessMsg("Address updated successfully.");
       } else {
         await addAddressAPI(formData);
+        setSuccessMsg("Address added successfully.");
       }
       await fetchAddresses();
       setFormData(defaultForm);
       setEditingId(null);
+      setTimeout(() => setSuccessMsg(""), 3000);
     } catch (err) {
       console.error("Failed to save address", err);
-      alert("Failed to save address");
+      setErrorMsg(extractErrorMessage(err, "Failed to save address."));
     } finally {
       setSubmitting(false);
     }
@@ -106,6 +124,20 @@ const AddressSection = () => {
   return (
     <div>
       <h2 className="text-xl sm:text-2xl font-semibold mb-6">{t("auth.saved_address", "Saved Addresses")}</h2>
+
+      {errorMsg && (
+        <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-md mb-6">
+          <FiAlertCircle size={16} />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
+      {successMsg && (
+        <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-md mb-6">
+          <FiCheckCircle size={16} />
+          <span>{successMsg}</span>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {confirmDeleteId && (

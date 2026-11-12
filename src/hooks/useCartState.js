@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { addToCartAPI, fetchCartAPI, removeCartItemAPI } from "../api/cart";
 import { useGuestId } from "./useGuestId";
 import { formatMoney } from "../utils/currency";
+import { extractErrorMessage } from "../utils/errorHandler";
 
 const parsePrice = (price) => {
   if (typeof price === "number") return price;
@@ -19,7 +20,7 @@ const normaliseCartItems = (payload) => {
       productId: prodId,
       name: (typeof item.product === "string" ? item.product : item.product?.name) ?? item.product_name ?? item.name ?? "",
       price: formatMoney(item.price ?? 0, item.currency),
-      _rawPrice: Number(item.price ?? 0),
+      _rawPrice: parsePrice(item.price ?? 0),
       currency: item.currency || null,
       images: [item.image ?? item.product?.image].filter(Boolean),
       image: item.image ?? item.product?.image ?? null,
@@ -35,7 +36,7 @@ const normaliseCartItems = (payload) => {
       variantId: item.variant?.id ?? null,
       variant: item.variant ?? null,
       qty: Number(item.quantity ?? item.qty ?? 1) || 1,
-      lineTotal: Number(item.total ?? 0),
+      lineTotal: parsePrice(item.total ?? 0),
     };
   });
 };
