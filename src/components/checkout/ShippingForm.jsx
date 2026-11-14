@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { FiTruck, FiEdit2 } from "react-icons/fi";
 import { getAddressesAPI } from "../../api/auth";
 import { COUNTRIES } from "../../utils/countries";
@@ -58,6 +58,9 @@ export default function ShippingForm({
   const [editingId, setEditingId] = useState(null);
   const isLoggedIn = !!localStorage.getItem("accessToken");
 
+  // FIX: auto-select a saved address only once, on the initial load
+  const initialSelectDone = useRef(false);
+
   const selectAddress = useCallback(
     (addr) => {
       if (!addr) return;
@@ -88,11 +91,15 @@ export default function ShippingForm({
     return list;
   }, []);
 
+  // FIX: runs once on mount (and if login state changes), not on every form change
   useEffect(() => {
     if (!isLoggedIn) return;
     setLoadingAddrs(true);
     loadAddresses()
       .then((list) => {
+        if (initialSelectDone.current) return;
+        initialSelectDone.current = true;
+
         if (list.length > 0 && !form.address_id) {
           const defaultAddr = list.find((a) => a.is_default) || list[0];
           selectAddress(defaultAddr);
@@ -105,7 +112,8 @@ export default function ShippingForm({
       })
       .catch(console.error)
       .finally(() => setLoadingAddrs(false));
-  }, [isLoggedIn, form.address_id, form.first_name, form.address_line_1, loadAddresses, selectAddress]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn]);
 
   const clearMessages = () => {
     setSaveMsg("");

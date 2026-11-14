@@ -58,4 +58,3 @@ export const extractErrorMessage = (err, fallback = "An unexpected error occurre
 
   return err.message || fallback;
 };
-
