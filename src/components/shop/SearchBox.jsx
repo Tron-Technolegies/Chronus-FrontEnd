@@ -36,7 +36,10 @@ const SearchBox = ({ search, setSearch, onSearch, sort, setSort }) => {
 
           <select
             value={sort}
-            onChange={(e) => setSort(e.target.value)}
+            onChange={(e) => {
+              console.log("sort changed:", e.target.value);
+              setSort(e.target.value);
+            }}
             className="px-3 py-2 text-sm border border-gray-300 rounded-md"
           >
             <option value="default">{t("shop.search.sort_default")}</option>

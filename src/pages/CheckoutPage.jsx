@@ -34,11 +34,12 @@ const INITIAL_FORM = {
 };
 
 const PAYMENT_GATEWAYS = [
-  {
-    id: "stripe",
-    label: "Stripe/Card Payment",
-    description: "Pay by card with Stripe's secure checkout form.",
-  },
+  // Temporarily disabled Stripe
+  // {
+  //   id: "stripe",
+  //   label: "Stripe/Card Payment",
+  //   description: "Pay by card with Stripe's secure checkout form.",
+  // },
   {
     id: "ziina",
     label: "Ziina",
