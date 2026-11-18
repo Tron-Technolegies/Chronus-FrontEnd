@@ -267,10 +267,6 @@ import { getActiveCurrency } from "../utils/currency";
 import { extractErrorMessage } from "../utils/errorHandler";
 import { TABBY_REJECTED_MESSAGE as TABBY_MSG } from "../constants/tabby";
 
-// CHANGED: approved Tabby message (exact text required by Tabby)
-// const TABBY_MSG =
-//   "Sorry, Tabby is unable to approve this purchase. Please use an alternative payment method for your order.";
-
 const normalizeCurrency = (value) => {
   if (!value) return null;
   const normalized = String(value).trim().toUpperCase();
@@ -299,6 +295,7 @@ export function useCheckout() {
   const [paymentGateway, setPaymentGateway] = useState(null);
   const [paymentUrl, setPaymentUrl] = useState(null);
   const [orderTotals, setOrderTotals] = useState(null);
+  const [tabbyUnavailable, setTabbyUnavailable] = useState(false); // CHANGED
 
   // Create order
   const submit = useCallback(async (formData) => {
@@ -308,6 +305,7 @@ export function useCheckout() {
     setPaymentUrl(null);
     setPaymentGateway(null);
     setOrderTotals(null);
+    setTabbyUnavailable(false); // CHANGED: a new order gets a fresh Tabby check
 
     try {
       const token = localStorage.getItem("accessToken");
@@ -465,6 +463,8 @@ export function useCheckout() {
   );
 
   // Tabby payment
+  // CHANGED: only a real Tabby rejection marks Tabby as unavailable.
+  // Technical failures show a separate, honest message.
   const startTabbyPayment = useCallback(
     async (targetOrderId, customerData = {}) => {
       setLoading(true);
@@ -472,21 +472,26 @@ export function useCheckout() {
       setClientSecret(null);
 
       try {
-        const paymentRes = await createTabbyPaymentAPI(
-          targetOrderId,
-          customerData
-        );
+        const paymentRes = await createTabbyPaymentAPI(targetOrderId, customerData);
+        const data = paymentRes.data ?? {};
+
+        // Pre-scoring reject: Tabby is unavailable for this customer
+        if (data.status === "rejected" || /rejected/i.test(String(data.code ?? ""))) {
+          setTabbyUnavailable(true);
+          const rejection = new Error(TABBY_MSG);
+          rejection.isTabbyRejection = true;
+          throw rejection;
+        }
 
         const url =
-          paymentRes.data?.payment_url ??
-          paymentRes.data?.checkout_url ??
-          paymentRes.data?.redirect_url ??
-          paymentRes.data?.url ??
-          paymentRes.data?.web_url;
+          data.payment_url ??
+          data.checkout_url ??
+          data.redirect_url ??
+          data.url ??
+          data.web_url;
 
         if (!url) {
-          // CHANGED: no Tabby payment page means Tabby did not approve the purchase
-          throw new Error(TABBY_MSG);
+          throw new Error("Tabby did not return a payment page.");
         }
 
         setPaymentGateway("tabby");
@@ -494,9 +499,12 @@ export function useCheckout() {
 
         return { paymentUrl: url };
       } catch (err) {
-        // CHANGED: always show the approved message; keep the real error for debugging
         console.error("Tabby payment error:", err?.response?.data ?? err);
-        setError(TABBY_MSG);
+        if (!err?.isTabbyRejection) {
+          setError(
+            "Unable to process your Tabby payment at the moment. Please try again or select another payment method."
+          );
+        }
         throw err;
       } finally {
         setLoading(false);
@@ -517,5 +525,6 @@ export function useCheckout() {
     paymentGateway,
     paymentUrl,
     orderTotals,
+    tabbyUnavailable, // CHANGED
   };
 }

@@ -593,7 +593,8 @@ import OrderReview from "../components/checkout/OrderReview";
 import StripeProvider from "../providers/StripeProvider";
 import StripePaymentForm from "../components/checkout/StripePaymentForm";
 import TabbyCard from "../components/Tabby/TabbyCard";
-import tabbyLogo from "../assets/payments/tabby.svg"; // CHANGED: logo from src/assets
+import tabbyLogo from "../assets/payments/tabby.svg";
+import { getTabbyRejectedMessage } from "../constants/tabby";
 
 // ── Steps: 1 Shipping → 2 Review → 3 Payment ──────────────────────────────
 const STEPS = [
@@ -634,7 +635,7 @@ const PAYMENT_GATEWAYS = [
     id: "tabby",
     label: "Pay later with Tabby",
     labelAr: "ادفع لاحقًا مع تابي",
-    logo: tabbyLogo, // CHANGED
+    logo: tabbyLogo,
   },
 ];
 
@@ -667,7 +668,7 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, subtotal } = useCart();
 
-  // Language for the Tabby name and snippet
+  // Language for the Tabby name, snippet and messages
   const { i18n } = useTranslation();
   const isArabic = i18n.language?.toLowerCase().startsWith("ar");
   const tabbyLang = isArabic ? "ar" : "en";
@@ -676,7 +677,7 @@ export default function CheckoutPage() {
   const [form, setForm] = useState(INITIAL_FORM);
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [selectedGateway, setSelectedGateway] = useState("stripe");
+  const [selectedGateway, setSelectedGateway] = useState(null); // CHANGED: no default method
   const [paymentCurrency, setPaymentCurrency] = useState("AED");
   const [activeCurrency, setActiveCurrency] = useState(getActiveCurrency());
 
@@ -697,6 +698,7 @@ export default function CheckoutPage() {
     orderId,
     paymentUrl,
     orderTotals,
+    tabbyUnavailable,
   } = useCheckout();
 
   const subtotalNum = Number(subtotal);
@@ -753,6 +755,13 @@ export default function CheckoutPage() {
       } catch (e) {}
     }
   }, []);
+
+  // CHANGED: once Tabby is unavailable, clear the selection so the customer picks another method
+  useEffect(() => {
+    if (tabbyUnavailable && selectedGateway === "tabby") {
+      setSelectedGateway(null);
+    }
+  }, [tabbyUnavailable, selectedGateway]);
 
   // Sync activeCurrency when changed in other tabs or components
   useEffect(() => {
@@ -881,11 +890,12 @@ export default function CheckoutPage() {
   };
 
   const handleGatewayContinue = async () => {
-    if (!orderId || loading) return;
+    if (!orderId || loading || !selectedGateway) return; // CHANGED: nothing without a selection
 
     try {
       if (selectedGateway === "tabby") {
-        const result = await startTabbyPayment(orderId, form);
+        // Pass the language so Tabby's page matches the site language
+        const result = await startTabbyPayment(orderId, { ...form, lang: tabbyLang });
         const targetUrl = result?.paymentUrl;
 
         if (targetUrl) {
@@ -908,7 +918,10 @@ export default function CheckoutPage() {
         return;
       }
 
-      await startStripePayment(orderId, paymentCurrency);
+      // CHANGED: only start Stripe if it is actually selected
+      if (selectedGateway === "stripe") {
+        await startStripePayment(orderId, paymentCurrency);
+      }
     } catch {
       // error shown in hook
     }
@@ -1017,6 +1030,7 @@ export default function CheckoutPage() {
                     <div className="space-y-3">
                       {PAYMENT_GATEWAYS.map((gateway) => {
                         const isSelected = selectedGateway === gateway.id;
+                        const unavailable = gateway.id === "tabby" && tabbyUnavailable;
                         const label =
                           isArabic && gateway.labelAr ? gateway.labelAr : gateway.label;
 
@@ -1024,12 +1038,15 @@ export default function CheckoutPage() {
                           <div key={gateway.id}>
                             <button
                               type="button"
+                              disabled={unavailable}
                               onClick={() => setSelectedGateway(gateway.id)}
                               className={`w-full text-left border rounded-sm p-4 transition
                                 ${
-                                  isSelected
-                                    ? "border-[#CBA61F] bg-[#fff9e8]"
-                                    : "border-gray-200 bg-white hover:border-gray-300"
+                                  unavailable
+                                    ? "opacity-50 cursor-not-allowed border-gray-200 bg-gray-50"
+                                    : isSelected
+                                      ? "border-[#CBA61F] bg-[#fff9e8]"
+                                      : "border-gray-200 bg-white hover:border-gray-300"
                                 }`}
                             >
                               <div className="flex items-center justify-between gap-4">
@@ -1059,20 +1076,30 @@ export default function CheckoutPage() {
                                 <span
                                   className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0
                                     ${
-                                      isSelected
+                                      isSelected && !unavailable
                                         ? "border-[#CBA61F] bg-[#CBA61F]"
                                         : "border-gray-300 bg-white"
                                     }`}
                                 >
-                                  {isSelected && (
+                                  {isSelected && !unavailable && (
                                     <span className="w-1.5 h-1.5 rounded-full bg-white" />
                                   )}
                                 </span>
                               </div>
                             </button>
 
-                            {/* Tabby checkout snippet: under the option, only when selected */}
-                            {gateway.id === "tabby" && isSelected && (
+                            {/* Approved rejection message under the unavailable Tabby option */}
+                            {unavailable && (
+                              <p
+                                className="mt-2 text-xs text-red-600"
+                                dir={isArabic ? "rtl" : "ltr"}
+                              >
+                                {getTabbyRejectedMessage(tabbyLang)}
+                              </p>
+                            )}
+
+                            {/* Tabby checkout snippet: under the option, only when selected and available */}
+                            {gateway.id === "tabby" && isSelected && !unavailable && (
                               <div className="mt-2">
                                 <TabbyCard
                                   price={tabbyAmount}
@@ -1086,10 +1113,11 @@ export default function CheckoutPage() {
                       })}
                     </div>
 
+                    {/* CHANGED: disabled until a method is chosen, null-safe label */}
                     <button
                       type="button"
                       onClick={handleGatewayContinue}
-                      disabled={loading || !orderId}
+                      disabled={loading || !orderId || !selectedGateway}
                       className="w-full bg-[#3D1613] text-off-white py-3.5 text-xs tracking-[0.2em] font-semibold hover:bg-[#5a2019] transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
                     >
                       {loading ? (
@@ -1097,8 +1125,10 @@ export default function CheckoutPage() {
                           <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                           PREPARING PAYMENT...
                         </>
+                      ) : selectedGateway ? (
+                        `CONTINUE WITH ${selectedGateway.toUpperCase()}`
                       ) : (
-                        `CONTINUE WITH ${selectedGateway === "ziina" ? "ZIINA" : selectedGateway === "tabby" ? "TABBY" : "STRIPE"}`
+                        "SELECT A PAYMENT METHOD"
                       )}
                     </button>
 
