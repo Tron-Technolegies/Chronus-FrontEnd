@@ -25,5 +25,6 @@ export const createTabbyPaymentAPI = (orderId, customerData = {}) => {
     phone: customerData.phone || "",
     city: customerData.city || "",
     country: customerData.country || "",
+    lang: customerData.lang || "en",
   });
 };

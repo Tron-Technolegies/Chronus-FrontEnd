@@ -116,18 +116,21 @@
 
 
 import { useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom"; // CHANGED
+import { Link, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useCart } from "../hooks/useCart";
 import { FiCheckCircle, FiXCircle, FiAlertCircle, FiShoppingBag, FiCreditCard } from "react-icons/fi";
-import { TABBY_REJECTED_MESSAGE } from "../constants/tabby"; // CHANGED
+import { getTabbyRejectedMessage, getTabbyCancelledMessage } from "../constants/tabby";
 
 export default function PaymentStatusPage({ status }) {
   const { clearCart } = useCart();
+  const { i18n } = useTranslation();
+  const lang = i18n.language?.toLowerCase().startsWith("ar") ? "ar" : "en";
 
-  // CHANGED: Tabby's failure URL carries ?gateway=tabby
+  // Tabby's redirect URLs carry ?gateway=tabby
   const [searchParams] = useSearchParams();
   const gateway = (searchParams.get("gateway") || "").toLowerCase();
-  const isTabbyDecline = status === "failure" && gateway === "tabby";
+  const isTabby = gateway === "tabby";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -162,8 +165,10 @@ export default function PaymentStatusPage({ status }) {
 
   const { icon, title, message, borderColor, bgClass } = config[status] || config.failure;
 
-  // CHANGED: approved Tabby message for Tabby declines, current message otherwise
-  const displayMessage = isTabbyDecline ? TABBY_REJECTED_MESSAGE : message;
+  // Approved Tabby messages for redirects; other gateways keep their own text
+  let displayMessage = message;
+  if (isTabby && status === "failure") displayMessage = getTabbyRejectedMessage(lang);
+  if (isTabby && status === "cancel") displayMessage = getTabbyCancelledMessage(lang);
 
   return (
     <div className="min-h-screen bg-[#f7f6f3] flex items-center justify-center px-4">
@@ -187,7 +192,10 @@ export default function PaymentStatusPage({ status }) {
               <h1 className="text-off-white text-xl sm:text-2xl font-semibold tracking-widest mb-2">
                 {title}
               </h1>
-              <p className="text-off-white-60 text-sm leading-relaxed">
+              <p
+                className="text-off-white-60 text-sm leading-relaxed"
+                dir={isTabby && lang === "ar" ? "rtl" : "ltr"}
+              >
                 {displayMessage}
               </p>
             </div>

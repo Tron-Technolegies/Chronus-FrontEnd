@@ -7,6 +7,7 @@ import { fetchCategoryHisHerSubcategories } from "../../utils/fetchCategoryHisHe
 import { extractHisHerSubcategories } from "../../utils/shopSubcategories";
 import { useTranslation } from "react-i18next";
 import Loader from "../ui/Loader";
+import HomeCollections from "./HomeCollections";
 
 export default function ExploreCategories() {
   const { t } = useTranslation();
@@ -87,6 +88,8 @@ export default function ExploreCategories() {
           ))}
         </div>
       </section>
+
+      <HomeCollections />
 
       {selectedCategory && (
         <CategoryIntroModal

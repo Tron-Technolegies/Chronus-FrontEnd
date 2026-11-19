@@ -480,6 +480,13 @@ import { useTranslation } from "react-i18next";
 const PAGE_SIZE = 12;
 const DEFAULT_PRICE_RANGE = [0, 100000];
 
+// CHANGED: when a collection filter or sort is active, load this many products at
+// once so the filter can look at the whole catalog, not just one page of 12.
+const FETCH_ALL_PAGE_SIZE = 500;
+
+// CHANGED: "New Arrivals" = products added in the last 30 days
+const NEW_ARRIVAL_DAYS = 30;
+
 const parseIdParam = (value) => {
   const parsed = Number(value);
   return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
@@ -495,6 +502,13 @@ const parsePriceParam = (value) => {
 
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+};
+
+const isNewArrival = (product) => {
+  if (!product.created_at) return false;
+  const created = new Date(product.created_at).getTime();
+  if (!Number.isFinite(created)) return false;
+  return Date.now() - created < NEW_ARRIVAL_DAYS * 24 * 60 * 60 * 1000;
 };
 
 const ShopPage = () => {
@@ -528,9 +542,6 @@ const ShopPage = () => {
     maxPrice ?? DEFAULT_PRICE_RANGE[1],
   ]);
 
-  const [collection, setCollection] = useState("all");
-  const [sort, setSort] = useState("default");
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { categories } = useCategories();
@@ -557,6 +568,19 @@ const ShopPage = () => {
     [searchParams, setSearchParams],
   );
 
+  // CHANGED: collection and sort live in the URL, like the other filters
+  const collection = searchParams.get("collection") || "all";
+  const sort = searchParams.get("sort") || "default";
+
+  const setCollection = (key) =>
+    updateSearchParamValues({ collection: key === "all" ? null : key }, { resetPage: true });
+
+  const setSort = (value) =>
+    updateSearchParamValues({ sort: value === "default" ? null : value }, { resetPage: true });
+
+  // CHANGED: true when the browser (not the server) has to filter or sort the list
+  const isClientFiltered = collection !== "all" || sort !== "default";
+
   const shouldResolveType = Boolean(activeCategory && typeParam);
 
   const { products, loading, error, pagination, subcategories, totalCount } = useProducts({
@@ -565,8 +589,9 @@ const ShopPage = () => {
     search: searchParam || null,
     minPrice,
     maxPrice,
-    page,
-    pageSize: PAGE_SIZE,
+    // CHANGED: when filtering in the browser, load the whole list at once
+    page: isClientFiltered ? 1 : page,
+    pageSize: isClientFiltered ? FETCH_ALL_PAGE_SIZE : PAGE_SIZE,
     enabled: !shouldResolveType,
   });
 
@@ -621,10 +646,9 @@ const ShopPage = () => {
   };
 
   /* Reset filters */
+  // CHANGED: clearing the URL also resets collection and sort
   const resetFilters = () => {
     setSearchInput("");
-    setCollection("all");
-    setSort("default");
     setPriceRangeDraft([...DEFAULT_PRICE_RANGE]);
     setSearchParams(new URLSearchParams());
   };
@@ -737,13 +761,14 @@ const ShopPage = () => {
   if (selectedSubcategory?.slug === "his") typeLabel = t("shop.his_collection");
   if (selectedSubcategory?.slug === "her") typeLabel = t("shop.her_collection");
 
+  // CHANGED: filter and sort the whole loaded list (not just 12 products)
   const filteredProducts = useMemo(() => {
     let list = products;
 
     if (collection === "best-seller") {
       list = list.filter((product) => product.is_best_seller);
     } else if (collection === "new") {
-      list = list.filter((product) => Boolean(product.created_at));
+      list = list.filter(isNewArrival);
     } else if (collection === "featured") {
       list = list.filter((product) => product.is_featured);
     }
@@ -759,7 +784,19 @@ const ShopPage = () => {
     return list;
   }, [collection, products, sort]);
 
-  const visibleProductCount = collection === "all" ? totalCount : filteredProducts.length;
+  // CHANGED: when filtering in the browser, split the results into pages here
+  const clientTotalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+  const clientPage = Math.min(page, clientTotalPages);
+
+  const pagedProducts = isClientFiltered
+    ? filteredProducts.slice((clientPage - 1) * PAGE_SIZE, clientPage * PAGE_SIZE)
+    : filteredProducts;
+
+  const pageInfo = isClientFiltered
+    ? { currentPage: clientPage, totalPages: clientTotalPages }
+    : pagination;
+
+  const visibleProductCount = isClientFiltered ? filteredProducts.length : totalCount;
 
   return (
     <div className="max-w-[1700px] mx-auto bg-white pb-16 px-3 sm:px-6">
@@ -874,11 +911,11 @@ const ShopPage = () => {
           )}
 
           {/* Product grid */}
-          {!loading && !error && filteredProducts.length > 0 && (
-            <ProductsGrid products={filteredProducts} />
+          {!loading && !error && pagedProducts.length > 0 && (
+            <ProductsGrid products={pagedProducts} />
           )}
 
-          {!loading && !error && filteredProducts.length === 0 && (
+          {!loading && !error && pagedProducts.length === 0 && (
             <div className="px-6 py-8 text-sm text-gray-500">{t("shop.no_products")}</div>
           )}
 
@@ -890,29 +927,29 @@ const ShopPage = () => {
           )}
 
           {/* Pagination */}
-          {!loading && pagination.totalPages > 1 && (
+          {!loading && pageInfo.totalPages > 1 && (
             <div className="flex justify-center py-10 gap-4">
               <button
                 onClick={() =>
-                  updateSearchParamValues({ page: Math.max(1, pagination.currentPage - 1) })
+                  updateSearchParamValues({ page: Math.max(1, pageInfo.currentPage - 1) })
                 }
-                disabled={pagination.currentPage === 1}
+                disabled={pageInfo.currentPage === 1}
                 className="border border-gray-300 px-4 py-2 text-sm"
               >
                 {t("shop.prev")}
               </button>
 
               <span className="text-sm text-gray-500">
-                {t("shop.page_info", { current: pagination.currentPage, total: pagination.totalPages })}
+                {t("shop.page_info", { current: pageInfo.currentPage, total: pageInfo.totalPages })}
               </span>
 
               <button
                 onClick={() =>
                   updateSearchParamValues({
-                    page: Math.min(pagination.totalPages, pagination.currentPage + 1),
+                    page: Math.min(pageInfo.totalPages, pageInfo.currentPage + 1),
                   })
                 }
-                disabled={pagination.currentPage === pagination.totalPages}
+                disabled={pageInfo.currentPage === pageInfo.totalPages}
                 className="border border-gray-300 px-4 py-2 text-sm"
               >
                 {t("shop.next")}
