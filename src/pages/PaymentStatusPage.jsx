@@ -115,7 +115,7 @@
 // }
 
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react"; // CHANGED
 import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useCart } from "../hooks/useCart";
@@ -132,9 +132,14 @@ export default function PaymentStatusPage({ status }) {
   const gateway = (searchParams.get("gateway") || "").toLowerCase();
   const isTabby = gateway === "tabby";
 
+  // CHANGED: clear the cart only once, even if the effect runs again
+  // (React StrictMode runs effects twice in development)
+  const clearedRef = useRef(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (status === "success") {
+    if (status === "success" && !clearedRef.current) {
+      clearedRef.current = true;
       clearCart();
     }
   }, [status, clearCart]);

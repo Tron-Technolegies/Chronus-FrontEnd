@@ -1,9 +1,194 @@
+// import { useQuery } from "@tanstack/react-query";
+// import { fetchProductByIdAPI } from "../api/product";
+// import { formatMoney } from "../utils/currency";
+
+// const formatProductDetails = (rawProduct) => {
+//   if (!rawProduct) return null;
+
+//   const sizes = Array.isArray(rawProduct.sizes)
+//     ? rawProduct.sizes
+//         .map((item) => {
+//           const rawPrice = Number(item?.price ?? 0);
+//           const label = String(item?.size ?? "").trim();
+//           if (!label) return null;
+//           return {
+//             id: item?.id ?? label,
+//             size: label,
+//             price: formatMoney(rawPrice, rawProduct.currency),
+//             _rawPrice: rawPrice,
+//           };
+//         })
+//         .filter(Boolean)
+//     : [];
+
+//   const colors = Array.isArray(rawProduct.colors)
+//     ? rawProduct.colors
+//         .map((item) => {
+//           const id = item?.id;
+//           const name = String(item?.color_name ?? "").trim();
+//           if (!id || !name) return null;
+
+//           return {
+//             id,
+//             name,
+//             image: item?.image ?? null,
+//           };
+//         })
+//         .filter(Boolean)
+//     : [];
+
+//   const frames = Array.isArray(rawProduct.frames)
+//     ? rawProduct.frames
+//         .map((item) => {
+//           const id = item?.id;
+//           const name = String(item?.name ?? "").trim();
+//           if (!id || !name) return null;
+
+//           const rawExtraPrice = Number(item?.extra_price ?? 0);
+
+//           return {
+//             id,
+//             name,
+//             image: item?.image ?? null,
+//             extraPrice: formatMoney(rawExtraPrice, rawProduct.currency),
+//             _rawExtraPrice: rawExtraPrice,
+//           };
+//         })
+//         .filter(Boolean)
+//     : [];
+
+//   const materials = Array.isArray(rawProduct.materials)
+//     ? rawProduct.materials
+//         .map((item) => {
+//           const id = item?.id;
+//           const name = String(item?.name ?? "").trim();
+//           if (!id || !name) return null;
+
+//           const rawExtraPrice = Number(item?.extra_price ?? 0);
+
+//           return {
+//             id,
+//             name,
+//             description: item?.description ?? "",
+//             extraPrice: formatMoney(rawExtraPrice, rawProduct.currency),
+//             _rawExtraPrice: rawExtraPrice,
+//           };
+//         })
+//         .filter(Boolean)
+//     : [];
+
+//   const baseRawPrice = Number(rawProduct.price ?? 0);
+
+//   return {
+//     id: rawProduct.id,
+//     name: rawProduct.name ?? "",
+//     price: formatMoney(baseRawPrice, rawProduct.currency),
+//     _rawPrice: baseRawPrice,
+//     currency: rawProduct.currency || null,
+//     originalPrice: null,
+//     image: rawProduct.image ?? null,
+//     images: [rawProduct.image, ...(rawProduct.gallery ?? [])].filter(Boolean),
+//     category: rawProduct.category?.name?.toLowerCase().replace(/\s+/g, "-") ?? "other",
+//     categoryName: rawProduct.category?.name ?? "Other",
+//     categoryId: rawProduct.category?.id ?? null,
+//     subcategory: rawProduct.subcategory?.name?.toLowerCase().replace(/\s+/g, "-") ?? null,
+//     subcategoryName: rawProduct.subcategory?.name ?? null,
+//     subcategoryId: rawProduct.subcategory?.id ?? null,
+//     brand: rawProduct.brand?.name ?? "",
+//     brandId: rawProduct.brand?.id ?? null,
+//     shortDesc: rawProduct.description?.slice(0, 140) ?? "",
+//     description: rawProduct.description ?? "",
+//     specification:
+//       rawProduct.specification && typeof rawProduct.specification === "object"
+//         ? rawProduct.specification
+//         : {},
+//     stock: rawProduct.stock ?? 0,
+//     sizes,
+//     colors,
+//     frames,
+//     materials,
+//     variants: Array.isArray(rawProduct.variants)
+//       ? rawProduct.variants.map((v) => ({
+//           id: v.id,
+//           sku: v.sku ?? "",
+//           stock: v.stock ?? 0,
+//           isActive: v.is_active ?? true,
+//           options: v.options ?? [],
+//           images: v.images ?? [],
+//         }))
+//       : [],
+//     is_featured: rawProduct.is_featured ?? false,
+//     is_best_seller: rawProduct.is_best_seller ?? false,
+//     created_at: rawProduct.created_at ?? null,
+//     rating: Number(rawProduct.average_rating ?? 0),
+//     reviewsCount: Number(rawProduct.review_count ?? 0),
+//     reviews: (rawProduct.reviews ?? []).map((review) => ({
+//       id: review.id,
+//       name: review.name ?? "Guest",
+//       rating: Number(review.rating ?? 0),
+//       comment: review.comment ?? "",
+//       date: review.created_at
+//         ? new Date(review.created_at).toLocaleDateString("en-US", {
+//             year: "numeric",
+//             month: "short",
+//             day: "numeric",
+//           })
+//         : "",
+//     })),
+//   };
+// };
+
+// export function useProductDetails(productId) {
+//   const { data: product = null, isLoading, error, refetch } = useQuery({
+//     queryKey: ["product", productId],
+//     queryFn: async () => {
+//       const response = await fetchProductByIdAPI(productId);
+//       return formatProductDetails(response.data);
+//     },
+//     enabled: !!productId,
+//     staleTime: 10 * 60 * 1000, // 10 minutes
+//     gcTime: 30 * 60 * 1000,    // 30 minutes
+//   });
+
+//   return {
+//     product,
+//     loading: isLoading,
+//     error: error
+//       ? error?.response?.status === 404
+//         ? "Product not found."
+//         : "Failed to load product."
+//       : null,
+//     loadProduct: refetch,
+//   };
+// }
+
+
+
 import { useQuery } from "@tanstack/react-query";
 import { fetchProductByIdAPI } from "../api/product";
 import { formatMoney } from "../utils/currency";
 
+// NEW: one size of a size-priced product (price and stock come straight from the backend)
+const mapPricedSize = (item, currency, color = null) => {
+  const rawPrice = Number(item?.price ?? 0);
+  const stock = Number(item?.stock ?? 0);
+  return {
+    id: item?.id,
+    size: String(item?.size ?? "").trim(),
+    price: formatMoney(rawPrice, currency),
+    _rawPrice: rawPrice,
+    stock: Number.isFinite(stock) ? stock : 0,
+    colorId: color?.id ?? item?.color_id ?? null,
+    colorName: color?.name ?? item?.color_name ?? null,
+  };
+};
+
 const formatProductDetails = (rawProduct) => {
   if (!rawProduct) return null;
+
+  // NEW: the size-pricing type (Variant product with has_size_pricing = true)
+  const hasSizePricing =
+    Boolean(rawProduct.has_size_pricing) && rawProduct.product_type !== "fine_art";
 
   const sizes = Array.isArray(rawProduct.sizes)
     ? rawProduct.sizes
@@ -77,6 +262,40 @@ const formatProductDetails = (rawProduct) => {
         .filter(Boolean)
     : [];
 
+  // NEW: colours with their own sizes (colour + size products)
+  const pricedColors =
+    hasSizePricing && Array.isArray(rawProduct.colors)
+      ? rawProduct.colors
+          .map((c) => {
+            const color = { id: c?.id, name: String(c?.color_name ?? "").trim() };
+            return {
+              id: color.id,
+              name: color.name,
+              image: c?.image ?? null,
+              gallery: (Array.isArray(c?.gallery) ? c.gallery : [])
+                .map((g) => (g && typeof g === "object" ? g.image : g))
+                .filter(Boolean),
+              sizes: (Array.isArray(c?.sizes) ? c.sizes : [])
+                .map((s) => mapPricedSize(s, rawProduct.currency, color))
+                .filter((s) => s.id && s.size),
+            };
+          })
+          .filter((c) => c.id && c.name)
+      : [];
+
+  // NEW: size-only products use the top-level product_sizes (sizes without a colour)
+  const pricedSizes =
+    hasSizePricing && pricedColors.length === 0 && Array.isArray(rawProduct.product_sizes)
+      ? rawProduct.product_sizes
+          .filter((s) => !s?.color_id)
+          .map((s) => mapPricedSize(s, rawProduct.currency))
+          .filter((s) => s.id && s.size)
+      : [];
+
+  // NEW: total stock across all sizes (the product's own stock is not used for these products)
+  const pricedStockTotal = (pricedColors.length > 0 ? pricedColors.flatMap((c) => c.sizes) : pricedSizes)
+    .reduce((sum, s) => sum + (Number(s.stock) || 0), 0);
+
   const baseRawPrice = Number(rawProduct.price ?? 0);
 
   return {
@@ -102,21 +321,27 @@ const formatProductDetails = (rawProduct) => {
       rawProduct.specification && typeof rawProduct.specification === "object"
         ? rawProduct.specification
         : {},
-    stock: rawProduct.stock ?? 0,
-    sizes,
-    colors,
+    stock: hasSizePricing ? pricedStockTotal : rawProduct.stock ?? 0,
+    // size-priced products use pricedColors / pricedSizes below, so the older
+    // size, colour and variant selectors stay empty for them
+    sizes: hasSizePricing ? [] : sizes,
+    colors: hasSizePricing ? [] : colors,
     frames,
     materials,
-    variants: Array.isArray(rawProduct.variants)
-      ? rawProduct.variants.map((v) => ({
-          id: v.id,
-          sku: v.sku ?? "",
-          stock: v.stock ?? 0,
-          isActive: v.is_active ?? true,
-          options: v.options ?? [],
-          images: v.images ?? [],
-        }))
-      : [],
+    hasSizePricing,
+    pricedColors,
+    pricedSizes,
+    variants:
+      !hasSizePricing && Array.isArray(rawProduct.variants)
+        ? rawProduct.variants.map((v) => ({
+            id: v.id,
+            sku: v.sku ?? "",
+            stock: v.stock ?? 0,
+            isActive: v.is_active ?? true,
+            options: v.options ?? [],
+            images: v.images ?? [],
+          }))
+        : [],
     is_featured: rawProduct.is_featured ?? false,
     is_best_seller: rawProduct.is_best_seller ?? false,
     created_at: rawProduct.created_at ?? null,

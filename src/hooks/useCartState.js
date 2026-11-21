@@ -1,8 +1,498 @@
+// import { useCallback, useEffect, useMemo, useState } from "react";
+// import { addToCartAPI, fetchCartAPI, removeCartItemAPI } from "../api/cart";
+// import { useGuestId } from "./useGuestId";
+// import { formatMoney } from "../utils/currency";
+// import { extractErrorMessage } from "../utils/errorHandler";
+
+// const parsePrice = (price) => {
+//   if (typeof price === "number") return price;
+//   const cleaned = String(price).replace(/[^0-9.]/g, "");
+//   return parseFloat(cleaned) || 0;
+// };
+
+// const normaliseCartItems = (payload) => {
+//   const items = Array.isArray(payload?.items) ? payload.items : (Array.isArray(payload) ? payload : []);
+//   return items.map((item) => {
+//     const prodId = item.product?.id ?? item.product_id ?? item.id;
+//     return {
+//       id: prodId,
+//       cartItemId: item.id ?? null,
+//       productId: prodId,
+//       name: (typeof item.product === "string" ? item.product : item.product?.name) ?? item.product_name ?? item.name ?? "",
+//       price: formatMoney(item.price ?? 0, item.currency),
+//       _rawPrice: parsePrice(item.price ?? 0),
+//       currency: item.currency || null,
+//       images: [item.image ?? item.product?.image].filter(Boolean),
+//       image: item.image ?? item.product?.image ?? null,
+//       productType: item.product_type ?? "standard",
+//       selectedSize: item.size ?? null,
+//       selectedColor: item.color ?? null,
+//       selectedFrame: item.frame ?? null,
+//       selectedMaterial: item.material ?? null,
+//       sizeId: item.size_id ?? null,
+//       colorId: item.color_id ?? null,
+//       frameId: item.frame_id ?? null,
+//       materialId: item.material_id ?? null,
+//       variantId: item.variant?.id ?? null,
+//       variant: item.variant ?? null,
+//       qty: Number(item.quantity ?? item.qty ?? 1) || 1,
+//       lineTotal: parsePrice(item.total ?? 0),
+//     };
+//   });
+// };
+
+// export function useCartState() {
+//   useGuestId();
+
+//   const [cart, setCart] = useState([]);
+//   const [toast, setToast] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState(null);
+
+//   const showToast = useCallback((msg) => {
+//     setToast(msg);
+//     setTimeout(() => setToast(""), 2500);
+//   }, []);
+
+//   const fetchCart = useCallback(async () => {
+//     try {
+//       setLoading(true);
+//       setError(null);
+//       const res = await fetchCartAPI();
+//       setCart(normaliseCartItems(res.data));
+//     } catch (err) {
+//       setError(err?.response?.data?.error ?? err?.message ?? "Failed to load cart.");
+//       setCart([]);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     fetchCart();
+//   }, [fetchCart]);
+
+//   const addToCart = useCallback(
+//     async (product, qty = 1) => {
+//       const safeQty = Math.max(1, Number.parseInt(qty, 10) || 1);
+      
+//       const payloadOptions = {
+//         sizeId: product.selectedSizeId,
+//         frameId: product.selectedFrameId,
+//         materialId: product.selectedMaterialId,
+//         variantId: product.selectedVariantId ?? product.variantId ?? product.variant?.id ?? null,
+//       };
+
+//       try {
+//         setLoading(true);
+//         setError(null);
+//         await addToCartAPI(product.id, safeQty, payloadOptions);
+//         await fetchCart();
+//         showToast(product.name ?? "Item");
+//         return true;
+//       } catch (err) {
+//         if (err?.response?.status === 400 && payloadOptions.variantId === null) {
+//           try {
+//             // Backend might require a variant_id. Since the grid doesn't return variants,
+//             // fetch the full product details and try adding the first variant.
+//             const { fetchProductByIdAPI } = await import("../api/product");
+//             const res = await fetchProductByIdAPI(product.id);
+//             const fullProduct = res.data;
+//             const fallbackVariantId = fullProduct.variants?.[0]?.id ?? null;
+
+//             if (fallbackVariantId) {
+//               await addToCartAPI(product.id, safeQty, { ...payloadOptions, variantId: fallbackVariantId });
+//               await fetchCart();
+//               showToast(fullProduct.name ?? product.name ?? "Item");
+//               return true;
+//             }
+//           } catch (retryErr) {
+//             // Ignore retry error and fall through to throw original error
+//           }
+//         }
+
+//         const errorMsg = err?.response?.data?.error ?? err?.message ?? "Failed to add item.";
+//         setError(errorMsg);
+//         showToast(`Error: ${errorMsg}`);
+//         return false;
+//       } finally {
+//         setLoading(false);
+//       }
+//     },
+//     [fetchCart, showToast],
+//   );
+
+//   const removeItem = useCallback(
+//     async (cartItemId) => {
+//       try {
+//         setLoading(true);
+//         setError(null);
+//         await removeCartItemAPI(cartItemId);
+//         await fetchCart();
+//       } catch (err) {
+//         setError(err?.response?.data?.error ?? err?.message ?? "Failed to remove item.");
+//       } finally {
+//         setLoading(false);
+//       }
+//     },
+//     [fetchCart],
+//   );
+
+//   const updateQty = useCallback(
+//     async (productId, type) => {
+//       const current = cart.find((item) => String(item.id) === String(productId));
+//       if (!current) return;
+
+//       const nextQty = type === "inc" ? current.qty + 1 : current.qty - 1;
+
+//       try {
+//         setLoading(true);
+//         setError(null);
+
+//         if (type === "inc") {
+//           await addToCartAPI(productId, 1, {
+//             sizeId: current.sizeId,
+//             frameId: current.frameId,
+//             materialId: current.materialId,
+//             variantId: current.variantId,
+//           });
+//         } else {
+//           // Prefer a single remove call for decrement. If backend remove endpoint
+//           // deletes only one unit, this is sufficient and avoids an add request.
+//           await removeCartItemAPI(current.cartItemId);
+
+//           if (nextQty > 0) {
+//             const refreshed = await fetchCartAPI();
+//             const refreshedItems = normaliseCartItems(refreshed.data);
+//             const updatedItem = refreshedItems.find(
+//               (item) => String(item.id) === String(productId),
+//             );
+
+//             const decrementedByOne = updatedItem && updatedItem.qty === nextQty;
+//             if (!decrementedByOne) {
+//               // Fallback for backends where remove deletes the whole line item.
+//               for (let i = 0; i < nextQty; i += 1) {
+//                 await addToCartAPI(productId, 1, {
+//                   sizeId: current.sizeId,
+//                   frameId: current.frameId,
+//                   materialId: current.materialId,
+//                   variantId: current.variantId,
+//                 });
+//               }
+//             }
+//           }
+//         }
+
+//         await fetchCart();
+//       } catch (err) {
+//         setError(err?.response?.data?.error ?? err?.message ?? "Failed to update quantity.");
+//       } finally {
+//         setLoading(false);
+//       }
+//     },
+//     [cart, fetchCart],
+//   );
+
+//   const clearCart = useCallback(async () => {
+//     if (cart.length === 0) return;
+//     try {
+//       setLoading(true);
+//       setError(null);
+//       await Promise.all(cart.map((item) => removeCartItemAPI(item.cartItemId)));
+//       await fetchCart();
+//     } catch (err) {
+//       setError(err?.response?.data?.error ?? err?.message ?? "Failed to clear cart.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, [cart, fetchCart]);
+
+//   const syncCartOnLogin = useCallback(async () => {
+//     await fetchCart();
+//   }, [fetchCart]);
+
+//   const subtotal = useMemo(
+//     () => cart.reduce((sum, item) => sum + (item._rawPrice || 0) * item.qty, 0),
+//     [cart],
+//   );
+//   const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.qty, 0), [cart]);
+
+//   return {
+//     cart,
+//     addToCart,
+//     removeItem,
+//     updateQty,
+//     clearCart,
+//     syncCartOnLogin,
+//     fetchCart,
+//     subtotal,
+//     cartCount,
+//     toast,
+//     loading,
+//     error,
+//   };
+// }
+
+
+// import { useCallback, useEffect, useMemo, useState } from "react";
+// import { addToCartAPI, fetchCartAPI, removeCartItemAPI } from "../api/cart";
+// import { useGuestId } from "./useGuestId";
+// import { formatMoney } from "../utils/currency";
+// import { extractErrorMessage } from "../utils/errorHandler";
+
+// // CHANGED: enough rounds to empty the cart even if each remove call deletes only one unit
+// const MAX_CLEAR_ROUNDS = 25;
+
+// const parsePrice = (price) => {
+//   if (typeof price === "number") return price;
+//   const cleaned = String(price).replace(/[^0-9.]/g, "");
+//   return parseFloat(cleaned) || 0;
+// };
+
+// const normaliseCartItems = (payload) => {
+//   const items = Array.isArray(payload?.items) ? payload.items : (Array.isArray(payload) ? payload : []);
+//   return items.map((item) => {
+//     const prodId = item.product?.id ?? item.product_id ?? item.id;
+//     return {
+//       id: prodId,
+//       cartItemId: item.id ?? null,
+//       productId: prodId,
+//       name: (typeof item.product === "string" ? item.product : item.product?.name) ?? item.product_name ?? item.name ?? "",
+//       price: formatMoney(item.price ?? 0, item.currency),
+//       _rawPrice: parsePrice(item.price ?? 0),
+//       currency: item.currency || null,
+//       images: [item.image ?? item.product?.image].filter(Boolean),
+//       image: item.image ?? item.product?.image ?? null,
+//       productType: item.product_type ?? "standard",
+//       selectedSize: item.size ?? null,
+//       selectedColor: item.color ?? null,
+//       selectedFrame: item.frame ?? null,
+//       selectedMaterial: item.material ?? null,
+//       sizeId: item.size_id ?? null,
+//       colorId: item.color_id ?? null,
+//       frameId: item.frame_id ?? null,
+//       materialId: item.material_id ?? null,
+//       variantId: item.variant?.id ?? null,
+//       variant: item.variant ?? null,
+//       qty: Number(item.quantity ?? item.qty ?? 1) || 1,
+//       lineTotal: parsePrice(item.total ?? 0),
+//     };
+//   });
+// };
+
+// export function useCartState() {
+//   useGuestId();
+
+//   const [cart, setCart] = useState([]);
+//   const [toast, setToast] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState(null);
+
+//   const showToast = useCallback((msg) => {
+//     setToast(msg);
+//     setTimeout(() => setToast(""), 2500);
+//   }, []);
+
+//   const fetchCart = useCallback(async () => {
+//     try {
+//       setLoading(true);
+//       setError(null);
+//       const res = await fetchCartAPI();
+//       setCart(normaliseCartItems(res.data));
+//     } catch (err) {
+//       setError(err?.response?.data?.error ?? err?.message ?? "Failed to load cart.");
+//       setCart([]);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     fetchCart();
+//   }, [fetchCart]);
+
+//   const addToCart = useCallback(
+//     async (product, qty = 1) => {
+//       const safeQty = Math.max(1, Number.parseInt(qty, 10) || 1);
+      
+//       const payloadOptions = {
+//         sizeId: product.selectedSizeId,
+//         frameId: product.selectedFrameId,
+//         materialId: product.selectedMaterialId,
+//         variantId: product.selectedVariantId ?? product.variantId ?? product.variant?.id ?? null,
+//       };
+
+//       try {
+//         setLoading(true);
+//         setError(null);
+//         await addToCartAPI(product.id, safeQty, payloadOptions);
+//         await fetchCart();
+//         showToast(product.name ?? "Item");
+//         return true;
+//       } catch (err) {
+//         if (err?.response?.status === 400 && payloadOptions.variantId === null) {
+//           try {
+//             // Backend might require a variant_id. Since the grid doesn't return variants,
+//             // fetch the full product details and try adding the first variant.
+//             const { fetchProductByIdAPI } = await import("../api/product");
+//             const res = await fetchProductByIdAPI(product.id);
+//             const fullProduct = res.data;
+//             const fallbackVariantId = fullProduct.variants?.[0]?.id ?? null;
+
+//             if (fallbackVariantId) {
+//               await addToCartAPI(product.id, safeQty, { ...payloadOptions, variantId: fallbackVariantId });
+//               await fetchCart();
+//               showToast(fullProduct.name ?? product.name ?? "Item");
+//               return true;
+//             }
+//           } catch (retryErr) {
+//             // Ignore retry error and fall through to throw original error
+//           }
+//         }
+
+//         const errorMsg = err?.response?.data?.error ?? err?.message ?? "Failed to add item.";
+//         setError(errorMsg);
+//         showToast(`Error: ${errorMsg}`);
+//         return false;
+//       } finally {
+//         setLoading(false);
+//       }
+//     },
+//     [fetchCart, showToast],
+//   );
+
+//   const removeItem = useCallback(
+//     async (cartItemId) => {
+//       try {
+//         setLoading(true);
+//         setError(null);
+//         await removeCartItemAPI(cartItemId);
+//         await fetchCart();
+//       } catch (err) {
+//         setError(err?.response?.data?.error ?? err?.message ?? "Failed to remove item.");
+//       } finally {
+//         setLoading(false);
+//       }
+//     },
+//     [fetchCart],
+//   );
+
+//   const updateQty = useCallback(
+//     async (productId, type) => {
+//       const current = cart.find((item) => String(item.id) === String(productId));
+//       if (!current) return;
+
+//       const nextQty = type === "inc" ? current.qty + 1 : current.qty - 1;
+
+//       try {
+//         setLoading(true);
+//         setError(null);
+
+//         if (type === "inc") {
+//           await addToCartAPI(productId, 1, {
+//             sizeId: current.sizeId,
+//             frameId: current.frameId,
+//             materialId: current.materialId,
+//             variantId: current.variantId,
+//           });
+//         } else {
+//           // Prefer a single remove call for decrement. If backend remove endpoint
+//           // deletes only one unit, this is sufficient and avoids an add request.
+//           await removeCartItemAPI(current.cartItemId);
+
+//           if (nextQty > 0) {
+//             const refreshed = await fetchCartAPI();
+//             const refreshedItems = normaliseCartItems(refreshed.data);
+//             const updatedItem = refreshedItems.find(
+//               (item) => String(item.id) === String(productId),
+//             );
+
+//             const decrementedByOne = updatedItem && updatedItem.qty === nextQty;
+//             if (!decrementedByOne) {
+//               // Fallback for backends where remove deletes the whole line item.
+//               for (let i = 0; i < nextQty; i += 1) {
+//                 await addToCartAPI(productId, 1, {
+//                   sizeId: current.sizeId,
+//                   frameId: current.frameId,
+//                   materialId: current.materialId,
+//                   variantId: current.variantId,
+//                 });
+//               }
+//             }
+//           }
+//         }
+
+//         await fetchCart();
+//       } catch (err) {
+//         setError(err?.response?.data?.error ?? err?.message ?? "Failed to update quantity.");
+//       } finally {
+//         setLoading(false);
+//       }
+//     },
+//     [cart, fetchCart],
+//   );
+
+//   // CHANGED: reads the cart from the server (not from screen state, which may not be
+//   // loaded yet on a fresh page like /payment-success) and repeats until it is empty.
+//   const clearCart = useCallback(async () => {
+//     try {
+//       setLoading(true);
+//       setError(null);
+
+//       for (let round = 0; round < MAX_CLEAR_ROUNDS; round += 1) {
+//         const res = await fetchCartAPI();
+//         const items = normaliseCartItems(res.data).filter((item) => item.cartItemId != null);
+//         if (items.length === 0) break;
+
+//         await Promise.allSettled(items.map((item) => removeCartItemAPI(item.cartItemId)));
+//       }
+//     } catch (err) {
+//       setError(err?.response?.data?.error ?? err?.message ?? "Failed to clear cart.");
+//     } finally {
+//       setLoading(false);
+//     }
+
+//     // make the screen match the server
+//     await fetchCart();
+//   }, [fetchCart]);
+
+//   const syncCartOnLogin = useCallback(async () => {
+//     await fetchCart();
+//   }, [fetchCart]);
+
+//   const subtotal = useMemo(
+//     () => cart.reduce((sum, item) => sum + (item._rawPrice || 0) * item.qty, 0),
+//     [cart],
+//   );
+//   const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.qty, 0), [cart]);
+
+//   return {
+//     cart,
+//     addToCart,
+//     removeItem,
+//     updateQty,
+//     clearCart,
+//     syncCartOnLogin,
+//     fetchCart,
+//     subtotal,
+//     cartCount,
+//     toast,
+//     loading,
+//     error,
+//   };
+// }
+
+
+
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { addToCartAPI, fetchCartAPI, removeCartItemAPI } from "../api/cart";
 import { useGuestId } from "./useGuestId";
 import { formatMoney } from "../utils/currency";
 import { extractErrorMessage } from "../utils/errorHandler";
+
+// enough rounds to empty the cart even if each remove call deletes only one unit
+const MAX_CLEAR_ROUNDS = 25;
 
 const parsePrice = (price) => {
   if (typeof price === "number") return price;
@@ -14,6 +504,8 @@ const normaliseCartItems = (payload) => {
   const items = Array.isArray(payload?.items) ? payload.items : (Array.isArray(payload) ? payload : []);
   return items.map((item) => {
     const prodId = item.product?.id ?? item.product_id ?? item.id;
+    // NEW: size-priced products return the chosen size/colour in `product_size`
+    const ps = item.product_size ?? null;
     return {
       id: prodId,
       cartItemId: item.id ?? null,
@@ -25,16 +517,19 @@ const normaliseCartItems = (payload) => {
       images: [item.image ?? item.product?.image].filter(Boolean),
       image: item.image ?? item.product?.image ?? null,
       productType: item.product_type ?? "standard",
-      selectedSize: item.size ?? null,
-      selectedColor: item.color ?? null,
+      selectedSize: item.size ?? ps?.size ?? null,
+      selectedColor: item.color ?? ps?.color_name ?? null,
       selectedFrame: item.frame ?? null,
       selectedMaterial: item.material ?? null,
       sizeId: item.size_id ?? null,
-      colorId: item.color_id ?? null,
+      colorId: item.color_id ?? ps?.color_id ?? null,
       frameId: item.frame_id ?? null,
       materialId: item.material_id ?? null,
       variantId: item.variant?.id ?? null,
       variant: item.variant ?? null,
+      // NEW: size-pricing fields
+      productSizeId: ps?.id ?? null,
+      sizeStock: ps && ps.stock !== undefined && ps.stock !== null ? Number(ps.stock) : null,
       qty: Number(item.quantity ?? item.qty ?? 1) || 1,
       lineTotal: parsePrice(item.total ?? 0),
     };
@@ -74,14 +569,29 @@ export function useCartState() {
 
   const addToCart = useCallback(
     async (product, qty = 1) => {
+      console.log("addToCart:", product.selectedProductSizeId, product.hasSizePricing);
       const safeQty = Math.max(1, Number.parseInt(qty, 10) || 1);
-      
-      const payloadOptions = {
-        sizeId: product.selectedSizeId,
-        frameId: product.selectedFrameId,
-        materialId: product.selectedMaterialId,
-        variantId: product.selectedVariantId ?? product.variantId ?? product.variant?.id ?? null,
-      };
+
+      // NEW: the exact selected size (and its colour) for size-priced products
+      const productSizeId = product.selectedProductSizeId ?? product.productSizeId ?? null;
+      const isSizePriced = Boolean(product.hasSizePricing ?? product.has_size_pricing);
+
+      // size-priced products cannot be added without a selected size
+      if (isSizePriced && !productSizeId) {
+        const msg = "Please select a size.";
+        setError(msg);
+        showToast(`Error: ${msg}`);
+        return false;
+      }
+
+      const payloadOptions = productSizeId
+        ? { productSizeId }
+        : {
+            sizeId: product.selectedSizeId,
+            frameId: product.selectedFrameId,
+            materialId: product.selectedMaterialId,
+            variantId: product.selectedVariantId ?? product.variantId ?? product.variant?.id ?? null,
+          };
 
       try {
         setLoading(true);
@@ -91,7 +601,7 @@ export function useCartState() {
         showToast(product.name ?? "Item");
         return true;
       } catch (err) {
-        if (err?.response?.status === 400 && payloadOptions.variantId === null) {
+        if (!productSizeId && err?.response?.status === 400 && payloadOptions.variantId === null) {
           try {
             // Backend might require a variant_id. Since the grid doesn't return variants,
             // fetch the full product details and try adding the first variant.
@@ -138,24 +648,45 @@ export function useCartState() {
     [fetchCart],
   );
 
+  // CHANGED: `target` can be a cart line (preferred, so two sizes of the same product
+  // never mix) or a product id (older callers keep working).
   const updateQty = useCallback(
-    async (productId, type) => {
-      const current = cart.find((item) => String(item.id) === String(productId));
+    async (target, type) => {
+      const current =
+        target && typeof target === "object"
+          ? cart.find((item) => item.cartItemId != null && item.cartItemId === target.cartItemId) ?? target
+          : cart.find((item) => String(item.id) === String(target));
       if (!current) return;
 
+      const productId = current.id;
       const nextQty = type === "inc" ? current.qty + 1 : current.qty - 1;
+
+      // NEW: do not go past the selected size's stock
+      if (type === "inc" && current.sizeStock !== null && current.qty >= current.sizeStock) {
+        setError(`Only ${current.sizeStock} available.`);
+        return;
+      }
+
+      // NEW: size-priced lines are re-added by product_size_id, everything else as before
+      const addOptions = current.productSizeId
+        ? { productSizeId: current.productSizeId }
+        : {
+            sizeId: current.sizeId,
+            frameId: current.frameId,
+            materialId: current.materialId,
+            variantId: current.variantId,
+          };
+      const isSameLine = (item) =>
+        current.productSizeId
+          ? String(item.productSizeId) === String(current.productSizeId)
+          : String(item.id) === String(productId);
 
       try {
         setLoading(true);
         setError(null);
 
         if (type === "inc") {
-          await addToCartAPI(productId, 1, {
-            sizeId: current.sizeId,
-            frameId: current.frameId,
-            materialId: current.materialId,
-            variantId: current.variantId,
-          });
+          await addToCartAPI(productId, 1, addOptions);
         } else {
           // Prefer a single remove call for decrement. If backend remove endpoint
           // deletes only one unit, this is sufficient and avoids an add request.
@@ -164,20 +695,13 @@ export function useCartState() {
           if (nextQty > 0) {
             const refreshed = await fetchCartAPI();
             const refreshedItems = normaliseCartItems(refreshed.data);
-            const updatedItem = refreshedItems.find(
-              (item) => String(item.id) === String(productId),
-            );
+            const updatedItem = refreshedItems.find(isSameLine);
 
             const decrementedByOne = updatedItem && updatedItem.qty === nextQty;
             if (!decrementedByOne) {
               // Fallback for backends where remove deletes the whole line item.
               for (let i = 0; i < nextQty; i += 1) {
-                await addToCartAPI(productId, 1, {
-                  sizeId: current.sizeId,
-                  frameId: current.frameId,
-                  materialId: current.materialId,
-                  variantId: current.variantId,
-                });
+                await addToCartAPI(productId, 1, addOptions);
               }
             }
           }
@@ -193,19 +717,29 @@ export function useCartState() {
     [cart, fetchCart],
   );
 
+  // reads the cart from the server (not from screen state, which may not be
+  // loaded yet on a fresh page like /payment-success) and repeats until it is empty.
   const clearCart = useCallback(async () => {
-    if (cart.length === 0) return;
     try {
       setLoading(true);
       setError(null);
-      await Promise.all(cart.map((item) => removeCartItemAPI(item.cartItemId)));
-      await fetchCart();
+
+      for (let round = 0; round < MAX_CLEAR_ROUNDS; round += 1) {
+        const res = await fetchCartAPI();
+        const items = normaliseCartItems(res.data).filter((item) => item.cartItemId != null);
+        if (items.length === 0) break;
+
+        await Promise.allSettled(items.map((item) => removeCartItemAPI(item.cartItemId)));
+      }
     } catch (err) {
       setError(err?.response?.data?.error ?? err?.message ?? "Failed to clear cart.");
     } finally {
       setLoading(false);
     }
-  }, [cart, fetchCart]);
+
+    // make the screen match the server
+    await fetchCart();
+  }, [fetchCart]);
 
   const syncCartOnLogin = useCallback(async () => {
     await fetchCart();
